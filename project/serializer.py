@@ -9,7 +9,7 @@ __author__ = 'awemulya'
 class SitesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
-        fields = ('id', 'name', 'description', 'address', 'start_date', 'incharge')
+        fields = ('id', 'name', 'description', 'address', 'start_date',)
         depth = 1
         extra_kwargs = {
             "id": {

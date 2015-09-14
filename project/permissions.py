@@ -14,6 +14,6 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
         #     return True
 
         # Instance must have an attribute named `owner`.
-        import pdb
-        pdb.set_trace()
-        return request.user in obj.incharge_set.all()
+        if request.user.is_admin:
+            return True
+        return request.user in obj.incharge.all()

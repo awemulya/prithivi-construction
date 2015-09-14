@@ -24,8 +24,14 @@ class InChargeViewSet(viewsets.ModelViewSet):
 class SitesViewSet(viewsets.ModelViewSet):
 
     queryset = Project.objects.all()
-    permission_classes = (IsOwnerOrReadOnly,)
     serializer_class = SitesSerializer
+    permission_classes = [IsOwnerOrReadOnly]
+
+    def get_queryset(self):
+        if self.request.user.is_admin:
+            return Project.objects.all()
+        else:
+            return self.request.user.project_set.all()
 
     def perform_create(self, serializer):
             serializer.save()
