@@ -23,7 +23,7 @@ angular.module('myApp', [
                 dateFormat: 'yy-mm-dd',
                 onSelect: function (date) {
 //                element.val(date);
-                    scope.club.established = date;
+                    scope.date = date;
                     scope.$apply();
                 }
             });

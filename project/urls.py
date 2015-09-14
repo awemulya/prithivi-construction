@@ -1,11 +1,12 @@
 from django.conf.urls import patterns, url, include
 from project import views
 from rest_framework.routers import DefaultRouter
-from project.viewsets import SitesViewSet, SiteEmployeeViewSet, EmployeeViewSet
+from project.viewsets import SitesViewSet, SiteEmployeeViewSet, EmployeeViewSet, RoleViewSet
 
 router = DefaultRouter()
 router.register(r'sites', SitesViewSet)
-router.register(r'employee',EmployeeViewSet)
+router.register(r'employee', EmployeeViewSet)
+router.register(r'role', RoleViewSet)
 router.register(r'site-employee',SiteEmployeeViewSet)
 urlpatterns = patterns('',
                        url(r'^', include(router.urls)),

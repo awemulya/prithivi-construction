@@ -1,0 +1,67 @@
+<div class="modal-title">
+    <div class="row">
+        <div class="col-sm-10 col-sm-offset-2">
+            <label>Add New Employee Information</label></div>
+    </div>
+</div>
+ <div class="modal-body">
+ <div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+         <div class="box">
+                <div class="box-body">
+                    <form name="employeeForm">
+                        <div class="form-group" ng-class="{ 'has-error': employeeForm.$invalid }">
+                          <label class="control-label" for="name">
+                              <i class="fa fa-times-circle-o" ng-show="employeeForm.$invalid"></i> Full Name</label>
+                            <label ng-if="employeeForm.$invalid">
+                                Cannot be Empty.
+                            </label>
+                          <input type="text" class="form-control" id="name" ng-model="employee.name"
+                                 placeholder="Name ..." required>
+                        </div>
+                        <div class="form-group" ng-class="{ 'has-error': employeeForm.$invalid }">
+                          <label class="control-label" for="address">
+                              <i class="fa fa-times-circle-o" ng-show="employeeForm.$invalid"></i> Address</label>
+                            <label ng-if="employeeForm.address.$invalid">
+                                Address be Empty.
+                            </label>
+                          <input type="text" class="form-control" id="address" ng-model="employee.address"
+                                 placeholder="Name ..." required>
+                        </div>
+                        <div class="form-group">
+                          <label class="control-label" for="role">
+                              <i class="fa fa-times-circle-o"></i> Sex</label>
+                            <select class="form-control" id="sex" ng-init="employee.sex = employee.sex || options[0]"
+                                    ng-model="employee.sex"
+                                    ng-options="option as option for option in options "></select>
+
+                        </div>
+                        <div class="form-group">
+                          <label class="control-label" for="role">
+                              <i class="fa fa-times-circle-o"></i> Role</label>
+
+                            <select class="form-control" id="role" ng-init="employee.role = roles_list[0]"
+                                    ng-model="employee.role"
+                                    ng-options="option as option.role for option in roles_list track by option.id"></select>
+
+                        </div>
+                        <div class="form-group">
+                          <label class="control-label" for="dob"><i class="fa fa-times-circle-o"></i> Date Of Birth.</label>
+                          <input type="text" class="form-control" id="dob" ng-model="employee.date_of_birth"
+                                 placeholder="Birth Date" jqdatepicker/>
+                        </div>
+                        <div class="form-group">
+                          <button class="btn btn-primary" ng-click="ok()" ng-disabled="employeeForm.$invalid">
+                              Save Employee
+                          </button>
+                        </div>
+                    </form>
+                </div>
+          </div>
+    </div>
+</div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>
+

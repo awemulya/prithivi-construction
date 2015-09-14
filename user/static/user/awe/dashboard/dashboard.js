@@ -17,6 +17,11 @@ angular.module('myApp.dashboard', ['ngRoute'])
     controller: 'EmployeeController'
   })
 
+  $routeProvider.when('/employees/:siteId/:eId', {
+    templateUrl: djstatic('user/awe/dashboard/employee/employees_detail.html'),
+    controller: 'EmployeeDetailController'
+  })
+
   $routeProvider.when('/players/:pid', {
     templateUrl: djstatic('user/awe/dashboard/player/player_details.html'),
     controller: 'PlayerDetailController',
@@ -95,16 +100,17 @@ angular.module('myApp.dashboard', ['ngRoute'])
 
 
 
-.controller('PlayerDetailController', ['$scope', 'Clubs', 'Player', 'Fixture', '$modal', '$timeout', '$routeParams',
-function($scope, Clubs, Player, Fixture, $modal, $timeout, $routeParams) {
+.controller('EmployeeDetailController', ['$scope', 'Employee', 'Site', '$modal', '$timeout', '$routeParams',
+function($scope, Employee, Site, $modal, $timeout, $routeParams) {
 
 var self = $scope;
-self.pid =  $routeParams.pid;
-self.player = {};
-var playerService = new Player();
-    playerService.$get({pId:self.pid},
+self.site =  $routeParams.siteId;
+self.employeeId =  $routeParams.eId;
+self.employee = {};
+var es = new Employee();
+    es.$get({eId:self.employeeId},
             function(data) {
-            self.player = data;
+            self.employee = data;
             },
             function(error) {
                 console.log(error);
@@ -447,30 +453,24 @@ self.openAddResults = function(club, clubs) {
 })
 
 
-.controller('PlayerAddModalController', function($scope, $modalInstance, club, clubService) {
-    var playerModal = $scope;
-    playerModal.options = ['goalkeeper', 'defender', 'midfielder', 'forward'];
-    playerModal.$watch('clubs', function(clubs) {
-    playerModal.player.club = playerModal.clubs[0];
-}, true);
-    playerModal.player = {};
-    playerModal.playerSenario = false;
-    if (!club){
-        playerModal.clubs = clubService.query();
-        playerModal.playerSenario = true;
-        playerModal.club = {};
-        playerModal.club.established = "1990-01-01";
-    }else{
-        playerModal.club = angular.copy(club);
-        playerModal.player.club_id = club.id;
-        playerModal.player.date_of_birth =  playerModal.club.established;
-    }
-    playerModal.ok = function() {
-        playerModal.player.date_of_birth =  playerModal.club.established;
-        $modalInstance.close(playerModal.player);
+.controller('EmployeeAddModalController', function($scope, $modalInstance, site, employeeService, Roles) {
+    var newEmployee = $scope;
+    newEmployee.employee = {};
+    newEmployee.options = ['Male', 'Female', 'Others'];
+        newEmployee.$watch('roles', function(roles) {
+        newEmployee.roles_list = angular.copy(roles);
+        newEmployee.employee.role = newEmployee.roles_list[0];
+    }, true);
+    newEmployee.roles = Roles.query();
+    newEmployee.employee.date_of_birth =  newEmployee.date;
+
+    newEmployee.ok = function() {
+        newEmployee.employee.date_of_birth =  newEmployee.date;
+        newEmployee.employee.role_id =  newEmployee.employee.role.id;
+        $modalInstance.close(newEmployee.employee);
     };
 
-    playerModal.cancel = function() {
+    newEmployee.cancel = function() {
         $modalInstance.dismiss('cancel');
     };
 })
@@ -549,57 +549,61 @@ self.openAddResults = function(club, clubs) {
     };
 })
 
-.controller('EmployeeController', ['$scope', 'SiteEmployee', 'Site', '$modal', '$timeout', '$routeParams',
-function($scope, SiteEmployee, Site, $modal, $timeout, $routeParams){
+.controller('EmployeeController', ['$scope', 'Employee', 'SiteEmployee', 'Site', 'Role', '$modal', '$timeout', '$routeParams',
+function($scope, Employee, SiteEmployee, Site, Role, $modal, $timeout, $routeParams){
     var self = $scope
     self.siteID =  $routeParams.siteId;
     self.employees = {};
+    self.site = "";
     var employeeService = new SiteEmployee();
     employeeService.$query({siteID:self.siteID},
             function(data) {
             self.employees = data.employee;
+            self.site = data.id;
             },
             function(error) {
                 console.log(error);
             });
-//    self.openAddPlayers = function() {
-//        var modalInstance = $modal.open({
-//            animation: true,
-//            templateUrl: djstatic('user/awe/dashboard/club/add_players_modal.html'),
-//            controller: 'PlayerAddModalController',
-//            windowClass: 'app-modal-window',
-//            resolve: {
-//            club: function() {
-//                return false;
-//                },
-//            clubService: function() {
-//                return Clubs;
-//            },
-//            player: function() {
-//                return false;
-//            }
-//
-//            }
-//        });
-//
-//        modalInstance.result.then(function(playerData) {
-//        if (!angular.equals({},playerData)){
-//        var playerService = new Player();
-//            playerService.name = playerData.name;
-//            playerService.position = playerData.position;
-//            playerService.club = playerData.club.id;
-//            playerService.date_of_birth = playerData.date_of_birth;
-//            playerService.$save(null,
-//            function(data) {
-//                self.players.splice(0, 0, data);
-//            },
-//            function(error) {
-//                console.log(error);
-//            });
-//
-//            }
-//        });
-//    };
+    self.openAddEmployee = function(site) {
+        var modalInstance = $modal.open({
+            animation: true,
+            templateUrl: djstatic('user/awe/dashboard/employee/add_employee_modal.html'),
+            controller: 'EmployeeAddModalController',
+            windowClass: 'app-modal-window',
+            resolve: {
+            site: function() {
+                return site;
+                },
+            employeeService: function() {
+                return Employee;
+            },
+            Roles: function() {
+                return Role;
+            }
+            }
+        });
+
+        modalInstance.result.then(function(employeeData) {
+        if (!angular.equals({},employeeData)){
+        var es = new Employee();
+            es.name = employeeData.name;
+            es.address = employeeData.address;
+            es.sex = employeeData.sex;
+            es.marital_status = employeeData.marital_status;
+            es.site_id = self.site;
+            es.role_id = employeeData.role_id;
+            es.date_of_birth = employeeData.date_of_birth;
+            es.$save(null,
+            function(data) {
+                self.employees.splice(0, 0, data);
+            },
+            function(error) {
+                console.log(error);
+            });
+
+            }
+        });
+    };
 //
 //    self.openEditPlayer = function(player) {
 //        var modalInstance = $modal.open({

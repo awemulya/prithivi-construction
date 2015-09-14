@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
-from employee.models import Employee
+from employee.models import Employee, EmployeeRole
 from project.models import Project
 from user.models import AweUser
 
@@ -20,12 +20,20 @@ class SitesSerializer(serializers.ModelSerializer):
         }
 
 
-class EmployeeSerializer(serializers.ModelSerializer):
+class RoleSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Employee
-        fields = ('id', 'name', 'address', 'date_of_birth', 'role', 'sex','marital_status', 'date_joined')
+        model = EmployeeRole
+        fields = ('id', 'role', 'description')
         depth = 1
 
+
+class EmployeeSerializer(serializers.ModelSerializer):
+    site_id = serializers.PrimaryKeyRelatedField(source='site', queryset=Project.objects.all())
+    role_id = serializers.PrimaryKeyRelatedField(source='role', queryset=EmployeeRole.objects.all())
+    role_name = serializers.PrimaryKeyRelatedField(source='role.role', read_only=True)
+    class Meta:
+        model = Employee
+        fields = ('id', 'name', 'address', 'date_of_birth', 'role_name', 'sex','marital_status', 'date_joined', 'site_id', 'role_id')
 
 
 class InChargeSerializer(serializers.ModelSerializer):
