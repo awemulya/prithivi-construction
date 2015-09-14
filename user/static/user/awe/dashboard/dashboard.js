@@ -12,9 +12,9 @@ angular.module('myApp.dashboard', ['ngRoute'])
     controller: 'DashboardController'
   })
 
-  $routeProvider.when('/players', {
-    templateUrl: djstatic('user/awe/dashboard/player/players.html'),
-    controller: 'PlayerController'
+  $routeProvider.when('/employees/:siteId', {
+    templateUrl: djstatic('user/awe/dashboard/employee/employees.html'),
+    controller: 'EmployeeController'
   })
 
   $routeProvider.when('/players/:pid', {
@@ -54,36 +54,7 @@ angular.module('myApp.dashboard', ['ngRoute'])
 .controller('DashboardController', ['$scope', 'Site', '$modal', '$timeout', function($scope, Site, $modal, $timeout) {
  var self = $scope;
  self.sites = Site.query();
- self.openPlayerDetails = function(player) {
-        var modalInstance = $modal.open({
-            animation: true,
-            templateUrl: djstatic('user/awe/dashboard/player_detail_modal.html'),
-            controller: 'PlayerDetailModalController',
-            windowClass: 'app-modal-window',
-            resolve: {
-                player: function() {
-                    return player;
-                }
-            }
-        });
-        modalInstance.result.then(function() {
-        });
-    };
-    self.openPlayerFixtures = function(player) {
-        var modalInstance = $modal.open({
-            animation: true,
-            templateUrl: djstatic('user/awe/dashboard/fixtures_modal.html'),
-            controller: 'FixtureModalController',
-            windowClass: 'app-modal-window',
-            resolve: {
-                player: function() {
-                    return player;
-                }
-            }
-        });
-        modalInstance.result.then(function() {
-        });
-    };
+
 }])
 
 .controller('PlayerDetailModalController', function($scope, $modalInstance, player) {
@@ -578,92 +549,100 @@ self.openAddResults = function(club, clubs) {
     };
 })
 
-.controller('PlayerController', ['$scope', 'Clubs', 'Player', 'Fixture', 'Game', '$modal', '$timeout',
-function($scope, Clubs, Player, Fixture, Game, $modal, $timeout){
+.controller('EmployeeController', ['$scope', 'SiteEmployee', 'Site', '$modal', '$timeout', '$routeParams',
+function($scope, SiteEmployee, Site, $modal, $timeout, $routeParams){
     var self = $scope
-    self.players = Player.query();
-
-    self.openAddPlayers = function() {
-        var modalInstance = $modal.open({
-            animation: true,
-            templateUrl: djstatic('user/awe/dashboard/club/add_players_modal.html'),
-            controller: 'PlayerAddModalController',
-            windowClass: 'app-modal-window',
-            resolve: {
-            club: function() {
-                return false;
-                },
-            clubService: function() {
-                return Clubs;
-            },
-            player: function() {
-                return false;
-            }
-
-            }
-        });
-
-        modalInstance.result.then(function(playerData) {
-        if (!angular.equals({},playerData)){
-        var playerService = new Player();
-            playerService.name = playerData.name;
-            playerService.position = playerData.position;
-            playerService.club = playerData.club.id;
-            playerService.date_of_birth = playerData.date_of_birth;
-            playerService.$save(null,
+    self.siteID =  $routeParams.siteId;
+    self.employees = {};
+    var employeeService = new SiteEmployee();
+    employeeService.$query({siteID:self.siteID},
             function(data) {
-                self.players.splice(0, 0, data);
+            self.employees = data.employee;
             },
             function(error) {
                 console.log(error);
             });
-
-            }
-        });
-    };
-
-    self.openEditPlayer = function(player) {
-        var modalInstance = $modal.open({
-            animation: true,
-            templateUrl: djstatic('user/awe/dashboard/club/add_players_modal.html'),
-            controller: 'PlayerUpdateModalController',
-            windowClass: 'app-modal-window',
-            resolve: {
-            club: function() {
-                return false;
-                },
-            clubService: function() {
-                return Clubs;
-            },
-            player: function() {
-                return player;
-            }
-
-            }
-        });
-
-        modalInstance.result.then(function(playerData) {
-        if (!angular.equals({},playerData)){
-        var playerService = new Player();
-            playerService.name = playerData.name;
-            playerService.position = playerData.position;
-            playerService.club = playerData.club.id;
-            playerService.date_of_birth = playerData.date_of_birth;
-            playerService.$update({pId:playerData.id},
-            function(data) {
-                for (var i=0; i<self.players.length; i++){
-                    if(self.players[i].id == data.id){
-                        self.players[i] = data;
-                    }
-                }
-            },
-            function(error) {
-                console.log(error);
-            });
-
-            }
-        });
-    };
+//    self.openAddPlayers = function() {
+//        var modalInstance = $modal.open({
+//            animation: true,
+//            templateUrl: djstatic('user/awe/dashboard/club/add_players_modal.html'),
+//            controller: 'PlayerAddModalController',
+//            windowClass: 'app-modal-window',
+//            resolve: {
+//            club: function() {
+//                return false;
+//                },
+//            clubService: function() {
+//                return Clubs;
+//            },
+//            player: function() {
+//                return false;
+//            }
+//
+//            }
+//        });
+//
+//        modalInstance.result.then(function(playerData) {
+//        if (!angular.equals({},playerData)){
+//        var playerService = new Player();
+//            playerService.name = playerData.name;
+//            playerService.position = playerData.position;
+//            playerService.club = playerData.club.id;
+//            playerService.date_of_birth = playerData.date_of_birth;
+//            playerService.$save(null,
+//            function(data) {
+//                self.players.splice(0, 0, data);
+//            },
+//            function(error) {
+//                console.log(error);
+//            });
+//
+//            }
+//        });
+//    };
+//
+//    self.openEditPlayer = function(player) {
+//        var modalInstance = $modal.open({
+//            animation: true,
+//            templateUrl: djstatic('user/awe/dashboard/club/add_players_modal.html'),
+//            controller: 'PlayerUpdateModalController',
+//            windowClass: 'app-modal-window',
+//            resolve: {
+//            club: function() {
+//                return false;
+//                },
+//            clubService: function() {
+//                return Clubs;
+//            },
+//            player: function() {
+//                return player;
+//            }
+//
+//            }
+//        });
+//
+//        modalInstance.result.then(function(playerData) {
+//        if (!angular.equals({},playerData)){
+//        var playerService = new Player();
+//            playerService.name = playerData.name;
+//            playerService.position = playerData.position;
+//            playerService.club = playerData.club.id;
+//            playerService.date_of_birth = playerData.date_of_birth;
+//            playerService.$update({pId:playerData.id},
+//            function(data) {
+//                for (var i=0; i<self.players.length; i++){
+//                    if(self.players[i].id == data.id){
+//                        self.players[i] = data;
+//                    }
+//                }
+//            },
+//            function(error) {
+//                console.log(error);
+//            });
+//
+//            }
+//        });
+//    };
 
 }])
 

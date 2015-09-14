@@ -8,4 +8,4 @@ class Company(models.Model):
     address = models.CharField(max_length=50)
 
     def __unicode__(self):
-        return u'%s' % (self.name)
+        return '{0}'.format(self.name)

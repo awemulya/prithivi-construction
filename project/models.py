@@ -9,3 +9,6 @@ class Project(models.Model):
     start_date = models.DateField(null=True)
     completion_date = models.DateField(null=True)
     incharge = models.ManyToManyField(AweUser)
+
+    def __unicode__(self):
+        return '{0}'.format(self.name)

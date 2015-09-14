@@ -1,0 +1,39 @@
+<table id="example1" class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>Employee <a href="" title="Add Player" ng-click="openAddPlayers()"><i class="fa fa-plus"></i></a></th>
+        <th>Address</th>
+        <th>Age</th>
+        <th>Role</th>
+        <th>Sex</th>
+        <th>Marital Status</th>
+        <th>Date Joined</th>
+        <th colspan="2">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="emp in employees | orderBy:'-name'">
+        <td><a href="#/employee/{{emp.id}}"> {{emp.name}} </a></td>
+        <td>{{emp.address}}</td>
+        <td>{{emp.employee_age}}</td>
+        <td>{{emp.role.role}}</td>
+        <td>{{emp.sex}}</td>
+        <td>{{emp.marital_status}}</td>
+        <td>{{emp.date_joined}}</td>
+        <td><a href="" title="View History" ng-click="openHistory(emp)"><i class="fa fa-calendar"></i></a></td>
+        <td><a href="" title="Edit Employee" ng-click="openEditEmployee(player)"><i class="fa fa-edit"></i></a></td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <th>Employee <a href="" title="Add Player" ng-click="openAddPlayers()"><i class="fa fa-plus"></i></a></th>
+        <th>Address</th>
+        <th>Age</th>
+        <th>Role</th>
+        <th>Sex</th>
+        <th>Marital Status</th>
+        <th>Date Joined</th>
+        <th colspan="2">Actions</th>
+      </tr>
+    </tfoot>
+</table>

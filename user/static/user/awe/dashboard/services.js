@@ -24,6 +24,14 @@ angular.module('dashboardServices', ['ngResource'])
 	  save: {method:'POST', params: {pId: ''}},
 	});
 }])
+.factory('SiteEmployee', ['$resource', function($resource){
+	return $resource('/dashboard/site-employee/:siteID', {}, {
+	  query: {method:'GET', params:{siteID: '@siteID'}},
+	  update: {method:'PUT', params: {siteID: '@siteID'}},
+	  player: {method:'GET', params: {siteID: '@siteID'}},
+	  save: {method:'POST', params: {siteID: '@siteID'}},
+	});
+}])
 
 .factory('Fixture', ['$resource', function($resource){
 	return $resource('/app/fixtures/:pId', {}, {

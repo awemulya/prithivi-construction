@@ -1,12 +1,13 @@
 from rest_framework.response import Response
-from project.permissions import IsOwnerOrReadOnly
+from employee.models import Employee
+from project.permissions import IsOwnerOrReadOnly, IsSiteInchargeOrReadOnly
 from user.models import AweUser
 
 __author__ = 'awemulya'
 
 
 from.models import Project
-from .serializer import InChargeSerializer, SitesSerializer
+from .serializer import InChargeSerializer, SitesSerializer, SiteEmployeeSerializer, EmployeeSerializer
 from rest_framework import viewsets
 
 class InChargeViewSet(viewsets.ModelViewSet):
@@ -31,6 +32,34 @@ class SitesViewSet(viewsets.ModelViewSet):
         if self.request.user.is_admin:
             return Project.objects.all()
         else:
+            return self.request.user.project_set.all()
+
+    def perform_create(self, serializer):
+            serializer.save()
+
+class EmployeeViewSet(viewsets.ModelViewSet):
+
+    queryset = Employee.objects.all()
+    serializer_class = EmployeeSerializer
+    permission_classes = [IsOwnerOrReadOnly]
+
+    def perform_create(self, serializer):
+            serializer.save()
+
+
+class SiteEmployeeViewSet(viewsets.ModelViewSet):
+
+    queryset = Project.objects.all()
+    serializer_class = SiteEmployeeSerializer
+    permission_classes = [IsOwnerOrReadOnly]
+
+    def get_queryset(self):
+        # import pdb
+        # pdb.set_trace()
+        if self.request.user.is_admin:
+            return Project.objects.all()
+        else:
+            # get side id and site obj siteobj.employee.all()
             return self.request.user.project_set.all()
 
     def perform_create(self, serializer):

@@ -1,13 +1,39 @@
 <div class="row">
-    <div class="col-md-4 col-sm-6 col-xs-12" ng-repeat="site in sites">
-         <div class="box box-widget widget-user">
+    <div class="col-sm-9 col-sm-offset-3"><h2>Sites Managed By Me</h2></div>
+    <div class="col-md-6 col-sm-6 col-xs-12" ng-repeat="site in sites">
+
+        <div class="box box-widget widget-user">
                 <!-- Add the bg color to the header using any of the bg-* classes -->
                 <div class="widget-user-header bg-aqua-active">
                   <h3 class="widget-user-username">{{site.name}}</h3>
-                  <h5 class="widget-user-desc">{{site.address}}</h5>
+                  <h5 class="widget-user-desc">{{site.description}}</h5>
                 </div>
 
-                </div>
+        </div>
+        <div class="box-body">
+              <div class="col-sm-3"><i class="fa fa-calendar">Progress</i></div>
+              <div class="col-sm-3">
+                  <a href="#/employees/{{site.id}}" title="Employee Details"><i class="fa fa-user">Employees</i></a>
+              </div>
+              <div class="col-sm-3"><i class="fa fa-wrench">Inventory</i></div>
+              <div class="col-sm-3"><i class="fa fa-book">Account</i></div>
+        </div>
+        <div class="box-footer">
+              <div class="row">
+                    <div class="col-sm-6 border-right bg-aqua-active" >
+                      <div class="description-block">
+                        <h5 class="description-header">{{site.start_date}}</h5>
+                        <span class="description-text">Started</span>
+                      </div>
+                    </div>
+                  <div class="col-sm-6 border-right bg-aqua-active" >
+                      <div class="description-block">
+                        <h5 class="description-header">{{site.address}}</h5>
+                        <span class="description-text">Location</span>
+                      </div>
+                    </div>
+
+              </div>
          </div>
     </div>
 </div>
