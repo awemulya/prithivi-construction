@@ -1,0 +1,22 @@
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+         <div class="box box-widget widget-user">
+            <div class="box-footer">
+                <div class="row">
+                    <div class="col-sm-1"><label>Game Week</label></div>
+                    <div class="col-sm-2"><label>Game Time</label></div>
+                    <div class="col-sm-1"><label>Played</label></div>
+                    <div class="col-sm-6"><label>Fixture</label></div>
+                    <div class="col-sm-2"><label>Game Score</label></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-1">{{fixture.week}}</div>
+                    <div class="col-sm-2">{{fixture.time}}</div>
+                    <div class="col-sm-1"><div ng-if="fixture.played">Played</div></div>
+                    <div class="col-sm-6">{{fixture.game_fixture_text}}</div>
+                    <div class="col-sm-2">{{fixture.score_text}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

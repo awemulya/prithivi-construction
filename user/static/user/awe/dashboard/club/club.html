@@ -1,0 +1,36 @@
+<table id="example1" class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>Club <a href="" title="Add Club" ng-click="openAddClub()"><i class="fa fa-plus"></i></a></th>
+        <th>Established</th>
+        <th>Points</th>
+        <th colspan="6">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="club in clubs | orderBy:'-points'">
+        <td>{{club.name}}</td>
+        <td>{{club.established}}</td>
+        <td>{{club.points}}</td>
+        <td><a href="" title="Players" ng-click="openPlayers(club.players)"><i class="fa fa-user"></i></a></td>
+        <td><a href="" title="Add Players" ng-click="openAddPlayers(club)"><i class="fa fa-user-plus"></i></a></td>
+        <td><a href="" title="view Results" ng-click="openResults(club.game, true)"><i class="fa fa-support"></i></a></td>
+        <td><a href="" title="Add Results" ng-click="openAddResults(club, clubs)"><i class="fa fa-support"></i>
+            <i class="fa fa-plus"></i></a></td>
+        <td><a href="" title="View Fixtures" ng-click="openResults(club.game, false)"><i class="fa fa-calendar"></i></a></td>
+        <td><a href="" title="Edit Club" ng-click="openEditClub(club)"><i class="fa fa-edit"></i></a></td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <th>Club</th>
+        <th>Established</th>
+        <th colspan="6">Actions</th>
+      </tr>
+    </tfoot>
+</table>
+<!--<script>-->
+      <!--$(function () {-->
+        <!--$("#example1").DataTable();-->
+      <!--});-->
+<!--</script>-->

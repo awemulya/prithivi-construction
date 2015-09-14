@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Awe | Players{% endblock %}
+
+{% block pagehead %}
+    Players
+{% endblock %}
+
+{% block pagedesc %}Players details{% endblock %}
+
+{% block content-title %} Players Details {% endblock %}
+
+{% block content-body %}
+<div class="row">
+    {% for player in players %}
+    <div class="col-md-4 col-sm-6 col-xs-12">
+         <div class="box box-widget widget-user">
+                <!-- Add the bg color to the header using any of the bg-* classes -->
+                <div class="widget-user-header bg-aqua-active">
+                  <h3 class="widget-user-username">{{player.name}}| {{player.club}}| {{player.position}}</h3>
+                  <h5 class="widget-user-desc">{{player.position}}</h5>
+                </div>
+                <div class="widget-user-image">
+                  <img class="img-circle" src="{{ STATIC_URL }}user/vendor/dist/img/user2-160x160.jpg" alt="User Avatar">
+                </div>
+                <div class="box-footer">
+                  <div class="row">
+                    <div class="col-sm-4 border-right">
+                      <div class="description-block">
+                        <h5 class="description-header">{{player.age}}</h5>
+                        <span class="description-text">AGE</span>
+                      </div><!-- /.description-block -->
+                    </div><!-- /.col -->
+                    <div class="col-sm-4 border-right">
+                      <div class="description-block">
+                        <h5 class="description-header">{{player.point}}</h5>
+                        <span class="description-text">GW Points</span>
+                      </div><!-- /.description-block -->
+                    </div><!-- /.col -->
+                    <div class="col-sm-4">
+                      <div class="description-block">
+                        <h5 class="description-header">{{player.points}}</h5>
+                        <span class="description-text">Total</span>
+                      </div><!-- /.description-block -->
+                    </div><!-- /.col -->
+                  </div><!-- /.row -->
+                </div>
+              </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}
+
+
+{% block content-footer %}Players  Footer {% endblock %}

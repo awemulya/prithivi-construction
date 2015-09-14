@@ -1,0 +1,55 @@
+<div class="row">
+    <div class="col-md-4 col-sm-6 col-xs-12">
+         <div class="box box-widget widget-user">
+                <!-- Add the bg color to the header using any of the bg-* classes -->
+                <div class="widget-user-header bg-aqua-active">
+                  <h3 class="widget-user-username">{{player.name}}</h3>
+                  <h5 class="widget-user-desc">{{player.position}}</h5>
+                </div>
+                <div class="widget-user-image">
+                  <img class="img-circle" ng-src="{{profileImg[0].src}}" alt="User Avatar">
+                </div>
+                <div class="box-footer">
+                  <div class="row">
+                    <div class="col-sm-4 border-right">
+                      <div class="description-block">
+                        <h5 class="description-header">{{player.player_age}}</h5>
+                        <span class="description-text">AGE</span>
+                      </div><!-- /.description-block -->
+                    </div><!-- /.col -->
+                    <div class="col-sm-4 border-right">
+                      <div class="description-block">
+                        <h5 class="description-header">{{player.game_point}}</h5>
+                        <span class="description-text">GW Points</span>
+                      </div><!-- /.description-block -->
+                    </div><!-- /.col -->
+                    <div class="col-sm-4">
+                      <div class="description-block">
+                        <h5 class="description-header">{{player.total_points}}</h5>
+                        <span class="description-text">Total</span>
+                      </div><!-- /.description-block -->
+                    </div><!-- /.col -->
+                  </div><!-- /.row -->
+
+                </div>
+         </div>
+    </div>
+     <div class="col-md-8 col-sm-6 col-xs-12">
+         <div class="box box-widget widget-user">
+            <div class="box-footer">
+                <div class="row">
+                    <div class="col-sm-2"><label>Game Week</label></div>
+                    <div class="col-sm-2"><label>Points</label></div>
+                    <div class="col-sm-6"><label>Fixture</label></div>
+                    <div class="col-sm-2"><label>Game Score</label></div>
+                </div>
+                <div class="row" ng-repeat="game_week in player.game | orderBy:'-week'">
+                    <div class="col-sm-2">{{game_week.week}}</div>
+                    <div class="col-sm-2">{{game_week.points}}</div>
+                    <div class="col-sm-6">{{game_week.fixtures}}</div>
+                    <div class="col-sm-2">{{game_week.week_score}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block top %}
+<!--[if lt IE 7]>      <html lang="en" ng-app="myApp" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html lang="en" ng-app="myApp" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html lang="en" ng-app="myApp" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html lang="en" ng-app="myApp" class="no-js"> <!--<![endif]-->
+{% endblock %}
+
+ {% block extracss %}
+
+  {% endblock %}
+
+{% block title %}Awe | Home{% endblock %}
+
+{% block pagehead %}
+    Home
+{% endblock %}
+
+{% block pagedesc %}Welcome{% endblock %}
+
+{% block content-title %} Home Details {% endblock %}
+{% block content-body %}
+
+    <div ng-view></div>
+
+
+{% endblock %}
+{% block content-footer %}Home  Footer {% endblock %}
+{% block extrascripts %}
+  <script type="text/javascript">
+      var STATIC_URL = "{{ STATIC_URL|escapejs }}";
+      var MEDIA_URL = "{{ MEDIA_URL|escapejs }}";
+      var CSRF_TOKEN = "{{ csrf_token|escapejs }}";
+      function djstatic(path){
+        return STATIC_URL + path;
+      }
+      function djmedia(path){
+        return MEDIA_URL + path;
+      }
+      function djcsrf(){
+        return CSRF_TOKEN;
+      }
+  </script>
+    <script src="{{ STATIC_URL }}user/bower_components/angular/angular.js"></script>
+    <script src="{{ STATIC_URL }}user/bower_components/angular-route/angular-route.js"></script>
+    <script src="{{ STATIC_URL }}user/bower_components/angular-resource/angular-resource.js"></script>
+    <script src="{{ STATIC_URL }}user/bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="{{ STATIC_URL }}user/vendor/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="{{ STATIC_URL }}user/vendor/plugins/datatables/dataTables.bootstrap.min.js"></script>
+    <script src="{{ STATIC_URL }}user/awe/app.js"></script>
+    <script src="{{ STATIC_URL }}user/awe/dashboard/dashboard.js"></script>
+    <script src="{{ STATIC_URL }}user/awe/dashboard/services.js"></script>
+    <script>
+      $(function () {
+        $('#example1').DataTable();
+      });
+    </script>
+
+
+{% endblock %}

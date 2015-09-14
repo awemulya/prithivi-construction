@@ -1,0 +1,52 @@
+ <div class="modal-body">
+ <div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+         <div class="box box-widget widget-user">
+                <!-- Add the bg color to the header using any of the bg-* classes -->
+                <div class="widget-user-header bg-aqua-active">
+                  <h3 class="widget-user-username">{{player.club_name}}</h3>
+                  <h3 class="widget-user-username">{{player.name}}</h3>
+                  <h5 class="widget-user-desc">{{player.position}}</h5>
+                </div>
+                <div class="widget-user-image">
+                  <img class="img-circle" ng-src="{{profileImg[0].src}}" alt="User Avatar">
+                </div>
+                <div class="box-footer">
+                  <div class="row">
+                    <div class="col-sm-4 border-right">
+                      <div class="description-block">
+                        <h5 class="description-header">{{player.player_age}}</h5>
+                        <span class="description-text">AGE</span>
+                      </div><!-- /.description-block -->
+                    </div><!-- /.col -->
+                    <div class="col-sm-4 border-right">
+                      <div class="description-block">
+                        <h5 class="description-header">{{player.game_point}}</h5>
+                        <span class="description-text">GW Points</span>
+                      </div><!-- /.description-block -->
+                    </div><!-- /.col -->
+                    <div class="col-sm-4">
+                      <div class="description-block">
+                        <h5 class="description-header">{{player.total_points}}</h5>
+                        <span class="description-text">In ({{player.game.length}}) Games</span>
+                      </div><!-- /.description-block -->
+                    </div><!-- /.col -->
+                  </div><!-- /.row -->
+                    <div class="row" ng-show="player.game.length">
+                        <div class="col-sm-4"><label>Game Week</label></div>
+                        <div class="col-sm-4"><label>Points</label></div>
+                        <div class="col-sm-4"><label>Fixture</label></div>
+                    </div>
+                    <div class="row" ng-repeat="game_week in player.game">
+                        <div class="col-sm-4">{{game_week.week}}</div>
+                        <div class="col-sm-4">{{game_week.points}}</div>
+                        <div class="col-sm-4">{{game_week.fixtures}}</div>
+                    </div>
+                </div>
+              </div>
+    </div>
+</div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="cancel()">Close</button>
+</div>

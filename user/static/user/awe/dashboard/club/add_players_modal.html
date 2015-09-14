@@ -1,0 +1,50 @@
+<div class="modal-title">
+    <div class="row">
+        <div class="col-sm-10 col-sm-offset-2"><label ng-hide="operation">Add New Player Information to {{club.name}}</label>
+            <label ng-show="operation">Add New Player Information</label></div>
+    </div>
+</div>
+ <div class="modal-body">
+ <div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+         <div class="box">
+                <div class="box-body">
+                    <form name="playerForm">
+                        <div class="form-group" ng-class="{ 'has-error': playerForm.$invalid }">
+                          <label class="control-label" for="name">
+                              <i class="fa fa-times-circle-o" ng-show="playerForm.$invalid"></i> Player Name</label>
+                            <label ng-if="playerForm.$invalid">
+                                Cannot be Empty.
+                            </label>
+                          <input type="text" class="form-control" id="name" ng-model="player.name" placeholder="Name ..." required>
+                        </div>
+                        <div class="form-group">
+                          <label class="control-label" for="position">
+                              <i class="fa fa-times-circle-o"></i> Position</label>
+                            <select class="form-control" id="position" ng-init="player.position = player.position || options[0]" ng-model="player.position" ng-options="option for option in options"></select>
+
+                        </div>
+                        <div class="form-group" ng-show="playerSenario">
+                          <label class="control-label" for="club">
+                              <i class="fa fa-times-circle-o"></i> Club</label>
+                            <select class="form-control" required id="club" name="club" ng-model="player.club"
+                                    ng-init="player.club = player.club ||clubs[0]"
+                                    ng-model="player.club" ng-options="option as option.name for option in clubs track by option.id"></select>
+                        </div>
+                        <div class="form-group">
+                          <label class="control-label" for="dob"><i class="fa fa-times-circle-o"></i> Birth Date.</label>
+                          <input type="text" class="form-control" id="dob" ng-model="player.date_of_birth" placeholder="Birth Date" jqdatepicker/>
+                        </div>
+                        <div class="form-group">
+                          <button class="btn btn-primary" ng-click="ok()" ng-disabled="playerForm.$invalid">Save Player</button>
+                        </div>
+                    </form>
+                </div>
+          </div>
+    </div>
+</div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>
+

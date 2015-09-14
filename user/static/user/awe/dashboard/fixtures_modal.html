@@ -1,0 +1,23 @@
+ <div class="modal-body">
+ <div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+         <div class="box box-widget widget-user">
+                <div class="box-footer">
+                    <div class="row">
+                        <div class="col-sm-4"><label>Game Week</label></div>
+                        <div class="col-sm-4"><label>Points</label></div>
+                        <div class="col-sm-4"><label>Fixture</label></div>
+                    </div>
+                    <div class="row" ng-repeat="game_week in player.game">
+                        <div class="col-sm-4">{{game_week.week}}</div>
+                        <div class="col-sm-4">{{game_week.points}}</div>
+                        <div class="col-sm-4">{{game_week.fixtures}}</div>
+                    </div>
+                </div>
+              </div>
+    </div>
+</div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="cancel()">Close</button>
+</div>
