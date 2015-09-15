@@ -1,3 +1,4 @@
+import datetime
 from django.db import models
 from project.models import Project
 DEFAULT_PROJECT_ID = 2
@@ -20,6 +21,11 @@ class Employee(models.Model):
     date_of_birth = models.DateField(null=True)
     date_joined = models.DateField(null=True)
     site = models.ForeignKey(Project, default=DEFAULT_PROJECT_ID, related_name="employee")
+
+    def age(self):
+        if not self.date_of_birth:
+            return None
+        return int((datetime.date.today() - self.date_of_birth).days / 365.25)
 
     def __unicode__(self):
         return '{0} ->  {1}'.format(self.name, self.role.role)

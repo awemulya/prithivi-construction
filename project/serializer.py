@@ -31,9 +31,11 @@ class EmployeeSerializer(serializers.ModelSerializer):
     site_id = serializers.PrimaryKeyRelatedField(source='site', queryset=Project.objects.all())
     role_id = serializers.PrimaryKeyRelatedField(source='role', queryset=EmployeeRole.objects.all())
     role_name = serializers.PrimaryKeyRelatedField(source='role.role', read_only=True)
+    employee_age = serializers.IntegerField(source='age', read_only=True)
     class Meta:
         model = Employee
-        fields = ('id', 'name', 'address', 'date_of_birth', 'role_name', 'sex','marital_status', 'date_joined', 'site_id', 'role_id')
+        fields = ('id', 'name', 'address', 'date_of_birth', 'role_name', 'sex','marital_status',
+                  'date_joined', 'site_id', 'role_id', 'employee_age')
 
 
 class InChargeSerializer(serializers.ModelSerializer):

@@ -106,11 +106,11 @@ function($scope, Employee, Site, $modal, $timeout, $routeParams) {
 var self = $scope;
 self.site =  $routeParams.siteId;
 self.employeeId =  $routeParams.eId;
-self.employee = {};
+self.emp = {};
 var es = new Employee();
     es.$get({eId:self.employeeId},
             function(data) {
-            self.employee = data;
+            self.emp = data;
             },
             function(error) {
                 console.log(error);
@@ -457,16 +457,65 @@ self.openAddResults = function(club, clubs) {
     var newEmployee = $scope;
     newEmployee.employee = {};
     newEmployee.options = ['Male', 'Female', 'Others'];
-        newEmployee.$watch('roles', function(roles) {
+    newEmployee.$watch('roles', function(roles) {
         newEmployee.roles_list = angular.copy(roles);
-        newEmployee.employee.role = newEmployee.roles_list[0];
+        newEmployee.employee.role_id = newEmployee.roles_list[0];
+    }, true);
+
+    newEmployee.$watch('date', function(dob) {
+       if(!dob == newEmployee.employee.date_of_birth){
+       console.log("changed");
+        newEmployee.employee.date_of_birth = dob;
+       }
+    }, true);
+     newEmployee.$watch('awedate', function(dob) {
+       if(!dob == newEmployee.employee.date_joined){
+       console.log("changed");
+        newEmployee.employee.date_joined = dob;
+       }
     }, true);
     newEmployee.roles = Roles.query();
     newEmployee.employee.date_of_birth =  newEmployee.date;
+    newEmployee.employee.date_joined =  newEmployee.awedate;
 
     newEmployee.ok = function() {
-        newEmployee.employee.date_of_birth =  newEmployee.date;
-        newEmployee.employee.role_id =  newEmployee.employee.role.id;
+          if(angular.isObject(newEmployee.employee.role_id)){
+               newEmployee.employee.role_id = newEmployee.employee.role_id.id;
+            }else{
+            newEmployee.employee.role_id =  newEmployee.employee.role_id;
+            }
+        $modalInstance.close(newEmployee.employee);
+    };
+
+    newEmployee.cancel = function() {
+        $modalInstance.dismiss('cancel');
+    };
+})
+
+.controller('EmployeeUpdateModalController', function($scope, $modalInstance, employee, Roles) {
+    var newEmployee = $scope;
+    newEmployee.employee = angular.copy(employee);
+    newEmployee.options = ['Male', 'Female', 'Others'];
+    newEmployee.$watch('roles', function(roles) {
+        newEmployee.roles_list = angular.copy(roles);
+        if(!angular.equals(roles),{}){
+        for(var i=0; i< newEmployee.roles_list.length; i++){
+            if(newEmployee.roles_list[i].id == employee.role_id ){
+            newEmployee.employee.role_id = newEmployee.roles_list[i];
+            i= newEmployee.roles_list.length;
+        }
+        }
+        }
+    }, true);
+
+
+    newEmployee.roles = Roles.query();
+    newEmployee.ok = function() {
+        if(angular.isObject(newEmployee.employee.role_id)){
+               newEmployee.employee.role_id = newEmployee.employee.role_id.id;
+        }else{
+            newEmployee.employee.role_id =  newEmployee.employee.role_id;
+        }
         $modalInstance.close(newEmployee.employee);
     };
 
@@ -593,6 +642,7 @@ function($scope, Employee, SiteEmployee, Site, Role, $modal, $timeout, $routePar
             es.site_id = self.site;
             es.role_id = employeeData.role_id;
             es.date_of_birth = employeeData.date_of_birth;
+            es.date_joined = employeeData.date_joined;
             es.$save(null,
             function(data) {
                 self.employees.splice(0, 0, data);
@@ -604,49 +654,52 @@ function($scope, Employee, SiteEmployee, Site, Role, $modal, $timeout, $routePar
             }
         });
     };
-//
-//    self.openEditPlayer = function(player) {
-//        var modalInstance = $modal.open({
-//            animation: true,
-//            templateUrl: djstatic('user/awe/dashboard/club/add_players_modal.html'),
-//            controller: 'PlayerUpdateModalController',
-//            windowClass: 'app-modal-window',
-//            resolve: {
-//            club: function() {
-//                return false;
-//                },
-//            clubService: function() {
-//                return Clubs;
-//            },
-//            player: function() {
-//                return player;
-//            }
-//
-//            }
-//        });
-//
-//        modalInstance.result.then(function(playerData) {
-//        if (!angular.equals({},playerData)){
-//        var playerService = new Player();
-//            playerService.name = playerData.name;
-//            playerService.position = playerData.position;
-//            playerService.club = playerData.club.id;
-//            playerService.date_of_birth = playerData.date_of_birth;
-//            playerService.$update({pId:playerData.id},
-//            function(data) {
-//                for (var i=0; i<self.players.length; i++){
-//                    if(self.players[i].id == data.id){
-//                        self.players[i] = data;
-//                    }
-//                }
-//            },
-//            function(error) {
-//                console.log(error);
-//            });
-//
-//            }
-//        });
-//    };
+
+
+    self.openEditEmployee = function(employee) {
+        var modalInstance = $modal.open({
+            animation: true,
+            templateUrl: djstatic('user/awe/dashboard/employee/add_employee_modal.html'),
+            controller: 'EmployeeUpdateModalController',
+            windowClass: 'app-modal-window',
+            resolve: {
+            employee: function() {
+                return employee;
+                },
+            Roles: function() {
+                return Role;
+            }
+            }
+        });
+
+        modalInstance.result.then(function(employeeData) {
+        if (!angular.equals({},employeeData)){
+        var es = new Employee();
+            es.name = employeeData.name;
+            es.address = employeeData.address;
+            es.sex = employeeData.sex;
+            es.marital_status = employeeData.marital_status;
+            es.site_id = self.site;
+            es.role_id = employeeData.role_id;
+            es.date_of_birth = employeeData.date_of_birth;
+            es.date_joined = employeeData.date_joined;
+            es.$update({eId:employeeData.id},
+            function(data) {
+                for( var i=0; i< self.employees.length; i++){
+                    if(self.employees[i].id == data.id){
+                        self.employees[i]= data;
+
+                    }
+                }
+            },
+            function(error) {
+                console.log(error);
+            });
+
+            }
+        });
+    };
+
 
 }])
 
