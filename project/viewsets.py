@@ -8,7 +8,7 @@ __author__ = 'awemulya'
 
 from.models import Project
 from .serializer import InChargeSerializer, SitesSerializer, SiteEmployeeSerializer, EmployeeSerializer, RoleSerializer, \
-    SalarySerializer, EmployeeSalarySerializer
+    SalarySerializer, EmployeeSalarySerializer, EmployeePaymentSerializer
 from rest_framework import viewsets
 
 class InChargeViewSet(viewsets.ModelViewSet):
@@ -91,6 +91,15 @@ class EmployeeSalaryViewSet(viewsets.ModelViewSet):
 
     queryset = Employee.objects.all()
     serializer_class = EmployeeSalarySerializer
+
+    def perform_create(self, serializer):
+            serializer.save()
+
+
+class EmployeePaymentsViewSet(viewsets.ModelViewSet):
+
+    queryset = Employee.objects.all()
+    serializer_class = EmployeePaymentSerializer
 
     def perform_create(self, serializer):
             serializer.save()

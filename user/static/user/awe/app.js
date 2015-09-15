@@ -47,6 +47,23 @@ angular.module('myApp', [
     };
 })
 
+.directive('salarydatedatepicker', function () {
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+         link: function (scope, element, attrs, ngModelCtrl) {
+            element.datepicker({
+                dateFormat: 'yy-mm-dd',
+                onSelect: function (date) {
+//                element.val(date);
+                    scope.newSalary.date = date;
+                    scope.$apply();
+                }
+            });
+        }
+    };
+})
+
 .directive('jqdatepickerjoined', function () {
     return {
         restrict: 'A',

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
-from employee.models import Employee, EmployeeRole, Salary
+from employee.models import Employee, EmployeeRole, Salary, Payment
 from project.models import Project
 from user.models import AweUser
 
@@ -45,6 +45,16 @@ class SalarySerializer(serializers.ModelSerializer):
         fields = ('id', 'salary', 'date', 'employee_id')
 
 
+class PaymentSerializer(serializers.ModelSerializer):
+    employee_id = serializers.PrimaryKeyRelatedField(source='employee', queryset=Employee.objects.all())
+    monthly_salary = serializers.IntegerField(source='current_salary', read_only=True)
+    salary_amount = serializers.IntegerField(source='amount', read_only=True)
+
+    class Meta:
+        model = Payment
+        fields = ('id', 'absent_days', 'date', 'year', 'monthly_salary', 'salary_amount', 'month', 'employee_id')
+
+
 class InChargeSerializer(serializers.ModelSerializer):
     sites = SerializerMethodField('get_sites', read_only= True)
 
@@ -85,4 +95,18 @@ class EmployeeSalarySerializer(serializers.ModelSerializer):
     def get_salaries(self, employee):
         salary_list = employee.salary.all()
         serializer = SalarySerializer(instance=salary_list, many=True)
+        return serializer.data
+
+
+class EmployeePaymentSerializer(serializers.ModelSerializer):
+    # employee = serializers.StringRelatedField()
+    employee_payments = SerializerMethodField('get_payments', read_only= True)
+
+    class Meta:
+        model = Employee
+        fields = ('id', 'employee_payments',)
+
+    def get_payments(self, employee):
+        salary_list = employee.payment.all()
+        serializer = PaymentSerializer(instance=salary_list, many=True)
         return serializer.data
