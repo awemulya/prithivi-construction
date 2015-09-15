@@ -1,0 +1,21 @@
+<table id="example1" class="table table-bordered table-striped">
+    <thead><tr><th>Empolyee History </th></tr></thead>
+    <thead>
+      <tr>
+        <th>Salary</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="record in records | orderBy:'-date'">
+        <td>{{emp.salary}}</td>
+        <td>{{emp.date}}</td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <th>Salary</th>
+        <th>Date</th>
+      </tr>
+    </tfoot>
+</table>

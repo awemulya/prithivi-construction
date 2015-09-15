@@ -33,6 +33,24 @@ angular.module('dashboardServices', ['ngResource'])
 	});
 }])
 
+.factory('SalaryRecord', ['$resource', function($resource){
+	return $resource('/dashboard/employee-salary/:eId', {}, {
+	  query: {method:'GET', params:{eId: '@eId'}},
+	  update: {method:'PUT', params: {eId: '@eId'}},
+	  player: {method:'GET', params: {eId: '@eId'}},
+	  save: {method:'POST', params: {eId: '@eId'}},
+	});
+}])
+
+.factory('Salary', ['$resource', function($resource){
+	return $resource('/dashboard/salary/:sId', {}, {
+	  query: {method:'GET', params:{sId: ''}},
+	  update: {method:'PUT', params: {sId: '@sId'}},
+	  employee: {method:'GET', params: {sId: '@sId'}},
+	  save: {method:'POST', params: {sId: ''}},
+	});
+}])
+
 .factory('Employee', ['$resource', function($resource){
 	return $resource('/dashboard/employee/:eId', {}, {
 	  query: {method:'GET', params:{eId: ''}},

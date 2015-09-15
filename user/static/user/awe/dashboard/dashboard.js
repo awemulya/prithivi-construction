@@ -598,8 +598,8 @@ self.openAddResults = function(club, clubs) {
     };
 })
 
-.controller('EmployeeController', ['$scope', 'Employee', 'SiteEmployee', 'Site', 'Role', '$modal', '$timeout', '$routeParams',
-function($scope, Employee, SiteEmployee, Site, Role, $modal, $timeout, $routeParams){
+.controller('EmployeeController', ['$scope', 'Employee', 'SiteEmployee', 'Site', 'Role', 'SalaryRecord', 'Salary', '$modal', '$timeout', '$routeParams',
+function($scope, Employee, SiteEmployee, Site, Role, SalaryRecord, Salary, $modal, $timeout, $routeParams){
     var self = $scope
     self.siteID =  $routeParams.siteId;
     self.employees = {};
@@ -639,6 +639,7 @@ function($scope, Employee, SiteEmployee, Site, Role, $modal, $timeout, $routePar
             es.address = employeeData.address;
             es.sex = employeeData.sex;
             es.marital_status = employeeData.marital_status;
+            es.status = employeeData.status;
             es.site_id = self.site;
             es.role_id = employeeData.role_id;
             es.date_of_birth = employeeData.date_of_birth;
@@ -679,6 +680,7 @@ function($scope, Employee, SiteEmployee, Site, Role, $modal, $timeout, $routePar
             es.address = employeeData.address;
             es.sex = employeeData.sex;
             es.marital_status = employeeData.marital_status;
+            es.status = employeeData.status;
             es.site_id = self.site;
             es.role_id = employeeData.role_id;
             es.date_of_birth = employeeData.date_of_birth;
@@ -696,6 +698,25 @@ function($scope, Employee, SiteEmployee, Site, Role, $modal, $timeout, $routePar
                 console.log(error);
             });
 
+            }
+        });
+    };
+    self.openHistory = function(employee) {
+        var modalInstance = $modal.open({
+            animation: true,
+            templateUrl: djstatic('user/awe/dashboard/employee/employee_history_modal.html'),
+            controller: 'EmployeeHistoryModalController',
+            windowClass: 'app-modal-window',
+            resolve: {
+            employee: function() {
+                return employee;
+                },
+            SalaryRecord: function() {
+                return SalaryRecord;
+            },
+            Salary: function() {
+                return Salary;
+            },
             }
         });
     };
