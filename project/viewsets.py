@@ -1,5 +1,5 @@
 from rest_framework.response import Response
-from employee.models import Employee, EmployeeRole
+from employee.models import Employee, EmployeeRole, Salary
 from project.permissions import IsOwnerOrReadOnly, IsSiteInchargeOrReadOnly
 from user.models import AweUser
 
@@ -7,7 +7,8 @@ __author__ = 'awemulya'
 
 
 from.models import Project
-from .serializer import InChargeSerializer, SitesSerializer, SiteEmployeeSerializer, EmployeeSerializer, RoleSerializer
+from .serializer import InChargeSerializer, SitesSerializer, SiteEmployeeSerializer, EmployeeSerializer, RoleSerializer, \
+    SalarySerializer, EmployeeSalarySerializer
 from rest_framework import viewsets
 
 class InChargeViewSet(viewsets.ModelViewSet):
@@ -57,6 +58,16 @@ class EmployeeViewSet(viewsets.ModelViewSet):
             serializer.save()
 
 
+class SalaryViewSet(viewsets.ModelViewSet):
+
+    queryset = Salary.objects.all()
+    serializer_class = SalarySerializer
+    # permission_classes = [IsOwnerOrReadOnly]
+
+    def perform_create(self, serializer):
+            serializer.save()
+
+
 class SiteEmployeeViewSet(viewsets.ModelViewSet):
 
     queryset = Project.objects.all()
@@ -71,6 +82,15 @@ class SiteEmployeeViewSet(viewsets.ModelViewSet):
         else:
             # get side id and site obj siteobj.employee.all()
             return self.request.user.project_set.all()
+
+    def perform_create(self, serializer):
+            serializer.save()
+
+
+class EmployeeSalaryViewSet(viewsets.ModelViewSet):
+
+    queryset = Employee.objects.all()
+    serializer_class = EmployeeSalarySerializer
 
     def perform_create(self, serializer):
             serializer.save()
