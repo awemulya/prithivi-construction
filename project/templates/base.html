@@ -217,10 +217,10 @@
           <ul class="sidebar-menu">
             <li class="header">MAIN NAVIGATION{{sites}}</li>
             <li><a href="#dashboard"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a></li>
-            <li><a href="#/sites/{[{getActiveSite()}]}"><i class="fa fa-home"></i> Sites</a></li>
-            <li><a href="#/employees/{[{getActiveSite()}]}"><i class="fa fa-users"></i> Employees</a></li>
-            <li><a href="#/account/{[{getActiveSite()}]}"><i class="fa fa-money"></i> Account</a></li>
-            <li><a href="#/inventory/{[{getActiveSite()}]}"><i class="fa fa-book"></i> Inventory</a></li>
+            <li><a href="#/sites/{[{data.site_id}]}"><i class="fa fa-home"></i> Sites</a></li>
+            <li><a href="#/employees/{[{data.site_id}]}"><i class="fa fa-users"></i> Employees</a></li>
+            <li><a href="#/account/{[{data.site_id}]}"><i class="fa fa-money"></i> Account</a></li>
+            <li><a href="#/inventory/{[{data.site_id}]}"><i class="fa fa-book"></i> Inventory</a></li>
             <!--<li class="treeview">-->
               <!--<a href="#">-->
                 <!--<i class="fa fa-gears"></i> <span>Settings</span> <i class="fa fa-angle-left pull-right"></i>-->

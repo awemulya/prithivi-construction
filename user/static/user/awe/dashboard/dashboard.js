@@ -17,6 +17,11 @@ angular.module('myApp.dashboard', ['ngRoute'])
     controller: 'EmployeeController'
   })
 
+ $routeProvider.when('/account/:siteId', {
+    templateUrl: djstatic('user/awe/dashboard/account/account.html'),
+    controller: 'AccountController'
+  })
+
   $routeProvider.when('/employees/:siteId/:eId', {
     templateUrl: djstatic('user/awe/dashboard/employee/employees_detail.html'),
     controller: 'EmployeeDetailController'
@@ -44,19 +49,20 @@ angular.module('myApp.dashboard', ['ngRoute'])
 
 .controller('MainController', ['$scope', 'Site', '$modal', '$timeout', function($scope, Site, $modal, $timeout) {
     var self = $scope;
-    self.site_id = '';
+    self.data = {};
+    self.data.site_id = '';
     self.sites = [];
 
     Site.query(null,
             function(data) {
             self.sites = data;
-            self.site_id = self.sites[0].id;
+            self.data.site_id = self.sites[0].id;
             },
             function(error) {
                 console.log(error);
             });
     self.getActiveSite = function(){
-        return self.site_id;
+        return self.data.site_id;
 
     };
 
@@ -209,6 +215,17 @@ var es = new Employee();
     };
 })
 
+.controller('AccountController', ['$scope', 'Employee', 'SiteEmployee', 'Site', 'Role', 'SalaryRecord',
+'Salary', 'EmployeePayments','SalaryPayments', '$modal', '$timeout', '$routeParams',
+function($scope, Employee, SiteEmployee, Site, Role, SalaryRecord, Salary, EmployeePayments, SalaryPayments, $modal,
+$timeout, $routeParams){
+    var self = $scope;
+    var parent = self.$parent;
+    self.siteID =  $routeParams.siteId;
+    parent.data.site_id = 2;//self.siteID;
+
+
+}])
 
 
 .controller('EmployeeController', ['$scope', 'Employee', 'SiteEmployee', 'Site', 'Role', 'SalaryRecord',
@@ -216,7 +233,9 @@ var es = new Employee();
 function($scope, Employee, SiteEmployee, Site, Role, SalaryRecord, Salary, EmployeePayments, SalaryPayments, $modal,
 $timeout, $routeParams){
     var self = $scope;
+    var parent = self.$parent;
     self.siteID =  $routeParams.siteId;
+    parent.data.site_id = self.siteID;
     self.employees = {};
     self.site = "";
     var employeeService = new SiteEmployee();
