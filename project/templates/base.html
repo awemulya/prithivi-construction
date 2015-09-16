@@ -1,15 +1,15 @@
+{% load staticfiles %}
 <!DOCTYPE html>
-{% block top %}
-<html>
-{% endblock %}
 <!--[if lt IE 7]>      <html lang="en" ng-app="myApp" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html lang="en" ng-app="myApp" class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html lang="en" ng-app="myApp" class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html lang="en" ng-app="myApp" class="no-js"> <!--<![endif]-->
+<!--[if gt IE 8]><!-->
+<html lang="en" ng-app="myApp" class="no-js">
+<!--<![endif]-->
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>{% block title %}Awe | Club{% endblock %}</title>
+    <title>Awe | Construction</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <!-- Bootstrap 3.3.5 -->
@@ -27,8 +27,6 @@
       <link href="{{ STATIC_URL }}user/vendor/dist/css/skins/_all-skins.min.css" rel="stylesheet" type="text/css" />
       <link href="{{ STATIC_URL }}user/bower_components/angular-bootstrap/ui-bootstrap-csp.css" rel="stylesheet" type="text/css" />
       <link href="{{ STATIC_URL }}user/awe/app.css" rel="stylesheet" type="text/css" />
-   {% block extrascss %}
-  {% endblock %}
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -37,7 +35,7 @@
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
-  <body class="hold-transition skin-blue sidebar-mini">
+  <body class="hold-transition skin-blue sidebar-mini" ng-controller="MainController">
     <!-- Site wrapper -->
     <div class="wrapper">
 
@@ -45,9 +43,9 @@
         <!-- Logo -->
         <a href="#" class="logo">
           <!-- mini logo for sidebar mini 50x50 pixels -->
-          <span class="logo-mini"><b>A</b>LT</span>
+          <span class="logo-mini"><b>Awe</b>Cons</span>
           <!-- logo for regular state and mobile devices -->
-          <span class="logo-lg"><b>Mcfc</b>NEPAL</span>
+          <span class="logo-lg"><b>Awe</b>Construction</span>
         </a>
         <!-- Header Navbar: style can be found in header.less -->
         <nav class="navbar navbar-static-top" role="navigation">
@@ -217,19 +215,23 @@
           <!-- /.search form -->
           <!-- sidebar menu: : style can be found in sidebar.less -->
           <ul class="sidebar-menu">
-            <li class="header">MAIN NAVIGATION</li>
+            <li class="header">MAIN NAVIGATION{{sites}}</li>
             <li><a href="#dashboard"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a></li>
-            <li class="treeview">
-              <a href="#">
-                <i class="fa fa-gears"></i> <span>Settings</span> <i class="fa fa-angle-left pull-right"></i>
-              </a>
-              <ul class="treeview-menu">
-                <li><a href="#/sites"><i class="fa fa-circle-o"></i> Sites</a></li>
-                <li><a href="#/employees"><i class="fa fa-circle-o"></i> Employees</a></li>
-                <li><a href="#/account"><i class="fa fa-circle-o"></i> Account</a></li>
-                <li><a href="#/inventory"><i class="fa fa-circle-o"></i> Inventory</a></li>
-              </ul>
-            </li>
+            <li><a href="#/sites/{[{getActiveSite()}]}"><i class="fa fa-home"></i> Sites</a></li>
+            <li><a href="#/employees/{[{getActiveSite()}]}"><i class="fa fa-users"></i> Employees</a></li>
+            <li><a href="#/account/{[{getActiveSite()}]}"><i class="fa fa-money"></i> Account</a></li>
+            <li><a href="#/inventory/{[{getActiveSite()}]}"><i class="fa fa-book"></i> Inventory</a></li>
+            <!--<li class="treeview">-->
+              <!--<a href="#">-->
+                <!--<i class="fa fa-gears"></i> <span>Settings</span> <i class="fa fa-angle-left pull-right"></i>-->
+              <!--</a>-->
+              <!--<ul class="treeview-menu">-->
+                <!--<li><a href="#/sites"><i class="fa fa-circle-o"></i> Sites</a></li>-->
+                <!--<li><a href="#/employees/{{site}}"><i class="fa fa-circle-o"></i> Employees</a></li>-->
+                <!--<li><a href="#/account/{{site}}"><i class="fa fa-circle-o"></i> Account</a></li>-->
+                <!--<li><a href="#/inventory/{{site}}"><i class="fa fa-circle-o"></i> Inventory</a></li>-->
+              <!--</ul>-->
+            <!--</li>-->
             <li>
               <a href="">
                 <i class="fa fa-envelope"></i> <span>Mailbox</span>
@@ -254,10 +256,8 @@
         <!-- Content Header (Page header) -->
         <section class="content-header">
           <h1>
-              {% block pagehead %}
-                Blank page
-              {% endblock %}
-            <small>{% block pagedesc %}it all starts here{% endblock %}</small>
+             Dashboard
+              <small>it all starts here</small>
           </h1>
           <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -272,17 +272,17 @@
           <!-- Default box -->
           <div class="box">
             <div class="box-header with-border">
-              <h3 class="box-title">{% block content-title %} Title {% endblock %}</h3>
+              <h3 class="box-title">Dashboard</h3>
               <div class="box-tools pull-right">
                 <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse"><i class="fa fa-minus"></i></button>
                 <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove"><i class="fa fa-times"></i></button>
               </div>
             </div>
             <div class="box-body">
-              {% block content-body %} Amazing content {% endblock %}
+              <div ng-view></div>
             </div><!-- /.box-body -->
             <div class="box-footer">
-              {% block content-footer %} Footer content {% endblock %}
+               Footer content
             </div><!-- /.box-footer-->
           </div><!-- /.box -->
 
@@ -478,7 +478,33 @@ display: block;
     <script src="{{ STATIC_URL }}user/vendor/dist/js/app.min.js"></script>
     <!-- AdminLTE for demo purposes -->
     <script src="{{ STATIC_URL }}user/vendor/dist/js/demo.js"></script>
-  {% block extrascripts %}
-  {% endblock %}
+   <script type="text/javascript">
+      var STATIC_URL = "{{ STATIC_URL|escapejs }}";
+      var MEDIA_URL = "{{ MEDIA_URL|escapejs }}";
+      var CSRF_TOKEN = "{{ csrf_token|escapejs }}";
+      function djstatic(path){
+        return STATIC_URL + path;
+      }
+      function djmedia(path){
+        return MEDIA_URL + path;
+      }
+      function djcsrf(){
+        return CSRF_TOKEN;
+      }
+  </script>
+    <script src="{{ STATIC_URL }}user/bower_components/angular/angular.js"></script>
+    <script src="{{ STATIC_URL }}user/bower_components/angular-route/angular-route.js"></script>
+    <script src="{{ STATIC_URL }}user/bower_components/angular-resource/angular-resource.js"></script>
+    <script src="{{ STATIC_URL }}user/bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="{{ STATIC_URL }}user/vendor/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="{{ STATIC_URL }}user/vendor/plugins/datatables/dataTables.bootstrap.min.js"></script>
+    <script src="{{ STATIC_URL }}user/awe/app.js"></script>
+    <script src="{{ STATIC_URL }}user/awe/dashboard/dashboard.js"></script>
+    <script src="{{ STATIC_URL }}user/awe/dashboard/services.js"></script>
+    <script>
+      $(function () {
+        $('#example1').DataTable();
+      });
+    </script>
   </body>
 </html>

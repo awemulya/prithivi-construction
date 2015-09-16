@@ -1,39 +1,79 @@
 <table id="example1" class="table table-bordered table-striped">
     <thead>
       <tr>
-        <th>Employee <a href="" title="Add Employee" ng-click="openAddEmployee(site)"><i class="fa fa-plus"></i></a></th>
-        <th>Address</th>
-        <th>Age</th>
-        <th>Role</th>
-        <th>Sex</th>
-        <th>Marital Status</th>
-        <th>Date Joined</th>
-        <th colspan="2">Actions</th>
-      </tr>
+        <th>Employee</th>
+
+        <th>{[{emp.name}]}</th>
+        </tr>
     </thead>
-    <tbody>
+  <thead>
       <tr>
-        <td><a href="#/employee/{{site}}/{{emp.id}}"> {{emp.name}} </a></td>
-        <td>{{emp.address}}</td>
-        <td>{{emp.employee_age}}</td>
-        <td>{{emp.role_name}}</td>
-        <td>{{emp.sex}}</td>
-        <td><label ng-show="emp.marital_status">Married</label><label ng-hide="emp.marital_status">Single</label></td>
-        <td>{{emp.date_joined}}</td>
-        <td><a href="" title="View History" ng-click="openHistory(emp)"><i class="fa fa-calendar"></i></a></td>
-        <td><a href="" title="Edit Employee" ng-click="openEditEmployee(emp)"><i class="fa fa-edit"></i></a></td>
-      </tr>
-    </tbody>
-    <tfoot>
-      <tr>
-        <th>Employee <a href="" title="Add Player" ng-click="openAddEmployee(site)"><i class="fa fa-plus"></i></a></th>
-        <th>Address</th>
         <th>Age</th>
-        <th>Role</th>
-        <th>Sex</th>
+
+        <th>{[{emp.name}]}</th>
+        </tr>
+    </thead>
+  <thead>
+      <tr>
+        <th>Employee</th>
+
+        <th>{[{emp.name}]}</th>
+        </tr>
+    </thead>
+  <thead>
+      <tr>
+        <th>Age</th>
+
+        <th>{[{emp.employee_age}]}</th>
+        </tr>
+    </thead>
+  <thead>
+      <tr>
         <th>Marital Status</th>
+
+        <th><label ng-show="emp.marital_status">Married</label><label ng-hide="emp.marital_status">Single</label></th>
+        </tr>
+    </thead>
+  <thead>
+      <tr>
+        <th>Sex</th>
+
+        <th>{[{emp.sex}]}</th>
+        </tr>
+    </thead>
+  <thead>
+      <tr>
+        <th>Address</th>
+
+        <th>{[{emp.address}]}</th>
+        </tr>
+    </thead>
+  <thead>
+      <tr>
+        <th>Role</th>
+
+        <th>{[{emp.role_name}]}</th>
+        </tr>
+    </thead>
+  <thead>
+      <tr>
+        <th>Phone NO</th>
+
+        <th>{[{emp.phone}]}</th>
+        </tr>
+    </thead>
+  <thead>
+      <tr>
         <th>Date Joined</th>
-        <th colspan="2">Actions</th>
-      </tr>
-    </tfoot>
+
+        <th>{[{emp.date_joined}]}</th>
+        </tr>
+    </thead>
+  <thead>
+      <tr>
+        <th>Status</th>
+
+        <th><label class="text-aqua" ng-show="emp.status">Active</label><label class="text-red" ng-hide="emp.status">Inactive</label></th>
+        </tr>
+    </thead>
 </table>

@@ -2,7 +2,7 @@ from django.shortcuts import render
 
 
 def dashboard(request):
-    return render(request, 'home.html')
+    return render(request, 'base.html')
 
 
 def employee_list(request):

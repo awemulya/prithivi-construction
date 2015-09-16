@@ -17,6 +17,7 @@ class Employee(models.Model):
     name = models.CharField(max_length=255)
     address = models.CharField(max_length=255)
     sex = models.CharField(max_length=20)
+    phone = models.CharField(max_length=10)
     marital_status = models.BooleanField(default=False)
     status = models.BooleanField(default=True)
     date_of_birth = models.DateField(null=True)
@@ -44,16 +45,16 @@ class Salary(models.Model):
 class Payment(models.Model):
     employee = models.ForeignKey(Employee, related_name="payment")
     absent_days = models.IntegerField(default=0)
-    date = models.DateField(default=datetime.date.today())
-    year = models.IntegerField(max_length=4)
+    date = models.DateField(default=datetime.date.today)
+    year = models.IntegerField()
     month = models.CharField(max_length=2)
 
     def current_salary(self):
-        return self.employee.salary.all().order_by('-date')[0] if self.employee.salary.all() else 0
+        return self.employee.salary.all().filter(date__lt=self.date).order_by('-date')[0].salary if self.employee.salary.all() else 0
 
     def amount(self):
         salary = self.current_salary()
-        return salary-(salary*(30-self.absent_days))/30
+        return salary-(salary*(self.absent_days))/30
 
     def __unicode__(self):
         return '{0} -> {1}'.format(self.employee.name, self.amount())

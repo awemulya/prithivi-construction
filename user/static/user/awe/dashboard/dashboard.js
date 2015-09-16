@@ -36,10 +36,29 @@ angular.module('myApp.dashboard', ['ngRoute'])
   })
 }])
 
-
 .controller('DashboardController', ['$scope', 'Site', '$modal', '$timeout', function($scope, Site, $modal, $timeout) {
  var self = $scope;
  self.sites = Site.query();
+
+}])
+
+.controller('MainController', ['$scope', 'Site', '$modal', '$timeout', function($scope, Site, $modal, $timeout) {
+    var self = $scope;
+    self.site_id = '';
+    self.sites = [];
+
+    Site.query(null,
+            function(data) {
+            self.sites = data;
+            self.site_id = self.sites[0].id;
+            },
+            function(error) {
+                console.log(error);
+            });
+    self.getActiveSite = function(){
+        return self.site_id;
+
+    };
 
 }])
 
@@ -193,8 +212,9 @@ var es = new Employee();
 
 
 .controller('EmployeeController', ['$scope', 'Employee', 'SiteEmployee', 'Site', 'Role', 'SalaryRecord',
-'Salary', 'EmployeePayments', '$modal', '$timeout', '$routeParams',
-function($scope, Employee, SiteEmployee, Site, Role, SalaryRecord, Salary, EmployeePayments, $modal, $timeout, $routeParams){
+'Salary', 'EmployeePayments','SalaryPayments', '$modal', '$timeout', '$routeParams',
+function($scope, Employee, SiteEmployee, Site, Role, SalaryRecord, Salary, EmployeePayments, SalaryPayments, $modal,
+$timeout, $routeParams){
     var self = $scope;
     self.siteID =  $routeParams.siteId;
     self.employees = {};
@@ -233,6 +253,7 @@ function($scope, Employee, SiteEmployee, Site, Role, SalaryRecord, Salary, Emplo
             es.name = employeeData.name;
             es.address = employeeData.address;
             es.sex = employeeData.sex;
+            es.phone = employeeData.phone;
             es.marital_status = employeeData.marital_status;
             es.status = employeeData.status;
             es.site_id = self.site;
@@ -274,6 +295,7 @@ function($scope, Employee, SiteEmployee, Site, Role, SalaryRecord, Salary, Emplo
             es.name = employeeData.name;
             es.address = employeeData.address;
             es.sex = employeeData.sex;
+            es.phone = employeeData.phone;
             es.marital_status = employeeData.marital_status;
             es.status = employeeData.status;
             es.site_id = self.site;

@@ -14,6 +14,11 @@ angular.module('myApp', [
 .config(['$routeProvider', function($routeProvider) {
   $routeProvider.otherwise({redirectTo: '/dashboard'});
 }])
+.
+config(function($interpolateProvider) {
+  $interpolateProvider.startSymbol('{[{');
+  $interpolateProvider.endSymbol('}]}');
+})
 .directive('jqdatepicker', function () {
     return {
         restrict: 'A',

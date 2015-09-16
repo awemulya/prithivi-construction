@@ -1,7 +1,7 @@
 <div class="modal-title">
     <div class="row">
         <div class="col-sm-10 col-sm-offset-2">
-            <label>Employee Salary History of {{employee.name}}</label></div>
+            <label>Employee Salary History of {[{employee.name}]}</label></div>
     </div>
 </div>
  <div class="modal-body">
@@ -14,8 +14,8 @@
         </thead>
         <tbody>
           <tr ng-repeat="record in records | orderBy:'-date'">
-            <td>{{record.salary}}</td>
-            <td>{{record.date}}</td>
+            <td>{[{record.salary}]}</td>
+            <td>{[{record.date}]}</td>
           </tr>
         </tbody>
         <tfoot>

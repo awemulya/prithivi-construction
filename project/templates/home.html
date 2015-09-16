@@ -19,7 +19,7 @@
 
 {% block pagedesc %}Welcome{% endblock %}
 
-{% block content-title %} Home Details {% endblock %}
+{% block content-title %} Dashboard {{MainController.sites}}{{site_id}}{{getActiveSite()}} {% endblock %}
 {% block content-body %}
 
     <div ng-view></div>
