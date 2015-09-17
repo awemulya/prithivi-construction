@@ -12,3 +12,4 @@ app/local_settings.py
 
 *.sqlite3
 *.~*
+user/static/user/vendor/plugins/jquery-ui/ui/.DS_Store
