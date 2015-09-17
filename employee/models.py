@@ -59,9 +59,11 @@ class Payment(models.Model):
     def __unicode__(self):
         return '{0} -> {1}'.format(self.employee.name, self.amount())
 
+
 class SalaryVoucher(models.Model):
     voucher_no = models.PositiveIntegerField(blank=True, null=True)
     date = models.DateField(default=datetime.datetime.today)
+
 
 class SalaryVoucherRow(models.Model):
     sn = models.PositiveIntegerField()
