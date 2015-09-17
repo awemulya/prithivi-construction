@@ -15,15 +15,8 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'pdq7ufotix^rt444%vdesx5rd8&tl^aq#8+pdcu3_7th)3q1*@'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -81,24 +74,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'awecons.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/1.8/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'consdb',
-        'USER': 'awecmis',
-        'PASSWORD': 'awecmis',
-        'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
-        'PORT': '3306',
-    }
-}
-
-MEDIA_URL = "/media/"
-
-
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
@@ -107,9 +82,6 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
-
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-
 
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
@@ -135,8 +107,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
-STATIC_URL = '/static/'
-
 LOGIN_URL = '/login/'
 
 LOGOUT_URL = '/logout/'
@@ -146,3 +116,8 @@ LOGIN_REDIRECT_URL = '/dashboard/app/'
 LOGIN_EXEMPT_URLS = ('register/', LOGIN_URL)
 
 AUTH_USER_MODEL = 'user.AweUser'
+
+try:
+    from .local_settings import *
+except ImportError:
+    pass
