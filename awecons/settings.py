@@ -35,6 +35,7 @@ INSTALLED_APPS = (
     'user',
     'project',
     'employee',
+    'inventory',
     'rest_framework',
 )
 

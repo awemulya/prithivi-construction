@@ -8,6 +8,7 @@ __author__ = 'awemulya'
 
 
 class SitesSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Project
         fields = ('id', 'name', 'description', 'address', 'start_date',)
@@ -21,6 +22,7 @@ class SitesSerializer(serializers.ModelSerializer):
 
 
 class RoleSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = EmployeeRole
         fields = ('id', 'role', 'description')
@@ -32,6 +34,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
     role_id = serializers.PrimaryKeyRelatedField(source='role', queryset=EmployeeRole.objects.all())
     role_name = serializers.PrimaryKeyRelatedField(source='role.role', read_only=True)
     employee_age = serializers.IntegerField(source='age', read_only=True)
+
     class Meta:
         model = Employee
         fields = ('id', 'name', 'address', 'date_of_birth', 'role_name', 'sex','marital_status',
@@ -40,6 +43,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
 class SalarySerializer(serializers.ModelSerializer):
     employee_id = serializers.PrimaryKeyRelatedField(source='employee', queryset=Employee.objects.all())
+
     class Meta:
         model = Salary
         fields = ('id', 'salary', 'date', 'employee_id')
