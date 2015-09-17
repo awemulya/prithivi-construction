@@ -41,6 +41,7 @@ class Salary(models.Model):
     def __unicode__(self):
         return '{0} -> {1}'.format(self.employee.name, self.salary)
 
+
 class Payment(models.Model):
     employee = models.ForeignKey(Employee, related_name="payment")
     absent_days = models.IntegerField(default=0)
