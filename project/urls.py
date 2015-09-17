@@ -3,9 +3,12 @@ from project import views
 from rest_framework.routers import DefaultRouter
 from project.viewsets import SitesViewSet, SiteEmployeeViewSet, EmployeeViewSet, RoleViewSet, EmployeeSalaryViewSet, \
     SalaryViewSet, EmployeePaymentsViewSet, SalaryPaymentViewSet
+from employee.viewsets import SalaryVoucherRowViewSet
+
 
 router = DefaultRouter()
 router.register(r'sites', SitesViewSet)
+router.register(r'salary-voucher', SalaryVoucherRowViewSet)
 router.register(r'employee', EmployeeViewSet)
 router.register(r'salary', SalaryViewSet)
 router.register(r'salary-payments', SalaryPaymentViewSet)

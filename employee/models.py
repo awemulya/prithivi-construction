@@ -36,7 +36,7 @@ class Employee(models.Model):
 class Salary(models.Model):
     employee = models.ForeignKey(Employee, related_name="salary")
     salary = models.FloatField(default=0.0)
-    date = models.DateField(default=datetime.date.today())
+    date = models.DateField(default=datetime.date.today)
 
     def __unicode__(self):
         return '{0} -> {1}'.format(self.employee.name, self.salary)
@@ -58,3 +58,16 @@ class Payment(models.Model):
 
     def __unicode__(self):
         return '{0} -> {1}'.format(self.employee.name, self.amount())
+
+class SalaryVoucher(models.Model):
+    voucher_no = models.PositiveIntegerField(blank=True, null=True)
+    date = models.DateField(default=datetime.datetime.today)
+
+class SalaryVoucherRow(models.Model):
+    sn = models.PositiveIntegerField()
+    employee = models.ForeignKey(Employee)
+    paid_date = models.DateField(default=datetime.datetime.today)
+    amount = models.FloatField()
+    start_date = models.DateField()
+    last_date = models.DateField()
+    salary_voucher = models.ForeignKey(SalaryVoucher, related_name='rows')
