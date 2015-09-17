@@ -222,7 +222,7 @@ $timeout, $routeParams){
     var self = $scope;
     var parent = self.$parent;
     self.siteID =  $routeParams.siteId;
-    parent.data.site_id = 2;//self.siteID;
+    parent.data.site_id = self.siteID;
 
 
 }])

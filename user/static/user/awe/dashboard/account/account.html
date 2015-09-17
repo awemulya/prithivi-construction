@@ -1,1 +1,64 @@
-Account Page of site {[{siteID }]}
+<div class="row">
+    <div class="col-sm-4">
+      <!-- Widget: user widget style 1 -->
+      <div class="box box-widget widget-user-2">
+        <!-- Add the bg color to the header using any of the bg-* classes -->
+        <div class="widget-user-header bg-aqua-active">
+          <h3 class="widget-user-username">Payroll Summary</h3>
+        </div>
+        <div class="box-footer no-padding">
+          <ul class="nav nav-stacked">
+            <li><a href="#/account/payroll/list/{[{data.site.id}]}" title="List Payroll Details">List Payroll
+                <span class="pull-right fa fa-list"></span></a></li>
+            <li><a href="#/account/payroll/create/{[{data.site.id}]}" title="create New Payroll">Create Payroll
+                <span class="pull-right fa fa-plus"></span></a></li>
+            <li><a href="">Payroll Of <span class="pull-right badge bg-blue">{[{payroll.payroll_of}]}</span></a></li>
+            <li><a href="">Payrole Created Date <span class="pull-right badge bg-aqua">{[{payroll.date}]}</span></a></li>
+            <li><a href="">Total Amount <span class="pull-right badge bg-green">{[{payroll.amount}]}</span></a></li>
+            <li><a href="">Total EMployees <span class="pull-right badge bg-red">{[{payroll.employees}]}</span></a></li>
+          </ul>
+        </div>
+      </div><!-- /.widget-user -->
+    </div><!-- /.col --> <div class="col-sm-4">
+      <!-- Widget: user widget style 1 -->
+      <div class="box box-widget widget-user-2">
+        <!-- Add the bg color to the header using any of the bg-* classes -->
+        <div class="widget-user-header bg-aqua-active">
+          <h3 class="widget-user-username">Demands Summary</h3>
+        </div>
+        <div class="box-footer no-padding">
+          <ul class="nav nav-stacked">
+            <li><a href="#/account/demands/list/{[{site.id}]}" title="List Demand Details">List Demand
+                <span class="pull-right fa fa-list"></span></a></li>
+            <li><a href="#/account/demands/create/{[{site.id}]}" title="create New Demand">Create Deamnd
+                <span class="pull-right fa fa-plus"></span></a></li>
+            <li><a href="">Last Demanded <span class="pull-right badge bg-blue">{[{demands.last_date}]}</span></a></li>
+            <li><a href="">Total Demands <span class="pull-right badge bg-aqua">{[{demands.total}]}</span></a></li>
+            <li><a href="">Responded <span class="pull-right badge bg-green">{[{demands.response}]}</span></a></li>
+            <li><a href="">UnResponded <span class="pull-right badge bg-red">{[{demands.no_response}]}</span></a></li>
+          </ul>
+        </div>
+      </div><!-- /.widget-user -->
+    </div><!-- /.col -->
+    <div class="col-sm-4">
+      <!-- Widget: user widget style 1 -->
+      <div class="box box-widget widget-user-2">
+        <!-- Add the bg color to the header using any of the bg-* classes -->
+        <div class="widget-user-header bg-aqua-active">
+          <h3 class="widget-user-username">Cash Flow</h3>
+        </div>
+        <div class="box-footer no-padding">
+          <ul class="nav nav-stacked">
+            <li><a href="#/account/cashflow/lsit/{[{site.id}]}" title="List Cash Details">List Cash Details
+                <span class="pull-right fa fa-list"></span></a></li>
+            <li><a href="#/account/payroll/create/{[{data.site.id}]}" title="create New Expense">New Expense
+                <span class="pull-right fa fa-plus"></span></a></li>
+            <li><a href="">Last Expense <span class="pull-right badge bg-blue">{[{cash.last_date}]}</span></a></li>
+            <li><a href="">Total Received <span class="pull-right badge bg-aqua">{[{cash.received}]}</span></a></li>
+            <li><a href="">Cash Remaining <span class="pull-right badge bg-green">{[{payroll.remaining}]}</span></a></li>
+            <li><a href="">Total Expense <span class="pull-right badge bg-red">{[{cash.expense}]}</span></a></li>
+          </ul>
+        </div>
+      </div><!-- /.widget-user -->
+    </div><!-- /.col -->
+</div>
