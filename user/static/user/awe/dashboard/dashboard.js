@@ -22,6 +22,26 @@ angular.module('myApp.dashboard', ['ngRoute'])
     controller: 'AccountController'
   })
 
+$routeProvider.when('/inventory/item-add', {
+    templateUrl: djstatic('user/awe/dashboard/inventory/item_modify.html'),
+    controller: 'AddItemController'
+  })
+
+$routeProvider.when('/inventory/item-details/:itemId', {
+    templateUrl: djstatic('user/awe/dashboard/inventory/item_details.html'),
+    controller: 'InventoryController'
+  })
+
+$routeProvider.when('/inventory/item-modify/:itemId', {
+    templateUrl: djstatic('user/awe/dashboard/inventory/item_modify.html'),
+    controller: 'InventoryController'
+  })
+
+$routeProvider.when('/inventory/:siteId', {
+    templateUrl: djstatic('user/awe/dashboard/inventory/site_inventory.html'),
+    controller: 'InventoryController'
+  })
+
   $routeProvider.when('/employees/:siteId/:eId', {
     templateUrl: djstatic('user/awe/dashboard/employee/employees_detail.html'),
     controller: 'EmployeeDetailController'
@@ -223,6 +243,37 @@ $timeout, $routeParams){
     var parent = self.$parent;
     self.siteID =  $routeParams.siteId;
     parent.data.site_id = self.siteID;
+
+
+}])
+
+.controller('InventoryController', ['$scope','Site', 'Item', 'Category', 'InventoryAccount', '$modal', '$timeout', '$routeParams',
+function($scope, Site, Item, Category, InventoryAccount, $modal, $timeout, $routeParams){
+    var self = $scope;
+    var parent = self.$parent;
+    self.siteID =  $routeParams.siteId;
+    parent.data.site_id = self.siteID;
+    self.items = Item.query();
+    self.categories = Category.query();
+
+
+}])
+
+.controller('AddItemController', ['$scope','Site', 'Item', 'Category', 'InventoryAccount', '$modal', '$timeout', '$routeParams',
+function($scope, Site, Item, Category, InventoryAccount, $modal, $timeout, $routeParams){
+    var self = $scope;
+    self.options = ['consumable', 'non-consumable'];
+    self.item = {};
+    Category.query(null,
+            function(data) {
+            self.categories = data;
+            if(self.item.category==undefined){
+                self.item.category=data[0];
+            }
+            },
+            function(error) {
+                console.log(error);
+            });
 
 
 }])

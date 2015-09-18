@@ -1,0 +1,73 @@
+<div class="box box-info">
+<div class="box-header with-border">
+  <h3 class="box-title">Add Item Information</h3>
+</div><!-- /.box-header -->
+<!-- form start -->
+<form class="form-horizontal" name="itemForm">
+  <div class="box-body">
+      <div class="form-group" ng-class="{ 'has-error': itemForm.name.$invalid }">
+          <label class="control-label col-sm-2" for="name">Item Name</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="name" name="name" ng-model="item.name"
+                 placeholder="Item Name ..." required>
+          </div>
+    </div>
+   <div class="form-group">
+          <label class="control-label col-sm-2" for="code"> Item Code</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="code" name="code" ng-model="item.code"
+                 placeholder="Item Code ...">
+          </div>
+    </div>
+      <div class="form-group">
+          <label class="control-label col-sm-2" for="description"> Item Description</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="description" name="description" ng-model="item.description"
+                 placeholder="Item Description ...">
+          </div>
+    </div>
+
+       <div class="form-group">
+              <label class="control-label col-sm-2" for="type">
+               Item Type</label>
+           <div class="col-sm-10">
+                <select class="form-control" id="type" ng-init="item.type = item.type || options[0]"
+                        ng-model="item.type"
+                        ng-options="option as option for option in options "></select>
+               </div>
+    </div>
+
+    <div class="form-group">
+              <label class="control-label col-sm-2" for="category">
+               Category
+              <a href="" title="Add Category" ng-click="openAddCategory()">
+            <i class="fa fa-plus"></i></a>
+              </label>
+        <div class="col-sm-10">
+                <select class="form-control" id="category" ng-init="item.category = item.category || categories[0]"
+                        ng-model="item.category"
+                        ng-options="option as option.name for option in categories track by option.id "></select>
+            </div>
+    </div>
+
+      <div class="form-group">
+          <label class="control-label col-sm-2" for="unit"> Item Unit</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="unit" name="unit" ng-model="item.unit"
+                 placeholder="Item Unit ...">
+          </div>
+    </div>
+
+      <div class="form-group">
+          <label class="control-label col-sm-2" for="account_no"> Item Account</label>
+          <div class="col-sm-10">
+          <input type="text" class="form-control" id="account_no" name="account_no" ng-model="item.account_no"
+                 placeholder="Item Account ...">
+              </div>
+    </div>
+  </div><!-- /.box-body -->
+  <div class="box-footer">
+    <button type="submit" class="btn btn-info" ng-disabled="itemForm.$invalid">Save Item</button>
+  </div><!-- /.box-footer -->
+</form>
+</div><!-- /.box -->

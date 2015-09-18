@@ -86,6 +86,32 @@ angular.module('dashboardServices', ['ngResource'])
 	  save: {method:'POST', params: {roleId: ''}},
 	});
 }])
+.factory('Item', ['$resource', function($resource){
+	return $resource('/inventory/items/:itemId', {}, {
+	  query: {method:'GET', params:{itemId: ''}, isArray:true},
+	  update: {method:'PUT', params: {itemId: '@itemId'}},
+	  employee: {method:'GET', params: {itemId: '@itemId'}},
+	  save: {method:'POST', params: {itemId: ''}},
+	});
+}])
+
+.factory('Category', ['$resource', function($resource){
+	return $resource('/inventory/categories/:cId', {}, {
+	  query: {method:'GET', params:{cId: ''}, isArray:true},
+	  update: {method:'PUT', params: {cId: '@cId'}},
+	  employee: {method:'GET', params: {cId: '@cId'}},
+	  save: {method:'POST', params: {cId: ''}},
+	});
+}])
+
+.factory('InventoryAccount', ['$resource', function($resource){
+	return $resource('/inventory/account/:Id', {}, {
+	  query: {method:'GET', params:{Id: ''}, isArray:true},
+	  update: {method:'PUT', params: {Id: '@Id'}},
+	  employee: {method:'GET', params: {Id: '@Id'}},
+	  save: {method:'POST', params: {Id: ''}},
+	});
+}])
 
 .factory('Fixture', ['$resource', function($resource){
 	return $resource('/app/fixtures/:pId', {}, {

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
-from inventory.models import Category, Item
+from inventory.models import Category, Item, InventoryAccount
 
 
 class CategorySerializer(ModelSerializer):
@@ -25,5 +25,5 @@ class InventoryAccountSerializer(serializers.ModelSerializer):
     account_category = serializers.CharField(source='get_category', read_only=True)
 
     class Meta:
-        model = Item
+        model = InventoryAccount
         fields = ('id', 'code', 'name', 'account_no', 'opening_balance', 'current_balance', 'account_category')
