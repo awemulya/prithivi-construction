@@ -31,7 +31,7 @@
               <label class="control-label col-sm-2" for="type">
                Item Type</label>
            <div class="col-sm-10">
-                <select class="form-control" id="type" ng-init="item.type = item.type || options[0]"
+                <select class="form-control" id="type" ng-init="item.type = item.type || options[1]"
                         ng-model="item.type"
                         ng-options="option as option for option in options "></select>
                </div>
@@ -67,7 +67,7 @@
     </div>
   </div><!-- /.box-body -->
   <div class="box-footer">
-    <button type="submit" class="btn btn-info" ng-disabled="itemForm.$invalid">Save Item</button>
+    <button type="submit" class="btn btn-info" ng-disabled="itemForm.$invalid" ng-click="save()">Save Item</button>
   </div><!-- /.box-footer -->
 </form>
 </div><!-- /.box -->

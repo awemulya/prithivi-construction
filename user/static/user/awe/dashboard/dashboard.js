@@ -22,22 +22,22 @@ angular.module('myApp.dashboard', ['ngRoute'])
     controller: 'AccountController'
   })
 
-$routeProvider.when('/inventory/item-add', {
+$routeProvider.when('/inventory/item-add/:siteId', {
     templateUrl: djstatic('user/awe/dashboard/inventory/item_modify.html'),
     controller: 'AddItemController'
   })
 
 $routeProvider.when('/inventory/item-details/:itemId', {
     templateUrl: djstatic('user/awe/dashboard/inventory/item_details.html'),
-    controller: 'InventoryController'
+    controller: 'AddItemController'
   })
 
 $routeProvider.when('/inventory/item-modify/:itemId', {
     templateUrl: djstatic('user/awe/dashboard/inventory/item_modify.html'),
-    controller: 'InventoryController'
+    controller: 'AddItemController'
   })
 
-$routeProvider.when('/inventory/:siteId', {
+$routeProvider.when('/inventories/:siteId', {
     templateUrl: djstatic('user/awe/dashboard/inventory/site_inventory.html'),
     controller: 'InventoryController'
   })
@@ -259,10 +259,13 @@ function($scope, Site, Item, Category, InventoryAccount, $modal, $timeout, $rout
 
 }])
 
-.controller('AddItemController', ['$scope','Site', 'Item', 'Category', 'InventoryAccount', '$modal', '$timeout', '$routeParams',
-function($scope, Site, Item, Category, InventoryAccount, $modal, $timeout, $routeParams){
+.controller('AddItemController', ['$scope','Site', 'Item', 'Category', 'InventoryAccount', '$modal', '$timeout',
+'$routeParams', '$location',
+function($scope, Site, Item, Category, InventoryAccount, $modal, $timeout, $routeParams, $location){
     var self = $scope;
+    var parent = self.$parent;
     self.options = ['consumable', 'non-consumable'];
+    self.item_id = $routeParams.itemId | '';
     self.item = {};
     Category.query(null,
             function(data) {
@@ -275,8 +278,123 @@ function($scope, Site, Item, Category, InventoryAccount, $modal, $timeout, $rout
                 console.log(error);
             });
 
+    if (self.item_id){
+        var itemService = new Item();
+        itemService.$get({itemId:self.item_id},
+            function(data) {
+                self.item = data;
+                for(var i=0;i<self.categories.length;i++){
+                    if(self.categories[i].id == self.item.category_id){
+                        self.item.category = self.categories[i];
+                    }
+                }
+            },
+            function(error) {
+                console.log(error);
+            });
+
+
+    }
+       self.save = function() {
+        if (self.item_id){
+            var itemService = new Item();
+            itemService.name = self.item.name;
+            itemService.code = self.item.code;
+            itemService.description = self.item.description;
+            itemService.type = self.item.type;
+            itemService.unit = self.item.unit;
+            itemService.category_id = self.item.category.id;
+            itemService.$update({itemId:self.item_id},
+                function(data) {
+                  alert("Item "+self.item.name+" Updated ");
+                $location.path("/inventories/"+parent.data.site_id);
+                },
+                function(error) {
+                    console.log(error);
+                });
+
+
+    }else{
+        var itemService = new Item();
+        itemService.name = self.item.name;
+        itemService.code = self.item.code;
+        itemService.description = self.item.description;
+        itemService.type = self.item.type;
+        itemService.unit = self.item.unit;
+        itemService.category_id = self.item.category.id;
+        //        itemService.account_no = self.item.account_no;
+        itemService.$save({},
+            function(data) {
+                alert("Item "+self.item.name+" Saved");
+                $location.path("/inventories/"+parent.data.site_id);
+            },
+            function(error) {
+                console.log(error);
+            });
+        }
+    };
+
+    self.openAddCategory = function() {
+        var modalInstance = $modal.open({
+            animation: true,
+            templateUrl: djstatic('user/awe/dashboard/inventory/add_category_modal.html'),
+            controller: 'CategoryAddModalController',
+            windowClass: 'app-modal-window',
+            resolve: {
+            Category: function() {
+                return Category;
+            }
+            }
+        });
+
+        modalInstance.result.then(function(newCategory) {
+        if (!angular.equals({},newCategory)){
+        var cs = new Category();
+            cs.name = newCategory.name;
+            cs.description = newCategory.description;
+            cs.parent = newCategory.parent.id;
+            cs.$save(null,
+            function(data) {
+                self.item.category = data;
+                self.categories.splice(0, 0, data);
+            },
+            function(error) {
+                console.log(error);
+            });
+
+            }
+        });
+    };
+
+
+
 
 }])
+
+.controller('CategoryAddModalController', function($scope, $modalInstance, Category) {
+    var self = $scope;
+    self.newCategory = {};
+    Category.query(null,
+        function(data) {
+        self.categories = data;
+        if(self.newCategory.parent==undefined){
+            self.newCategory.parent=data[0];
+        }
+        },
+        function(error) {
+            console.log(error);
+        });
+
+    self.ok = function() {
+
+        $modalInstance.close(self.newCategory);
+    };
+
+    self.cancel = function(){
+                $modalInstance.close();
+
+    };
+    })
 
 
 .controller('EmployeeController', ['$scope', 'Employee', 'SiteEmployee', 'Site', 'Role', 'SalaryRecord',

@@ -1,0 +1,26 @@
+<div class="row">
+    <div class="col-sm-4 col-sm-offset-4">
+      <!-- Widget: user widget style 1 -->
+      <div class="box box-widget widget-user-2">
+        <!-- Add the bg color to the header using any of the bg-* classes -->
+        <div class="widget-user-header bg-aqua-active">
+          <h3 class="widget-user-username">Item Information</h3>
+        </div>
+        <div class="box-footer no-padding">
+          <ul class="nav nav-stacked">
+            <li><a href="#/inventories/{[{data.site_id}]}" title="List Items">List Item
+                <span class="pull-right fa fa-list"></span></a></li>
+            <li><a href="#/inventory/item-add/{[{data.site_id}]}" title="create New Item">Create Item
+                <span class="pull-right fa fa-plus"></span></a></li>
+            <li><a href="">Name <span class="pull-right badge bg-blue">{[{item.name}]}</span></a></li>
+            <li><a href="">Code <span class="pull-right badge bg-aqua">{[{item.code}]}</span></a></li>
+            <li><a href="">Description<span class="pull-right badge bg-green">{[{item.description}]}</span></a></li>
+            <li><a href="">Type<span class="pull-right badge bg-blue">{[{item.type}]}</span></a></li>
+            <li><a href="">Category<span class="pull-right badge bg-aqua">{[{item.category.name}]}</span></a></li>
+            <li><a href="">Unit<span class="pull-right badge bg-green">{[{item.unit}]}</span></a></li>
+            <li><a href="">Account<span class="pull-right badge bg-blue">{[{item.account_no}]}</span></a></li>
+          </ul>
+        </div>
+      </div><!-- /.widget-user -->
+    </div><!-- /.col -->
+</div>
