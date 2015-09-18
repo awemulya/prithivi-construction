@@ -22,6 +22,11 @@ angular.module('myApp.dashboard', ['ngRoute'])
     controller: 'AccountController'
   })
 
+$routeProvider.when('/demands/:siteId', {
+    templateUrl: djstatic('user/awe/dashboard/inventory/demand/demands.html'),
+    controller: 'DemandController'
+  })
+
 $routeProvider.when('/inventory/item-add/:siteId', {
     templateUrl: djstatic('user/awe/dashboard/inventory/item_modify.html'),
     controller: 'AddItemController'
@@ -243,6 +248,28 @@ $timeout, $routeParams){
     var parent = self.$parent;
     self.siteID =  $routeParams.siteId;
     parent.data.site_id = self.siteID;
+
+
+}])
+
+.controller('DemandController', ['$scope', 'SiteDemands', 'Demand', 'DemandRows', 'Site', 'Item', '$modal', '$timeout', '$routeParams',
+function($scope, SiteDemands, Demand, DemandRows, Site, Item, $modal,
+$timeout, $routeParams){
+    var self = $scope;
+    var parent = self.$parent;
+    self.siteID =  $routeParams.siteId;
+    parent.data.site_id = self.siteID;
+
+    self.demands = {};
+
+    var sd = new SiteDemands();
+    sd.$query({siteID:self.siteID},
+            function(data) {
+            self.demands = data.demands;
+            },
+            function(error) {
+                console.log(error);
+            });
 
 
 }])

@@ -113,6 +113,34 @@ angular.module('dashboardServices', ['ngResource'])
 	});
 }])
 
+.factory('SiteDemands', ['$resource', function($resource){
+	return $resource('/inventory/site-demands/:siteID', {}, {
+	  query: {method:'GET', params:{siteID: '@siteID'}},
+	  update: {method:'PUT', params: {siteID: '@siteID'}},
+	  player: {method:'GET', params: {siteID: '@siteID'}},
+	  save: {method:'POST', params: {siteID: '@siteID'}},
+	});
+}])
+
+
+.factory('Demand', ['$resource', function($resource){
+	return $resource('/inventory/demand/:Id', {}, {
+	  query: {method:'GET', params:{Id: ''}, isArray:true},
+	  update: {method:'PUT', params: {Id: '@Id'}},
+	  employee: {method:'GET', params: {Id: '@Id'}},
+	  save: {method:'POST', params: {Id: ''}},
+	});
+}])
+
+.factory('DemandRows', ['$resource', function($resource){
+	return $resource('/inventory/demands-rows/:Id', {}, {
+	  query: {method:'GET', params:{Id: ''}, isArray:true},
+	  update: {method:'PUT', params: {Id: '@Id'}},
+	  employee: {method:'GET', params: {Id: '@Id'}},
+	  save: {method:'POST', params: {Id: ''}},
+	});
+}])
+
 .factory('Fixture', ['$resource', function($resource){
 	return $resource('/app/fixtures/:pId', {}, {
 	  query: {method:'GET', params:{pId: ''}, isArray:true},
