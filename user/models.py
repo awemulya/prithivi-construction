@@ -52,6 +52,9 @@ class AweUser(AbstractBaseUser):
 
     USERNAME_FIELD = 'email'
 
+    def user_admin(self):
+        return self.is_admin
+
     def get_full_name(self):
         # The user is identified by their email address
         return self.email
