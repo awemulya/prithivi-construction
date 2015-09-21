@@ -53,11 +53,7 @@ class DemandsViewSet(viewsets.ModelViewSet):
     # permission_classes = [IsOwnerOrReadOnly]
 
     def perform_create(self, serializer):
-        import pdb
-        pdb.set_trace()
         serializer.save()
 
     def perform_update(self, serializer):
-        import pdb
-        pdb.set_trace()
         serializer.save()

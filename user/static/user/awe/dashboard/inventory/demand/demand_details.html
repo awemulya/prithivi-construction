@@ -6,7 +6,7 @@
 <table class="table table-bordered table-striped">
     <thead>
       <tr>
-        <th>SN <a href="#/inventory/demand-add/{[{data.site_id}]}" title="Add Demand">
+        <th>SN <a href="#/inventory/demand-details/{[{data.site_id}]}" title="Add Demand">
             <i class="fa fa-plus"></i></a></th>
         <th>Date</th>
         <th>Purpose</th>
@@ -25,8 +25,8 @@
     </tbody>
 
 </table>
-<div class="col-sm-9 col-sm-offset-3" ng-show="demand.item_rows.length"><h1>Demand Items</h1></div>
-<table class="table table-bordered table-striped" ng-show="demand.item_rows.length">
+<div class="col-sm-9 col-sm-offset-3" ng-show="demand.rows.length"><h1>Demand Items</h1></div>
+<table class="table table-bordered table-striped" ng-show="demand.rows.length">
     <thead>
       <tr>
         <th>SN
@@ -40,15 +40,15 @@
       </tr>
     </thead>
     <tbody>
-      <tr ng-repeat="row in demand.item_rows">
+      <tr ng-repeat="row in demand.rows">
         <td>{[{$index+1}]} </td>
         <td>
             <select class="form-control" data-ng-options="o.id as o.name for o in items" data-ng-model="row.item_id"></select>
         </td>
         <td><input type="text" class="form-control" ng-model="row.purpose"></td>
-        <td> <input type="text" class="form-control" ng-model="row.quantity"> </td>
+        <td> <input type="number" step="0.01" class="form-control" ng-model="row.quantity"> </td>
         <td> <input type="text" class="form-control" ng-model="row.unit"> </td>
-        <td> <input type="text" class="form-control" ng-model="row.fulfilled_quantity"></td>
+        <td> <input type="number" step="0.01" class="form-control" ng-model="row.fulfilled_quantity"></td>
         <td><input type="checkbox" class="icheckbox_flat-green checked" ng-model="row.status">
             <label class="text-aqua" ng-show="row.status">Received</label>
             <label class="text-red" ng-hide="row.status">Not Received</label> </td>
@@ -58,8 +58,8 @@
 </table>
     <div class="row">
         <div class="col-sm-10 col-sm-offset-2">
-            <div class="col-sm-6" ng-click="newItem()"><button class="btn btn-info">New Demand Item </button></div>
-            <div class="col-sm-6 " ng-click="saveDemand()"><button class="btn btn-info">Save Demand</button></div>
+            <div class="col-sm-6"><button class="btn btn-info" ng-click="newItem()">New Demand Item </button></div>
+            <div class="col-sm-6"><button class="btn btn-info" ng-click="saveDemand()">Save Demand</button></div>
         </div>
     </div>
 

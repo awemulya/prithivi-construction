@@ -280,16 +280,24 @@ $timeout, $routeParams){
 
 }])
 
-.controller('DemandDetailController', ['$scope', 'Demand', 'Item', '$timeout', '$routeParams',
-function($scope, Demand, Item, $timeout, $routeParams) {
+.controller('DemandDetailController', ['$scope', 'Demand', 'Item', '$timeout', '$routeParams', '$location',
+function($scope, Demand, Item, $timeout, $routeParams, $location) {
 
     var self = $scope;
     var parent = self.$parent;
+    var site_id = parent.data.site_id;
+    self.$watch('data', function(data) {
+        if(!angular.equals(data,{})){
+         if(!self.site_id){
+         self.site_id = data.site_id;
+         }
+        }
+    }, true);
     self.demandId =  $routeParams.demandId;
     self.initial_id = 1;
     self.items = Item.query();
     self.demand = {};
-    if(self.demandId){
+    if(self.demandId !=0){
         var es = new Demand();
             es.$get({Id:self.demandId},
                     function(data) {
@@ -299,7 +307,7 @@ function($scope, Demand, Item, $timeout, $routeParams) {
                         console.log(error);
                     });
     }else{
-        self.demand = {date:'', site_id:parent.data.site_id, purpose:''};
+        self.demand = {date:'', site_id:self.site_id, purpose:'',rows:[]};
     }
 
     self.saveDemand = function(){
@@ -309,9 +317,10 @@ function($scope, Demand, Item, $timeout, $routeParams) {
         ds.date=self.demand.date;
         ds.site_id=self.demand.site_id;
         ds.purpose=self.demand.purpose;
-        ds.item_rows = self.demand.item_rows;
+        ds.rows = self.demand.rows;
         ds.$update({Id:self.demand.id},
                 function(data) {
+                self.demand = data;
                   alert("Demand "+self.demand.purpose+" Updated ");
 //                $location.path("/inventories/"+parent.data.site_id);
                 },
@@ -321,14 +330,16 @@ function($scope, Demand, Item, $timeout, $routeParams) {
 
     }else{
         var ds = new Demand();
-        ds.site_id=self.demand.site_id
+        ds.site_id=self.site_id;
         ds.date=self.demand.date;
         ds.purpose=self.demand.purpose;
-        ds.item_rows = self.demand.item_rows;
+        ds.rows = self.demand.rows;
         ds.$save(null,
         function(data) {
+        self.demand = data;
+//        console.log(data);
           alert("Demand "+self.demand.purpose+" Saved ");
-//                $location.path("/inventories/"+parent.data.site_id);
+                $location.path("/inventory/demand-details/"+data.id);
         },
         function(error) {
             console.log(error);
@@ -341,7 +352,7 @@ function($scope, Demand, Item, $timeout, $routeParams) {
 
     self.newItem = function(){
 
-    self.demand.item_rows.push({'purpose':'',item_id:self.items[0].id,quantity:1,unit:'pieces',fulfilled_quantity:0,status:false});
+    self.demand.rows.push({'purpose':'',item_id:self.items[0].id,quantity:1,unit:'pieces',fulfilled_quantity:0,status:false});
 
     };
 

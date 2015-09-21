@@ -38,6 +38,10 @@ class DemandRowSerializer(serializers.ModelSerializer):
     class Meta:
         model = DemandRow
         fields = ('id', 'purpose', 'item_id', 'item_name', 'quantity', 'unit', 'fulfilled_quantity', 'status')
+        extra_kwargs = {
+            "id": {
+                "read_only": False, "required": False, },
+        }
 
 
 class DemandDetailsSerializer(serializers.ModelSerializer):
@@ -56,17 +60,64 @@ class DemandDetailsSerializer(serializers.ModelSerializer):
 class DemandSerializer(serializers.ModelSerializer):
     site_id = serializers.PrimaryKeyRelatedField(source='site', queryset=Project.objects.all())
     site_name = serializers.ReadOnlyField(source='site.name')
-    item_rows = SerializerMethodField('get_rows')
-
+    rows = DemandRowSerializer(many=True)
 
     class Meta:
         model = Demand
-        fields = ('id', 'date', 'purpose', 'site_id', 'site_name', 'item_rows')
+        fields = ('id', 'date', 'purpose', 'site_id', 'site_name', 'rows')
+        extra_kwargs = {
+            "id": {
+                "read_only": False, "required": False, },
+        }
 
-    def get_rows(self, demand):
-        rows = demand.rows.all()
-        serializer = DemandRowSerializer(instance=rows, many=True)
-        return serializer.data
+    def create(self, validated_data):
+        rows_data = validated_data.pop('rows')
+        demand = Demand.objects.create(**validated_data)
+        for row_data in rows_data:
+            data = dict(row_data)
+            row = DemandRow()
+            row.item = data.get('item')
+            row.unit = data.get('unit','Pieces')
+            row.purpose = data.get('purpose','')
+            row.status = data.get('status', False)
+            row.quantity = data.get('quantity',0.0)
+            row.fulfilled_quantity = data.get('fulfilled_quantity',0)
+            row.demand = demand
+            row.save()
+        return demand
+
+    def update(self, instance, validated_data):
+        rows_data = validated_data.pop('rows')
+        demand = Demand.objects.get(pk=instance.id)
+        demand.date = validated_data.pop('date',None)
+        demand.purpose = validated_data.pop('purpose','')
+        demand.site = validated_data.pop('site')
+        demand.save()
+        for row_data in rows_data:
+            data = dict(row_data)
+            id = data.get('id', '')
+            if id:
+                row = DemandRow.objects.get(pk=id)
+                row.item = data.get('item')
+                row.unit = data.get('unit', 'Pieces')
+                row.purpose = data.get('purpose', '')
+                row.status = data.get('status', False)
+                row.quantity = data.get('quantity', 0.0)
+                row.fulfilled_quantity = data.get('fulfilled_quantity', 0)
+                row.demand = demand
+                row.save()
+            else:
+                row = DemandRow()
+                row.item = data.get('item')
+                row.unit = data.get('unit','Pieces')
+                row.purpose = data.get('purpose','')
+                row.status = data.get('status', False)
+                row.quantity = data.get('quantity',0.0)
+                row.fulfilled_quantity = data.get('fulfilled_quantity',0)
+                row.demand = demand
+                row.save()
+
+        return demand
 
 
 class SiteDemandsSerializer(serializers.ModelSerializer):
