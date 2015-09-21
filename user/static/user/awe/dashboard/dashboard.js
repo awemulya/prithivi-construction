@@ -322,7 +322,6 @@ function($scope, Demand, Item, $timeout, $routeParams, $location) {
                 function(data) {
                 self.demand = data;
                   alert("Demand "+self.demand.purpose+" Updated ");
-//                $location.path("/inventories/"+parent.data.site_id);
                 },
                 function(error) {
                     console.log(error);
@@ -337,7 +336,6 @@ function($scope, Demand, Item, $timeout, $routeParams, $location) {
         ds.$save(null,
         function(data) {
         self.demand = data;
-//        console.log(data);
           alert("Demand "+self.demand.purpose+" Saved ");
                 $location.path("/inventory/demand-details/"+data.id);
         },
