@@ -280,8 +280,8 @@ $timeout, $routeParams){
 
 }])
 
-.controller('DemandDetailController', ['$scope', 'Demand', 'Item', '$timeout', '$routeParams', '$location',
-function($scope, Demand, Item, $timeout, $routeParams, $location) {
+.controller('DemandDetailController', ['$scope', 'Demand', 'Item', 'Category', '$modal', '$timeout', '$routeParams', '$location',
+function($scope, Demand, Item, Category, $modal, $timeout, $routeParams, $location) {
 
     var self = $scope;
     var parent = self.$parent;
@@ -352,6 +352,44 @@ function($scope, Demand, Item, $timeout, $routeParams, $location) {
 
     self.demand.rows.push({'purpose':'',item_id:self.items[0].id,quantity:1,unit:'pieces',fulfilled_quantity:0,status:false});
 
+    };
+
+       self.openAddItem = function(index) {
+        var modalInstance = $modal.open({
+            animation: true,
+            templateUrl: djstatic('user/awe/dashboard/inventory/add_item_modal.html'),
+            controller: 'ItemAddModalController',
+            windowClass: 'app-modal-window',
+            resolve: {
+            Item: function() {
+                return Item;
+            },
+            Category: function() {
+                return Category;
+            }
+            }
+        });
+
+        modalInstance.result.then(function(newItem) {
+        if (!angular.equals({},newItem)){
+        var cs = new Item();
+            cs.name = newItem.name;
+            cs.description = newItem.description;
+            cs.category_id = newItem.category_id;
+            cs.type = newItem.type;
+            cs.unit = newItem.unit;
+            cs.code = newItem.code;
+            cs.$save(null,
+            function(data) {
+                self.items.splice(0, 0, data);
+                self.demand.rows[index].item_id = data.id;
+            },
+            function(error) {
+                console.log(error);
+            });
+
+            }
+        });
     };
 
 }])
@@ -501,7 +539,34 @@ function($scope, Site, Item, Category, InventoryAccount, $modal, $timeout, $rout
     };
 
     self.cancel = function(){
-                $modalInstance.close();
+          $modalInstance.dismiss('cancel');
+
+    };
+    })
+
+
+.controller('ItemAddModalController', function($scope, $modalInstance, Item, Category) {
+    var self = $scope;
+    self.options = ['consumable', 'non-consumable'];
+    self.newItem = {};
+    self.items = {};
+    Category.query(null,
+        function(data) {
+        self.categories = data;
+        self.newItem.category_id = self.categories[0].id;
+        self.newItem.type = self.options[1];
+        },
+        function(error) {
+            console.log(error);
+        });
+
+    self.ok = function() {
+
+        $modalInstance.close(self.newItem);
+    };
+
+    self.cancel = function(){
+         $modalInstance.dismiss('cancel');
 
     };
     })
