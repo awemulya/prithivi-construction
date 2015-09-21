@@ -22,6 +22,11 @@ angular.module('myApp.dashboard', ['ngRoute'])
     controller: 'AccountController'
   })
 
+$routeProvider.when('/inventory/demand-details/:demandId', {
+    templateUrl: djstatic('user/awe/dashboard/inventory/demand/demand_details.html'),
+    controller: 'DemandDetailController'
+  })
+
 $routeProvider.when('/demands/:siteId', {
     templateUrl: djstatic('user/awe/dashboard/inventory/demand/demands.html'),
     controller: 'DemandController'
@@ -110,6 +115,7 @@ var es = new Employee();
             });
 
 }])
+
 
 
 .controller('EmployeeAddModalController', function($scope, $modalInstance, site, employeeService, Roles) {
@@ -273,6 +279,74 @@ $timeout, $routeParams){
 
 
 }])
+
+.controller('DemandDetailController', ['$scope', 'Demand', 'Item', '$timeout', '$routeParams',
+function($scope, Demand, Item, $timeout, $routeParams) {
+
+    var self = $scope;
+    var parent = self.$parent;
+    self.demandId =  $routeParams.demandId;
+    self.initial_id = 1;
+    self.items = Item.query();
+    self.demand = {};
+    if(self.demandId){
+        var es = new Demand();
+            es.$get({Id:self.demandId},
+                    function(data) {
+                    self.demand = data;
+                    },
+                    function(error) {
+                        console.log(error);
+                    });
+    }else{
+        self.demand = {date:'', site_id:parent.data.site_id, purpose:''};
+    }
+
+    self.saveDemand = function(){
+    if(self.demand.id){
+        var ds = new Demand();
+        ds.id=self.demand.id;
+        ds.date=self.demand.date;
+        ds.site_id=self.demand.site_id;
+        ds.purpose=self.demand.purpose;
+        ds.item_rows = self.demand.item_rows;
+        ds.$update({Id:self.demand.id},
+                function(data) {
+                  alert("Demand "+self.demand.purpose+" Updated ");
+//                $location.path("/inventories/"+parent.data.site_id);
+                },
+                function(error) {
+                    console.log(error);
+                });
+
+    }else{
+        var ds = new Demand();
+        ds.site_id=self.demand.site_id
+        ds.date=self.demand.date;
+        ds.purpose=self.demand.purpose;
+        ds.item_rows = self.demand.item_rows;
+        ds.$save(null,
+        function(data) {
+          alert("Demand "+self.demand.purpose+" Saved ");
+//                $location.path("/inventories/"+parent.data.site_id);
+        },
+        function(error) {
+            console.log(error);
+        });
+
+
+    }
+
+    };
+
+    self.newItem = function(){
+
+    self.demand.item_rows.push({'purpose':'',item_id:self.items[0].id,quantity:1,unit:'pieces',fulfilled_quantity:0,status:false});
+
+    };
+
+}])
+
 
 .controller('InventoryController', ['$scope','Site', 'Item', 'Category', 'InventoryAccount', '$modal', '$timeout', '$routeParams',
 function($scope, Site, Item, Category, InventoryAccount, $modal, $timeout, $routeParams){

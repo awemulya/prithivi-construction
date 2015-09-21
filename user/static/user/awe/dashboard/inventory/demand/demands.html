@@ -3,6 +3,7 @@
       <tr>
         <th>SN <a href="#/inventory/demand-add/{[{data.site_id}]}" title="Add Demand">
             <i class="fa fa-plus"></i></a></th>
+      <th>Demand Count</th>
         <th>Date</th>
         <th>Purpose</th>
         <th colspan="2">Actions</th>
@@ -10,17 +11,20 @@
     </thead>
     <tbody>
       <tr ng-repeat="demand in demands | orderBy:'-date'">
-        <td><a href="#/inventory/item-details/{[{item.id}]}"> {[{$index+1}]} </a></td>
+        <td>{[{$index+1}]} </td>
+          <td><a href="#/inventory/demand-details/{[{demand.id}]}" title="Demand Details"> {[{demand.item_rows.length}]}<i class="fa fa-bars"></i></a>
+            </td>
         <td>{[{demand.date}]}</td>
-        <td>{[{demand.purpose}]}</td>
-        <td><a href="#/inventory/demand-details/{[{item.id}]}" title="Demand Details"><i class="fa fa-detail"></i></a></td>
-        <td><a href="#/inventory/demand-modify/{[{item.id}]}" title="Edit Demand"><i class="fa fa-edit"></i></a></td>
+        <td><a href="#/inventory/demand-details/{[{demand.id}]}" title="Demand Details"> {[{demand.purpose}]}<i class="fa fa-bars"></i></a>
+            </td>
+        <td><a href="#/inventory/demand-details/{[{demand.id}]}" title="Demand Details"><i class="fa fa-bars"></i></a></td>
       </tr>
     </tbody>
     <tfoot>
       <tr>
         <th>SN <a href="#/inventory/demand-add/{[{data.site_id}]}" title="Add Demand">
             <i class="fa fa-plus"></i></a></th>
+        <th>Total Demands<</th>
         <th>Date</th>
         <th>Purpose</th>
         <th colspan="2">Actions</th>

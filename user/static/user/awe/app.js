@@ -84,4 +84,21 @@ config(function($interpolateProvider) {
             });
         }
     };
+})
+
+.directive('demanddatepicker', function () {
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+         link: function (scope, element, attrs, ngModelCtrl) {
+            element.datepicker({
+                dateFormat: 'yy-mm-dd',
+                onSelect: function (date) {
+//                element.val(date);
+                    scope.demand.date = date;
+                    scope.$apply();
+                }
+            });
+        }
+    };
 });

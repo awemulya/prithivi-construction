@@ -31,22 +31,13 @@ class InventoryAccountSerializer(serializers.ModelSerializer):
         fields = ('id', 'code', 'name', 'account_no', 'opening_balance', 'current_balance', 'account_category')
 
 
-class DemandSerializer(serializers.ModelSerializer):
-    site_id = serializers.PrimaryKeyRelatedField(source='site', queryset=Project.objects.all())
-    site_name = serializers.ReadOnlyField(source='site.name')
-
-    class Meta:
-        model = Demand
-        fields = ('id', 'date', 'purpose', 'site_id', 'site_name')
-
-
 class DemandRowSerializer(serializers.ModelSerializer):
-    demand_id = serializers.PrimaryKeyRelatedField(source='demand', queryset=Demand.objects.all())
-    purpose_name = serializers.ReadOnlyField(source='demand.purpose')
+    item_id = serializers.PrimaryKeyRelatedField(source='item', queryset=Item.objects.all())
+    item_name = serializers.ReadOnlyField(source='item.name')
 
     class Meta:
         model = DemandRow
-        fields = ('id', 'site_id', 'site_purpose', 'purpose', 'quantity', 'unit', 'fulfilled_quantity', 'status')
+        fields = ('id', 'purpose', 'item_id', 'item_name', 'quantity', 'unit', 'fulfilled_quantity', 'status')
 
 
 class DemandDetailsSerializer(serializers.ModelSerializer):
@@ -55,6 +46,22 @@ class DemandDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Demand
         fields = ('id', 'rows',)
+
+    def get_rows(self, demand):
+        rows = demand.rows.all()
+        serializer = DemandRowSerializer(instance=rows, many=True)
+        return serializer.data
+
+
+class DemandSerializer(serializers.ModelSerializer):
+    site_id = serializers.PrimaryKeyRelatedField(source='site', queryset=Project.objects.all())
+    site_name = serializers.ReadOnlyField(source='site.name')
+    item_rows = SerializerMethodField('get_rows')
+
+
+    class Meta:
+        model = Demand
+        fields = ('id', 'date', 'purpose', 'site_id', 'site_name', 'item_rows')
 
     def get_rows(self, demand):
         rows = demand.rows.all()
