@@ -32,6 +32,11 @@ $routeProvider.when('/demands/:siteId', {
     controller: 'DemandController'
   })
 
+$routeProvider.when('/payroll/:siteId', {
+    templateUrl: djstatic('user/awe/dashboard/account/payroll/payroll.html'),
+    controller: 'PayrollController'
+  })
+
 $routeProvider.when('/inventory/item-add/:siteId', {
     templateUrl: djstatic('user/awe/dashboard/inventory/item_modify.html'),
     controller: 'AddItemController'
@@ -272,6 +277,27 @@ $timeout, $routeParams){
     sd.$query({siteID:self.siteID},
             function(data) {
             self.demands = data.demands;
+            },
+            function(error) {
+                console.log(error);
+            });
+
+
+}])
+
+.controller('PayrollController', ['$scope', 'SitePayroll', '$routeParams',
+function($scope, SitePayroll, $routeParams){
+    var self = $scope;
+    var parent = self.$parent;
+    self.siteID =  $routeParams.siteId;
+    parent.data.site_id = self.siteID;
+
+    self.payrolls = {};
+
+    var ps = new SitePayroll();
+    ps.$query({siteID:self.siteID},
+            function(data) {
+            self.payrolls = data.payrolls;
             },
             function(error) {
                 console.log(error);

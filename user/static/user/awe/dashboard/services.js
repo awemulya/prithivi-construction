@@ -122,6 +122,15 @@ angular.module('dashboardServices', ['ngResource'])
 	});
 }])
 
+.factory('SitePayroll', ['$resource', function($resource){
+	return $resource('/inventory/site-payrolls/:siteID', {}, {
+	  query: {method:'GET', params:{siteID: '@siteID'}},
+	  update: {method:'PUT', params: {siteID: '@siteID'}},
+	  player: {method:'GET', params: {siteID: '@siteID'}},
+	  save: {method:'POST', params: {siteID: '@siteID'}},
+	});
+}])
+
 
 .factory('Demand', ['$resource', function($resource){
 	return $resource('/inventory/demand/:Id', {}, {
@@ -141,21 +150,6 @@ angular.module('dashboardServices', ['ngResource'])
 	});
 }])
 
-.factory('Fixture', ['$resource', function($resource){
-	return $resource('/app/fixtures/:pId', {}, {
-	  query: {method:'GET', params:{pId: ''}, isArray:true},
-	  update: {method:'PUT', params: {pId: '@pId'}},
-	  fixture: {method:'GET', params: {pId: '@pId'}},
-	  save: {method:'POST', params: {pId: ''}},
-	});
-}])
 
-.factory('Video', ['$resource', function($resource){
-	return $resource('app/create/videos/:videoId', {}, {
-//	  query: {method:'GET', params:{}, isArray:true},
-	  post: {method:'POST',  params: {}},
-        update: {method:'PUT', params: {videoId: '@videoId'}},
-	});
-}]);
 
 

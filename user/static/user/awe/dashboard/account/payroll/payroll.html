@@ -1,0 +1,31 @@
+<table id="example1" class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>SN <a href="#/inventory/demand-details/0" title="Add Demand">
+            <i class="fa fa-plus"></i></a></th>
+      <th>Employees Count</th>
+        <th>Date</th>
+        <th>Voucher NO</th>
+        <th colspan="2">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="demand in demands | orderBy:'-date'">
+        <td>{[{$index+1}]} </td>
+          <td>{[{demand.rows.length}]}</td>
+        <td>{[{demand.date}]}</td>
+        <td>{[{demand.purpose}]}</td>
+        <td><a href="#/inventory/demand-details/{[{demand.id}]}" title="Demand Details"><i class="fa fa-bars"></i></a></td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <th>SN <a href="#/inventory/demand-details/0" title="Add Demand">
+            <i class="fa fa-plus"></i></a></th>
+        <th>Demands Count</th>
+        <th>Date</th>
+        <th>Voucher NO</th>
+        <th colspan="2">Actions</th>
+      </tr>
+    </tfoot>
+</table>

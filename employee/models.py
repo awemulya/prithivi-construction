@@ -63,6 +63,7 @@ class Payment(models.Model):
 class SalaryVoucher(models.Model):
     voucher_no = models.PositiveIntegerField(blank=True, null=True)
     date = models.DateField(default=datetime.datetime.today)
+    site = models.ForeignKey(Project, related_name='salary_voucher')
 
 
 class SalaryVoucherRow(models.Model):
