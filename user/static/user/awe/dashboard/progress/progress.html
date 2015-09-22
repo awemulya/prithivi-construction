@@ -1,0 +1,41 @@
+<table id="example1" class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>SN <a href="#/progress/progress-details/0" title="Add New Progress">
+            <i class="fa fa-plus"></i></a></th>
+      <th>Description</th>
+      <th>Task Count</th>
+        <th>Start Date</th>
+        <th>Deadline Date</th>
+        <th>Progress Status</th>
+        <th>Status</th>
+        <th colspan="2">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="task in tasks | orderBy:'-start_date'">
+        <td>{[{$index+1}]} </td>
+          <td>{[{task.description}]}</td>
+          <td>{[{task.rows.length}]}</td>
+          <td>{[{task.start_date}]}</td>
+          <td>{[{task.deadline}]}</td>
+          <td>{[{task.project_status}]}</td>
+          <td><label class="text-red" ng-show="task.status">Closed</label><label class="text-aqua" ng-hide="task.status">
+              Active</label></td>
+        <td><a href="#/progress/progress-details/{[{task.id}]}" title="Progress Details"><i class="fa fa-bars"></i></a></td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <th>SN <a href="#/progress/progress-details/0" title="Add New Progress">
+            <i class="fa fa-plus"></i></a></th>
+      <th>Description</th>
+      <th>Task Count</th>
+        <th>Start Date</th>
+        <th>Deadline Date</th>
+        <th>Progress Status</th>
+        <th>Status</th>
+        <th colspan="2">Actions</th>
+      </tr>
+    </tfoot>
+</table>

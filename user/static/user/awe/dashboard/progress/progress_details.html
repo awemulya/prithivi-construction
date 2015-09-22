@@ -1,0 +1,75 @@
+<div class="col-sm-9 col-sm-offset-3">
+    <a href="#/progress/progress/{[{data.site_id}]}" title="Progress Details">
+          <i class="fa fa-line-chart">ALL Progresses</i></a>
+</div>
+<form name="demandForm">
+<table class="table table-bordered table-striped">
+    <thead>
+    <th>SN</th>
+    <th>Description</th>
+        <th>Start Date</th>
+        <th>Deadline Date</th>
+        <th>Progress Status</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{[{$index+1}]} </td>
+          <td><input type="text" ng-model="tasks.description"/> </td>
+          <td><input type="text" class="form-control"  ng-model="tasks.start_date"
+                                 placeholder="Start Date" /> </td>
+          <td><input type="text" class="form-control"  ng-model="tasks.deadline"
+                                 placeholder="Deadline Date" /> </td>
+          <td><select class="form-control" ng-init="tasks.project_status = tasks.project_status || options[0]"
+                        ng-model="tasks.project_status"
+                        ng-options="option as option for option in options "></select>
+        </td>
+        <td>  <input type="checkbox" class="icheckbox_flat-green checked"  ng-model="tasks.status">
+                    <label class="text-red" ng-show="tasks.status">Closed</label><label class="text-aqua" ng-hide="tasks.status">Active</label>
+                </input>
+        </td>
+    </tr>
+    </tbody>
+
+</table>
+<div class="col-sm-9 col-sm-offset-3" ng-show="tasks.rows.length"><h1>Progress Details</h1></div>
+<table class="table table-bordered table-striped" ng-show="tasks.rows.length">
+    <thead>
+      <tr>
+        <th>SN</th>
+        <th>Description</th>
+        <th>Start Date</th>
+        <th>Deadline Date</th>
+        <th>Progress Status</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="row in tasks.rows">
+        <td>{[{$index+1}]}</td>
+          <td><input type="text" ng-model="row.description"/> </td>
+          <td><input type="text" class="form-control"  ng-model="row.start_date"
+                                 placeholder="Start Date" /> </td>
+          <td><input type="text" class="form-control" id="sd" ng-model="row.deadline"
+                                 placeholder="Deadline Date" /> </td>
+          <td> <select class="form-control" ng-init="row.project_status = row.project_status || options[0]"
+                        ng-model="row.project_status"
+                        ng-options="option as option for option in options "></select>
+        </td>
+        <td>  <input type="checkbox" class="icheckbox_flat-green checked"  ng-model="row.status">
+                    <label class="text-red" ng-show="row.status">Closed</label><label class="text-aqua" ng-hide="row.status">Active</label>
+                </input>
+        </td>
+      </tr>
+    </tbody>
+
+</table>
+    <div class="row">
+        <div class="col-sm-10 col-sm-offset-2">
+            <div class="col-sm-6"><button class="btn btn-info" ng-click="newItem()">New Task </button></div>
+            <div class="col-sm-6"><button class="btn btn-info" ng-click="saveTask()">Save Progress</button></div>
+        </div>
+    </div>
+
+</form>

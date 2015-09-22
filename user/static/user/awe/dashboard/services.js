@@ -159,6 +159,25 @@ angular.module('dashboardServices', ['ngResource'])
 	});
 }])
 
+.factory('Tasks', ['$resource', function($resource){
+	return $resource('/progress/tasks/:Id', {}, {
+	  query: {method:'GET', params:{Id: ''}, isArray:true},
+	  update: {method:'PUT', params: {Id: '@Id'}},
+	  employee: {method:'GET', params: {Id: '@Id'}},
+	  save: {method:'POST', params: {Id: ''}},
+	});
+}])
+
+.factory('SiteTasks', ['$resource', function($resource){
+	return $resource('/progress/site-tasks/:siteID', {}, {
+	  query: {method:'GET', params:{siteID: '@siteID'}},
+	  update: {method:'PUT', params: {siteID: '@siteID'}},
+	  player: {method:'GET', params: {siteID: '@siteID'}},
+	  save: {method:'POST', params: {siteID: '@siteID'}},
+	});
+}])
+
+
 
 
 

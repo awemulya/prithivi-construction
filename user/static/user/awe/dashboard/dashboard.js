@@ -33,6 +33,11 @@ $routeProvider.when('/employee/voucher-details/:vId', {
     controller: 'PayrollDetailController'
   })
 
+$routeProvider.when('/progress/progress-details/:pId', {
+    templateUrl: djstatic('user/awe/dashboard/progress/progress_details.html'),
+    controller: 'ProgressDetailController'
+  })
+
 $routeProvider.when('/demands/:siteId', {
     templateUrl: djstatic('user/awe/dashboard/inventory/demand/demands.html'),
     controller: 'DemandController'
@@ -41,6 +46,11 @@ $routeProvider.when('/demands/:siteId', {
 $routeProvider.when('/account/payroll/:siteId', {
     templateUrl: djstatic('user/awe/dashboard/account/payroll/payroll.html'),
     controller: 'PayrollController'
+  })
+
+$routeProvider.when('/progress/progress/:siteId', {
+    templateUrl: djstatic('user/awe/dashboard/progress/progress.html'),
+    controller: 'ProgressController'
   })
 
 $routeProvider.when('/inventory/item-add/:siteId', {
@@ -312,6 +322,27 @@ function($scope, SitePayroll, $routeParams){
 
 }])
 
+.controller('ProgressController', ['$scope', 'SiteTasks', '$routeParams',
+function($scope, SiteTasks, $routeParams){
+    var self = $scope;
+    var parent = self.$parent;
+    self.siteID =  $routeParams.siteId;
+    parent.data.site_id = self.siteID;
+
+    self.tasks = {};
+
+    var ts = new SiteTasks();
+    ts.$query({siteID:self.siteID},
+            function(data) {
+            self.tasks = data.progresses;
+            },
+            function(error) {
+                console.log(error);
+            });
+
+
+}])
+
 .controller('DemandDetailController', ['$scope', 'Demand', 'Item', 'Category', '$modal', '$timeout', '$routeParams', '$location',
 function($scope, Demand, Item, Category, $modal, $timeout, $routeParams, $location) {
 
@@ -552,6 +583,88 @@ function($scope, Voucher, Employee, SiteEmployee, Role, $modal, $timeout, $route
         });
     };
 
+}])
+
+
+.controller('ProgressDetailController', ['$scope', 'Tasks', '$timeout', '$routeParams', '$location',
+function($scope, Tasks, $timeout, $routeParams, $location) {
+    var newDate = new Date();
+    var today = newDate.toISOString().substring(0, 10);
+    var self = $scope;
+    var parent = self.$parent;
+    self.options = ['planning', 'pending', 'started', 'completed'];
+    self.site_id = parent.data.site_id;
+    self.$watch('data', function(data) {
+        if(!angular.equals(data,{})){
+        if(data.site_id){
+        self.site_id = data.site_id;
+            self.tasks.site_id = data.site_id;
+            }
+        }
+    }, true);
+    self.taskId =  $routeParams.pId;
+    self.initial_id = 1;
+    self.tasks = {};
+    if(self.taskId !=0){
+        var ts = new Tasks();
+            ts.$get({Id:self.taskId},
+                    function(data) {
+                    self.tasks = data;
+                    },
+                    function(error) {
+                        console.log(error);
+                    });
+    }else{
+        self.tasks = {start_date:today, site_id:self.site_id, deadline:today, description:'', status_choices:self.options[0],
+        status:false, rows:[]};
+    }
+
+    self.saveTask = function(){
+    if(self.tasks.id){
+        var ts = new Tasks();
+        ts.site_id = self.site_id;
+        ts.start_date = self.tasks.start_date;
+        ts.deadline = self.tasks.deadline;
+        ts.description = self.tasks.description;
+        ts.status_choices = self.tasks.status_choices;
+        ts.status = self.tasks.status;
+        ds.rows = self.tasks.rows;
+        ts.$update({Id:self.tasks.id},
+                function(data) {
+                self.tasks = data;
+                  alert("Task "+self.tasks.description+" Updated ");
+                },
+                function(error) {
+                    console.log(error);
+                });
+
+    }else{
+        var ts = new Tasks();
+        ts.site_id = self.site_id;
+        ts.start_date = self.tasks.start_date;
+        ts.deadline = self.tasks.deadline;
+        ts.description = self.tasks.description;
+        ts.status_choices = self.tasks.status_choices;
+        ts.status = self.tasks.status;
+        ts.rows = self.tasks.rows;
+        ts.$save(null,
+        function(data) {
+        self.tasks = data;
+          alert("Task "+self.tasks.description+" Saved ");
+                $location.path("/progress/progress-details/"+data.id);
+        },
+        function(error) {
+            console.log(error);
+        });
+
+
+    }
+
+    };
+
+    self.newItem = function(){
+        self.tasks.rows.push({start_date:today, site_id:self.site_id, deadline:today, description:'', status_choices:self.options[0], status:false});
+    };
 }])
 
 

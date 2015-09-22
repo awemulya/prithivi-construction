@@ -10,16 +10,16 @@
          <div class="box">
                 <div class="box-body">
                     <form name="employeeForm">
-                        <div class="form-group" ng-class="{ 'has-error': employeeForm.$invalid }">
+                        <div class="form-group" ng-class="{ 'has-error': employeeForm.name.$invalid }">
                           <label class="control-label" for="name">
                               <i class="fa fa-times-circle-o" ng-show="employeeForm.$invalid"></i> Full Name</label>
-                            <label ng-if="employeeForm.$invalid">
+                            <label ng-if="employeeForm.name.$invalid">
                                 Cannot be Empty.
                             </label>
                           <input type="text" class="form-control" id="name" ng-model="employee.name"
                                  placeholder="Name ..." required>
                         </div>
-                        <div class="form-group" ng-class="{ 'has-error': employeeForm.$invalid }">
+                        <div class="form-group" ng-class="{ 'has-error': employeeForm.address.$invalid }">
                           <label class="control-label" for="address">
                               <i class="fa fa-times-circle-o"></i> Address</label>
                             <label ng-if="employeeForm.address.$invalid">
@@ -28,7 +28,7 @@
                           <input type="text" class="form-control" id="address" ng-model="employee.address"
                                  placeholder="Address ..." required>
                         </div>
-                        <div class="form-group" ng-class="{ 'has-error': employeeForm.$invalid }">
+                        <div class="form-group" ng-class="{ 'has-error': employeeForm.phone.$invalid }">
                           <label class="control-label" for="phone">
                               <i class="fa fa-times-circle-o"></i> Phone NO</label>
                             <label ng-if="employeeForm.phone.$invalid">
