@@ -1,7 +1,6 @@
-from rest_framework.response import Response
 from rest_framework import viewsets
-from employee.models import SalaryVoucher, SalaryVoucherRow
-from employee.serializer import SalaryVoucherSerializer, SalaryVoucherRowSerializer
+from employee.models import SalaryVoucher
+from employee.serializer import SalaryVoucherSerializer, SiteSalaryVoucherSerializer
 from project.models import Project
 
 

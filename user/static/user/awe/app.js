@@ -101,4 +101,20 @@ config(function($interpolateProvider) {
             });
         }
     };
+})
+.directive('voucherdatepicker', function () {
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+         link: function (scope, element, attrs, ngModelCtrl) {
+            element.datepicker({
+                dateFormat: 'yy-mm-dd',
+                onSelect: function (date) {
+//                element.val(date);
+                    scope.voucher.date = date;
+                    scope.$apply();
+                }
+            });
+        }
+    };
 });

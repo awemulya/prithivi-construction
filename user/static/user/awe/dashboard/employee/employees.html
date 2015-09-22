@@ -8,8 +8,8 @@
         <th>Sex</th>
         <th>Marital Status</th>
         <th>Date Joined</th>
-        <th>Status</th>
         <th>Phone</th>
+        <th>Status</th>
         <th colspan="4">Actions</th>
       </tr>
     </thead>
@@ -23,7 +23,8 @@
         <td><label ng-show="emp.marital_status">Married</label><label ng-hide="emp.marital_status">Single</label></td>
         <td>{[{emp.date_joined}]}</td>
         <td>{[{emp.phone}]}</td>
-        <td><label class="text-aqua" ng-show="emp.status">Active</label><label class="text-red" ng-hide="emp.status">Inactive</label></td>
+        <td><label class="text-aqua" ng-show="emp.status">Active</label>
+          <label class="text-red" ng-hide="emp.status">Inactive</label></td>
         <td><a href="" title="View working days" ng-click="openWorkinngDays(emp)"><i class="fa fa-user"></i></a></td>
         <td><a href="" title="View Salary Payments" ng-click="openSalaryPayment(emp)"><i class="fa fa-money"></i></a></td>
         <td><a href="" title="View Salary History" ng-click="openHistory(emp)"><i class="fa fa-calendar"></i></a></td>
@@ -40,6 +41,7 @@
         <th>Marital Status</th>
         <th>Date Joined</th>
         <th>Phone</th>
+        <th>Status</th>
         <th colspan="4">Actions</th>
       </tr>
     </tfoot>

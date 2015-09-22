@@ -71,7 +71,7 @@ angular.module('dashboardServices', ['ngResource'])
 
 .factory('Employee', ['$resource', function($resource){
 	return $resource('/dashboard/employee/:eId', {}, {
-	  query: {method:'GET', params:{eId: ''}},
+	  query: {method:'GET', params:{eId: ''},isArray:true},
 	  update: {method:'PUT', params: {eId: '@eId'}},
 	  employee: {method:'GET', params: {eId: '@eId'}},
 	  save: {method:'POST', params: {eId: ''}},
@@ -123,7 +123,7 @@ angular.module('dashboardServices', ['ngResource'])
 }])
 
 .factory('SitePayroll', ['$resource', function($resource){
-	return $resource('/inventory/site-payrolls/:siteID', {}, {
+	return $resource('/employee/site-payrolls/:siteID', {}, {
 	  query: {method:'GET', params:{siteID: '@siteID'}},
 	  update: {method:'PUT', params: {siteID: '@siteID'}},
 	  player: {method:'GET', params: {siteID: '@siteID'}},
@@ -134,6 +134,15 @@ angular.module('dashboardServices', ['ngResource'])
 
 .factory('Demand', ['$resource', function($resource){
 	return $resource('/inventory/demand/:Id', {}, {
+	  query: {method:'GET', params:{Id: ''}, isArray:true},
+	  update: {method:'PUT', params: {Id: '@Id'}},
+	  employee: {method:'GET', params: {Id: '@Id'}},
+	  save: {method:'POST', params: {Id: ''}},
+	});
+}])
+
+.factory('Voucher', ['$resource', function($resource){
+	return $resource('/employee/payroll/:Id', {}, {
 	  query: {method:'GET', params:{Id: ''}, isArray:true},
 	  update: {method:'PUT', params: {Id: '@Id'}},
 	  employee: {method:'GET', params: {Id: '@Id'}},

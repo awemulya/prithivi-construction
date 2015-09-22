@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
-from employee.models import SalaryVoucherRow, SalaryVoucher
+from employee.models import SalaryVoucherRow, SalaryVoucher, Employee
 from project.models import Project
+import datetime
 
 
 class SalaryVoucherRowSerializer(serializers.ModelSerializer):
@@ -32,52 +33,52 @@ class SalaryVoucherSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         rows_data = validated_data.pop('rows')
-        demand = SalaryVoucher.objects.create(**validated_data)
+        sv = SalaryVoucher.objects.create(**validated_data)
         for row_data in rows_data:
             data = dict(row_data)
             row = SalaryVoucherRow()
-            row.item = data.get('item')
-            row.unit = data.get('unit','Pieces')
-            row.purpose = data.get('purpose','')
-            row.status = data.get('status', False)
-            row.quantity = data.get('quantity',0.0)
-            row.fulfilled_quantity = data.get('fulfilled_quantity',0)
-            row.demand = demand
+            row.employee = data.get('employee')
+            row.sn = data.get('sn',0)
+            row.amount = data.get('amount',0)
+            row.paid_date = data.get('paid_date', datetime.datetime.today)
+            row.start_date = data.get('start_date', datetime.datetime.today)
+            row.last_date = data.get('last_date', datetime.datetime.today)
+            row.salary_voucher = sv
             row.save()
-        return demand
+        return sv
 
     def update(self, instance, validated_data):
         rows_data = validated_data.pop('rows')
-        demand = SalaryVoucher.objects.get(pk=instance.id)
-        demand.date = validated_data.pop('date',None)
-        demand.purpose = validated_data.pop('purpose','')
-        demand.site = validated_data.pop('site')
-        demand.save()
+        sv = SalaryVoucher.objects.get(pk=instance.id)
+        sv.date = validated_data.pop('date',datetime.datetime.today)
+        sv.voucher_no = validated_data.pop('voucher_no','')
+        sv.site = validated_data.pop('site')
+        sv.save()
         for row_data in rows_data:
             data = dict(row_data)
             id = data.get('id', '')
             if id:
                 row = SalaryVoucherRow.objects.get(pk=id)
-                row.item = data.get('item')
-                row.unit = data.get('unit', 'Pieces')
-                row.purpose = data.get('purpose', '')
-                row.status = data.get('status', False)
-                row.quantity = data.get('quantity', 0.0)
-                row.fulfilled_quantity = data.get('fulfilled_quantity', 0)
-                row.demand = demand
+                row.employee = data.get('employee')
+                row.sn = data.get('sn',1)
+                row.amount = data.get('amount',0)
+                row.paid_date = data.get('paid_date', datetime.datetime.today)
+                row.start_date = data.get('start_date',datetime.datetime.today)
+                row.last_date = data.get('last_date', datetime.datetime.today)
+                row.salary_voucher = sv
                 row.save()
             else:
                 row = SalaryVoucherRow()
-                row.item = data.get('item')
-                row.unit = data.get('unit','Pieces')
-                row.purpose = data.get('purpose','')
-                row.status = data.get('status', False)
-                row.quantity = data.get('quantity',0.0)
-                row.fulfilled_quantity = data.get('fulfilled_quantity',0)
-                row.demand = demand
+                row.employee = data.get('employee')
+                row.sn = data.get('sn',1)
+                row.amount = data.get('amount',0)
+                row.paid_date = data.get('paid_date',datetime.datetime.today)
+                row.start_date = data.get('start_date',datetime.datetime.today)
+                row.last_date = data.get('last_date',datetime.datetime.today)
+                row.salary_voucher = sv
                 row.save()
 
-        return demand
+        return sv
 
 
 class SiteSalaryVoucherSerializer(serializers.ModelSerializer):

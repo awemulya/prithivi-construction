@@ -26,7 +26,7 @@
                                 Address be Empty.
                             </label>
                           <input type="text" class="form-control" id="address" ng-model="employee.address"
-                                 placeholder="Name ..." required>
+                                 placeholder="Address ..." required>
                         </div>
                         <div class="form-group" ng-class="{ 'has-error': employeeForm.$invalid }">
                           <label class="control-label" for="phone">
@@ -48,21 +48,25 @@
                         <div class="form-group">
                           <label class="control-label">
                               <i class="fa fa-times-circle-o"></i> Marital Status</label>
-                            <input type="checkbox" class="icheckbox_flat-green checked" id="married" ng-model="employee.marital_status">Married</input>
+                            <input type="checkbox" class="icheckbox_flat-green checked" id="married" ng-model="employee.marital_status">
+                            <label ng-show="employee.marital_status">Married</label><label ng-hide="employee.marital_status">Single</label>
+                            </input>
                         </div>
                         <div class="form-group">
                           <label class="control-label">
                               <i class="fa fa-times-circle-o"></i> Status</label>
-                            <input type="checkbox" class="icheckbox_flat-green checked" id="status" ng-model="employee.status">Active</input>
+                            <input type="checkbox" class="icheckbox_flat-green checked" id="status" ng-model="employee.status">
+                            <label class="text-aqua" ng-show="employee.status">Active</label>
+                            <label class="text-red" ng-hide="employee.status">Inactive</label>
+                            </input>
                         </div>
 
                         <div class="form-group">
                           <label class="control-label" for="role">
                               <i class="fa fa-times-circle-o"></i> Role</label>
 
-                            <select class="form-control" id="role" ng-init="employee.role_id = roles_list[0]"
-                                    ng-model="employee.role_id"
-                                    ng-options="option as option.role for option in roles_list track by option.id"></select>
+                            <select class="form-control pull-right" id="role"
+                                    data-ng-options="o.id as o.role for o in roles" data-ng-model="employee.role_id"></select>
 
                         </div>
                         <div class="form-group">

@@ -27,12 +27,18 @@ $routeProvider.when('/inventory/demand-details/:demandId', {
     controller: 'DemandDetailController'
   })
 
+
+$routeProvider.when('/employee/voucher-details/:vId', {
+    templateUrl: djstatic('user/awe/dashboard/account/payroll/payroll_details.html'),
+    controller: 'PayrollDetailController'
+  })
+
 $routeProvider.when('/demands/:siteId', {
     templateUrl: djstatic('user/awe/dashboard/inventory/demand/demands.html'),
     controller: 'DemandController'
   })
 
-$routeProvider.when('/payroll/:siteId', {
+$routeProvider.when('/account/payroll/:siteId', {
     templateUrl: djstatic('user/awe/dashboard/account/payroll/payroll.html'),
     controller: 'PayrollController'
   })
@@ -123,14 +129,20 @@ var es = new Employee();
 
 
 
-.controller('EmployeeAddModalController', function($scope, $modalInstance, site, employeeService, Roles) {
+.controller('EmployeeAddModalController', function($scope, $modalInstance, Role) {
     var newEmployee = $scope;
     newEmployee.employee = {};
     newEmployee.options = ['Male', 'Female', 'Others'];
-    newEmployee.$watch('roles', function(roles) {
-        newEmployee.roles_list = angular.copy(roles);
-        newEmployee.employee.role_id = newEmployee.roles_list[0];
-    }, true);
+    Role.query(null,
+        function(data) {
+        newEmployee.roles = data;
+        newEmployee.employee.role_id = newEmployee.roles[0].id;
+        newEmployee.employee.sex = newEmployee.options[0];
+        },
+        function(error) {
+            console.log(error);
+        });
+
 
     newEmployee.$watch('date', function(dob) {
        if(!dob == newEmployee.employee.date_of_birth){
@@ -144,16 +156,10 @@ var es = new Employee();
         newEmployee.employee.date_joined = dob;
        }
     }, true);
-    newEmployee.roles = Roles.query();
     newEmployee.employee.date_of_birth =  newEmployee.date;
     newEmployee.employee.date_joined =  newEmployee.awedate;
 
     newEmployee.ok = function() {
-          if(angular.isObject(newEmployee.employee.role_id)){
-               newEmployee.employee.role_id = newEmployee.employee.role_id.id;
-            }else{
-            newEmployee.employee.role_id =  newEmployee.employee.role_id;
-            }
         $modalInstance.close(newEmployee.employee);
     };
 
@@ -311,7 +317,7 @@ function($scope, Demand, Item, Category, $modal, $timeout, $routeParams, $locati
 
     var self = $scope;
     var parent = self.$parent;
-    var site_id = parent.data.site_id;
+    self.site_id = parent.data.site_id;
     self.$watch('data', function(data) {
         if(!angular.equals(data,{})){
          if(!self.site_id){
@@ -409,6 +415,134 @@ function($scope, Demand, Item, Category, $modal, $timeout, $routeParams, $locati
             function(data) {
                 self.items.splice(0, 0, data);
                 self.demand.rows[index].item_id = data.id;
+            },
+            function(error) {
+                console.log(error);
+            });
+
+            }
+        });
+    };
+
+}])
+
+.controller('PayrollDetailController', ['$scope', 'Voucher', 'Employee', 'SiteEmployee', 'Role', '$modal', '$timeout', '$routeParams', '$location',
+function($scope, Voucher, Employee, SiteEmployee, Role, $modal, $timeout, $routeParams, $location) {
+    var newDate = new Date();
+    var today = newDate.toISOString().substring(0, 10);
+    var self = $scope;
+    var parent = self.$parent;
+    self.employees = {};
+    self.site_id = parent.data.site_id;
+    self.$watch('data', function(data) {
+        if(!angular.equals(data,{})){
+        if(data.site_id){
+        self.site_id = data.site_id;
+            self.voucher.site_id = data.site_id;
+            var se = new SiteEmployee();
+            se.$query({siteID:data.site_id},
+                function(data) {
+                self.employees = data.employee;
+                },
+                function(error) {
+                    console.log(error);
+                });
+            }
+        }
+    }, true);
+    self.voucherId =  $routeParams.vId;
+    self.initial_id = 1;
+    self.voucher = {};
+    if(self.voucherId !=0){
+        var es = new Voucher();
+            es.$get({Id:self.voucherId},
+                    function(data) {
+                    self.voucher = data;
+                    },
+                    function(error) {
+                        console.log(error);
+                    });
+    }else{
+        self.voucher = {date:today, site_id:self.site_id, voucher_no:1, rows:[]};
+    }
+
+    self.saveVoucher = function(){
+    if(self.voucher.id){
+        var ds = new Voucher();
+        ds.id = self.voucher.id;
+        ds.date = self.voucher.date;
+        ds.site_id = self.voucher.site_id;
+        ds.voucher_no = self.voucher.voucher_no;
+        ds.rows = self.voucher.rows;
+        ds.$update({Id:self.voucher.id},
+                function(data) {
+                self.voucher = data;
+                  alert("Payroll Voucher "+self.voucher.voucher_no+" Updated ");
+                },
+                function(error) {
+                    console.log(error);
+                });
+
+    }else{
+        var ds = new Voucher();
+        ds.site_id = parent.data.site_id;
+        ds.date = self.voucher.date;
+        ds.voucher_no = self.voucher.voucher_no;
+        ds.rows = self.voucher.rows;
+        ds.$save(null,
+        function(data) {
+        self.voucher = data;
+          alert("Payroll Voucher "+self.voucher.voucher_no+" Saved ");
+                $location.path("/employee/voucher-details/"+data.id);
+        },
+        function(error) {
+            console.log(error);
+        });
+
+
+    }
+
+    };
+
+    self.newItem = function(){
+    var sn = self.voucher.rows.length || 0;
+    self.voucher.rows.push({'sn':sn+1,employee_id:self.employees[0].id,amount:0.0,paid_date:today,
+    start_date:today,last_date:today});
+
+    };
+
+   self.openAddEmployee = function(index) {
+        var modalInstance = $modal.open({
+            animation: true,
+            templateUrl: djstatic('user/awe/dashboard/employee/add_employee_modal.html'),
+            controller: 'EmployeeAddModalController',
+            windowClass: 'app-modal-window',
+            resolve: {
+            Role: function() {
+                return Role;
+            }
+            }
+        });
+
+        modalInstance.result.then(function(employeeData) {
+        if (!angular.equals({},employeeData)){
+        var es = new Employee();
+            var es = new Employee();
+            es.name = employeeData.name;
+            es.address = employeeData.address;
+            es.sex = employeeData.sex;
+            es.phone = employeeData.phone;
+            es.marital_status = employeeData.marital_status;
+            es.status = employeeData.status;
+            es.site_id = parent.data.site_id;
+            es.role_id = employeeData.role_id;
+            es.date_of_birth = employeeData.date_of_birth;
+            es.date_joined = employeeData.date_joined;
+
+            es.$save(null,
+            function(data) {
+                self.employees.splice(0, 0, data);
+                self.voucher.rows[index].employee_id = data.id;
             },
             function(error) {
                 console.log(error);
@@ -624,13 +758,7 @@ $timeout, $routeParams){
             controller: 'EmployeeAddModalController',
             windowClass: 'app-modal-window',
             resolve: {
-            site: function() {
-                return site;
-                },
-            employeeService: function() {
-                return Employee;
-            },
-            Roles: function() {
+            Role: function() {
                 return Role;
             }
             }
@@ -645,7 +773,7 @@ $timeout, $routeParams){
             es.phone = employeeData.phone;
             es.marital_status = employeeData.marital_status;
             es.status = employeeData.status;
-            es.site_id = self.site;
+            es.site_id = self.siteID;
             es.role_id = employeeData.role_id;
             es.date_of_birth = employeeData.date_of_birth;
             es.date_joined = employeeData.date_joined;

@@ -1,0 +1,67 @@
+<div class="col-sm-9 col-sm-offset-3">
+    <a href="#/account/payroll/{[{data.site_id}]}" title="Payroll Details">
+          <i class="fa fa-level-up">ALL Payrolls</i></a>
+</div>
+<form name="demandForm">
+<table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>SN <a href="#/employee/voucher-details/0" title="Add Payroll">
+            <i class="fa fa-plus"></i></a></th>
+        <th>Date</th>
+        <th>Voucher NO</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>
+            <input type="text" class="form-control" id="date"  ng-model="voucher.date"
+                   placeholder="Date" voucherdatepicker/>
+        </td>
+        <td> <input type="number" step="1" class="form-control" ng-model="voucher.voucher_no">
+            </td>
+      </tr>
+    </tbody>
+
+</table>
+<div class="col-sm-9 col-sm-offset-3" ng-show="voucher.rows.length"><h1>Paid Employees</h1></div>
+<table class="table table-bordered table-striped" ng-show="voucher.rows.length">
+    <thead>
+      <tr>
+        <th>SN</th>
+        <th colspan="2">Employee</th>
+        <th>Amount</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Paid Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="row in voucher.rows">
+        <td><input type="number" step="1" class="form-control" ng-model="row.sn" ng-readonly="!user_admin()"></td>
+        <td><a href="" title="Add New Employee" ng-click="openAddEmployee($index)">
+            <i class="fa fa-plus"></i></a></td>
+          <td><select class="form-control pull-right" data-ng-options="o.id as o.name for o in employees"
+                      data-ng-model="row.employee_id"></select>
+        </td>
+        <td> <input type="number" step="1" class="form-control" ng-model="row.amount"> </td>
+        <td><input type="text" class="form-control" id="sd" ng-model="row.start_date"
+                                 placeholder="Start Date" /> </td>
+
+          <td><input type="text" class="form-control" id="ed" ng-model="row.last_date"
+                                 placeholder="Last Date" /> </td>
+          <td><input type="text" class="form-control" id="pd" ng-model="row.paid_date"
+                                 placeholder="Paid Date" /> </td>
+      </tr>
+    </tbody>
+
+</table>
+    <div class="row">
+        <div class="col-sm-10 col-sm-offset-2">
+            <div class="col-sm-6"><button class="btn btn-info" ng-click="newItem()">New Employee Payroll </button></div>
+            <div class="col-sm-6"><button class="btn btn-info" ng-click="saveVoucher()">Save Payroll</button></div>
+        </div>
+    </div>
+
+</form>
