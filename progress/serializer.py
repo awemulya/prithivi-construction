@@ -51,8 +51,8 @@ class TaskSerializer(serializers.ModelSerializer):
         task.description = validated_data.pop('description')
         task.progress_status = validated_data.pop('progress_status','started')
         task.status = validated_data.pop('status', False)
-        task.start_date = validated_data.pop.get('start_date', datetime.datetime.today)
-        task.deadline = validated_data.pop.get('deadline', datetime.datetime.today)
+        task.start_date = validated_data.pop('start_date', datetime.datetime.today)
+        task.deadline = validated_data.pop('deadline', datetime.datetime.today)
         task.save()
         for row_data in rows_data:
             data = dict(row_data)

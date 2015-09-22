@@ -628,7 +628,7 @@ function($scope, Tasks, $timeout, $routeParams, $location) {
         ts.description = self.tasks.description;
         ts.status_choices = self.tasks.status_choices;
         ts.status = self.tasks.status;
-        ds.rows = self.tasks.rows;
+        ts.rows = self.tasks.rows;
         ts.$update({Id:self.tasks.id},
                 function(data) {
                 self.tasks = data;
