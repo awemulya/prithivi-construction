@@ -1,8 +1,12 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import patterns, url, include
 from . import views
+from rest_framework.routers import DefaultRouter
+from user.viewsets import UserViewSet
 
-
+router = DefaultRouter()
+router.register(r'user', UserViewSet)
 urlpatterns = patterns('',
+                       url(r'', include(router.urls)),
                        url(r'^login/$', views.web_login, name='login'),
                        url(r'^logout/$', views.logout, name='logout'),
                        url(r'^register/$', views.register, name='register'),

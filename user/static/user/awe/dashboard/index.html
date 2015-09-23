@@ -1,17 +1,21 @@
 <div class="row">
-    <div class="col-sm-9 col-sm-offset-3"><h2>My Sites </h2></div>
+    <div class="col-sm-9 col-sm-offset-3"><h2>My Sites <a href="#/site/site-details/0" title="Add Site">
+                  <i class="fa fa-plus" ng-hide="!data.is_admin"></i></a></h2></div>
     <div class="col-md-6 col-sm-6 col-xs-12" ng-repeat="site in sites">
 
         <div class="box box-widget widget-user">
                 <!-- Add the bg color to the header using any of the bg-* classes -->
                 <div class="widget-user-header bg-aqua-active">
-                  <h3 class="widget-user-username">{[{site.name}]}</h3>
+                  <h3 class="widget-user-username">{[{site.name}]}
+                      <a href="#/site/site-details/{[{site.id}]}" title="Modify Site">
+                  <i class="fa fa-edit" ng-hide="!data.is_admin"></i></a></h3>
                   <h5 class="widget-user-desc">{[{site.description}]}</h5>
                 </div>
 
         </div>
         <div class="box-body">
-              <div class="col-sm-3"><i class="fa fa-calendar">Progress</i></div>
+              <div class="col-sm-3"><a href="#/progress/progress/{[{site.id}]}" title="Site progress">
+                  <i class="fa fa-line-chart">Progress</i></a></div>
               <div class="col-sm-3">
                   <a href="#/employees/{[{site.id}]}" title="Employee Details"><i class="fa fa-user">Employees</i></a>
               </div>

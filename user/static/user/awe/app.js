@@ -117,4 +117,20 @@ config(function($interpolateProvider) {
             });
         }
     };
+})
+.directive('sitedate', function () {
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+         link: function (scope, element, attrs, ngModelCtrl) {
+            element.datepicker({
+                dateFormat: 'yy-mm-dd',
+                onSelect: function (date) {
+//                element.val(date);
+                    scope.site.start_date = date;
+                    scope.$apply();
+                }
+            });
+        }
+    };
 });

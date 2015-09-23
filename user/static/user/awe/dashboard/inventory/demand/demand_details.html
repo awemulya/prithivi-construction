@@ -48,7 +48,7 @@
         <td><input type="text" class="form-control" ng-model="row.purpose"></td>
         <td> <input type="number" step="0.01" class="form-control" ng-model="row.quantity"> </td>
         <td> <input type="text" class="form-control" ng-model="row.unit"> </td>
-        <td> <input type="number" step="0.01" class="form-control" ng-model="row.fulfilled_quantity" ng-readonly="!user_admin()"></td>
+        <td> <input type="number" step="0.01" class="form-control" ng-model="row.fulfilled_quantity" ng-readonly="!data.is_admin"></td>
         <td><input type="checkbox" class="icheckbox_flat-green checked" ng-model="row.status">
             <label class="text-aqua" ng-show="row.status">Received</label>
             <label class="text-red" ng-hide="row.status">Not Received</label> </td>

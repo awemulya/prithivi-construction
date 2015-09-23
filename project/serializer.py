@@ -1,17 +1,19 @@
+import datetime
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 from employee.models import Employee, EmployeeRole, Salary, Payment
 from project.models import Project
 from user.models import AweUser
+from user.serializer import  UserIDSerializer
 
 __author__ = 'awemulya'
 
 
 class SitesSerializer(serializers.ModelSerializer):
-
+    incharge = UserIDSerializer(many=True)
     class Meta:
         model = Project
-        fields = ('id', 'name', 'description', 'address', 'start_date',)
+        fields = ('id', 'name', 'description', 'address', 'start_date', 'incharge')
         depth = 1
         extra_kwargs = {
             "id": {
@@ -19,7 +21,31 @@ class SitesSerializer(serializers.ModelSerializer):
                 "required": False,
             },
         }
+    def create(self, validated_data):
+        rows_data = validated_data.pop('incharge')
+        site = Project.objects.create(**validated_data)
+        for row_data in rows_data:
+            data = dict(row_data)
+            user = AweUser.objects.get(pk=data.get('id'))
+            site.incharge.add(user)
+        return site
 
+    def update(self, instance, validated_data):
+        rows_data = validated_data.pop('incharge')
+        site = Project.objects.get(pk=instance.id)
+        site.name = validated_data.pop('name')
+        site.description = validated_data.pop('description')
+        site.address = validated_data.pop('address')
+        site.start_date = validated_data.pop('start_date')
+        site.incharge.clear()
+        site.save()
+        for row_data in rows_data:
+            data = dict(row_data)
+            id = data.get('id', '')
+            if id:
+                user = AweUser.objects.get(pk=data.get('id'))
+                site.incharge.add(user)
+        return site
 
 class RoleSerializer(serializers.ModelSerializer):
 

@@ -21,6 +21,7 @@
     <!-- Theme style -->
     <link href="{{ STATIC_URL }}user/vendor/dist/css/AdminLTE.min.css" rel="stylesheet" type="text/css" />
     <link href="{{ STATIC_URL }}user/vendor/plugins/datatables/dataTables.bootstrap.css" rel="stylesheet" type="text/css" />
+    <link href="{{ STATIC_URL }}user/vendor/plugins/select2/select2.min.css" rel="stylesheet" type="text/css" />
     <link href="{{ STATIC_URL }}user/vendor/plugins/jquery-ui/themes/smoothness/jquery-ui.min.css" rel="stylesheet" type="text/css" />
     <!-- AdminLTE Skins. Choose a skin from the css/skins
          folder instead of downloading all of them to reduce the load. -->
@@ -140,7 +141,7 @@
               </li>
               <!-- User Account: style can be found in dropdown.less -->
               <li class="dropdown user user-menu">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <a href="" class="dropdown-toggle" data-toggle="dropdown">
                   <img src="{{ STATIC_URL }}user/vendor/dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
                   <span class="hidden-xs">{{request.user.email}}</span>
                 </a>
@@ -149,8 +150,8 @@
                   <li class="user-header">
                     <img src="{{ STATIC_URL }}user/vendor/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
                     <p>
-                        <label class="text-aqua" ng-show="user_admin()">Administrator</label>
-                        <label class="text-yellow" ng-hide="user_admin()">Site Incharge</label>
+                        <label class="text-aqua" ng-if="data.is_admin">Administrator</label>
+                        <label class="text-yellow" ng-if="!data.is_admin">Site InCharge</label>
                          {{request.user.email}}
                     </p>
                   </li>
@@ -158,20 +159,20 @@
                   <li class="user-body">
                     <div class="row">
                       <div class="col-xs-4 text-center">
-                        <a href="#">Followers</a>
+                        <a href="">Followers</a>
                       </div>
                       <div class="col-xs-4 text-center">
-                        <a href="#">Sales</a>
+                        <a href="">Sales</a>
                       </div>
                       <div class="col-xs-4 text-center">
-                        <a href="#">Friends</a>
+                        <a href="">Friends</a>
                       </div>
                     </div><!-- /.row -->
                   </li>
                   <!-- Menu Footer-->
                   <li class="user-footer">
                     <div class="pull-left">
-                      <a href="#" class="btn btn-default btn-flat">Profile</a>
+                      <a href="" class="btn btn-default btn-flat">Profile</a>
                     </div>
                     <div class="pull-right">
                       <a href="{% url 'logout' %}" class="btn btn-default btn-flat">Sign out</a>
@@ -181,7 +182,7 @@
               </li>
               <!-- Control Sidebar Toggle Button -->
               <li>
-                <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+                <a href="" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
               </li>
             </ul>
           </div>
@@ -219,6 +220,7 @@
             <li class="header">MAIN NAVIGATION{{sites}}</li>
             <li><a href="#dashboard"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a></li>
             <li><a href="#/sites/{[{data.site_id}]}"><i class="fa fa-home"></i> Sites</a></li>
+            <li><a href="#/users/"><i class="fa fa-home" ng-if="data.is_admin"></i> Users</a></li>
             <li><a href="#/progress/progress/{[{data.site_id}]}"><i class="fa fa-line-chart"></i> Progress</a></li>
             <li><a href="#/employees/{[{data.site_id}]}"><i class="fa fa-users"></i> Employees</a></li>
             <li><a href="#/account/{[{data.site_id}]}"><i class="fa fa-money"></i> Account</a></li>
@@ -492,7 +494,7 @@ display: block;
       var MEDIA_URL = "{{ MEDIA_URL|escapejs }}";
       var CSRF_TOKEN = "{{ csrf_token|escapejs }}";
       var USER = "{{ request.user.email|escapejs }}";
-      var USER_ADMIN = {{request.user.user_admin|yesno:"true,false"}};
+      var USER_ADMIN = {{request.user.is_admin|yesno:"true,false"}};
       function djstatic(path){
         return STATIC_URL + path;
       }
@@ -515,6 +517,7 @@ display: block;
     <script src="{{ STATIC_URL }}user/bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
     <script src="{{ STATIC_URL }}user/vendor/plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="{{ STATIC_URL }}user/vendor/plugins/datatables/dataTables.bootstrap.min.js"></script>
+    <script src="{{ STATIC_URL }}user/vendor/plugins/select2/select2.full.min.js"></script>
     <script src="{{ STATIC_URL }}user/awe/app.js"></script>
     <script src="{{ STATIC_URL }}user/awe/dashboard/dashboard.js"></script>
     <script src="{{ STATIC_URL }}user/awe/dashboard/services.js"></script>

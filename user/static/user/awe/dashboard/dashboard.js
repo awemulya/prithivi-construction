@@ -17,6 +17,11 @@ angular.module('myApp.dashboard', ['ngRoute'])
     controller: 'EmployeeController'
   })
 
+$routeProvider.when('/users/', {
+    templateUrl: djstatic('user/awe/dashboard/users/users.html'),
+    controller: 'UserController'
+  })
+
  $routeProvider.when('/account/:siteId', {
     templateUrl: djstatic('user/awe/dashboard/account/account.html'),
     controller: 'AccountController'
@@ -25,6 +30,11 @@ angular.module('myApp.dashboard', ['ngRoute'])
 $routeProvider.when('/inventory/demand-details/:demandId', {
     templateUrl: djstatic('user/awe/dashboard/inventory/demand/demand_details.html'),
     controller: 'DemandDetailController'
+  })
+
+$routeProvider.when('/site/site-details/:siteId', {
+    templateUrl: djstatic('user/awe/dashboard/site/site_details.html'),
+    controller: 'SiteDetailController'
   })
 
 
@@ -102,6 +112,7 @@ $routeProvider.when('/inventories/:siteId', {
     var self = $scope;
     self.data = {};
     self.data.site_id = '';
+    self.data.is_admin = USER_ADMIN;
     self.sites = [];
 
     Site.query(null,
@@ -454,6 +465,79 @@ function($scope, Demand, Item, Category, $modal, $timeout, $routeParams, $locati
             }
         });
     };
+
+}])
+
+.controller('SiteDetailController', ['$scope', 'Site', 'User','$modal', '$timeout', '$routeParams', '$location',
+function($scope, Site, User, $modal, $timeout, $routeParams, $location) {
+    var newDate = new Date();
+    var today = newDate.toISOString().substring(0, 10);
+    var self = $scope;
+    var parent = self.$parent;
+    self.site_Id =  $routeParams.siteId;
+    self.users = User.query();
+    self.site = {};
+    if(self.site_Id !=0){
+        parent.data.site_id = self.site_Id;
+        var ss = new Site();
+            ss.$site({pId:self.site_Id},
+                    function(data) {
+                    self.site = data;
+                    },
+                    function(error) {
+                        console.log(error);
+                    });
+    }else{
+        self.site = {start_date:today, name:'New Site', description:'', address:'', incharge:[]};
+    }
+
+    self.saveSite = function(){
+    if(self.site.id){
+        var ss = new Site();
+        ss.id=self.site.id;
+        ss.start_date=self.site.start_date;
+        ss.name=self.site.name;
+        ss.description=self.site.description;
+        ss.address=self.site.address;
+        ss.incharge = self.site.incharge;
+        ss.$update({pId:self.site.id},
+                function(data) {
+                self.site = data;
+                  alert("site "+self.site.name+" Updated ");
+                },
+                function(error) {
+                    console.log(error);
+                });
+
+    }else{
+        var ss = new Site();
+        ss.start_date=self.site.start_date;
+        ss.name=self.site.name;
+        ss.description=self.site.description;
+        ss.address=self.site.address;
+        ss.incharge = self.site.incharge;
+        ss.$save(null,
+        function(data) {
+        self.site = data;
+          alert("site "+self.site.name+" Saved ");
+                $location.path("/site/site-details/"+data.id);
+        },
+        function(error) {
+            console.log(error);
+        });
+
+
+    }
+
+    };
+    self.addIncharge = function(){
+    self.site.incharge.push({'id':self.users[0].id});
+
+    }
+    self.removeIncharge = function(index){
+    self.site.incharge.splice(index,1);
+
+    }
 
 }])
 

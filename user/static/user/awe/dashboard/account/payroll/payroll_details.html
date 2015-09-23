@@ -39,7 +39,7 @@
     </thead>
     <tbody>
       <tr ng-repeat="row in voucher.rows">
-        <td><input type="number" step="1" class="form-control" ng-model="row.sn" ng-readonly="!user_admin()"></td>
+        <td><input type="number" step="1" class="form-control" ng-model="row.sn" ng-readonly="!data.is_admin"></td>
         <td><a href="" title="Add New Employee" ng-click="openAddEmployee($index)">
             <i class="fa fa-plus"></i></a></td>
           <td><select class="form-control pull-right" data-ng-options="o.id as o.name for o in employees"

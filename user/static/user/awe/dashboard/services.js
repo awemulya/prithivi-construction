@@ -20,7 +20,7 @@ angular.module('dashboardServices', ['ngResource'])
 	return $resource('/dashboard/sites/:pId', {}, {
 	  query: {method:'GET', params:{pId: ''}, isArray:true},
 	  update: {method:'PUT', params: {pId: '@pId'}},
-	  player: {method:'GET', params: {pId: '@pId'}},
+	  site: {method:'GET', params: {pId: '@pId'}},
 	  save: {method:'POST', params: {pId: ''}},
 	});
 }])
@@ -84,6 +84,15 @@ angular.module('dashboardServices', ['ngResource'])
 	  update: {method:'PUT', params: {roleId: '@roleId'}},
 	  employee: {method:'GET', params: {roleId: '@roleId'}},
 	  save: {method:'POST', params: {roleId: ''}},
+	});
+}])
+
+.factory('User', ['$resource', function($resource){
+	return $resource('/user/:uId', {}, {
+	  query: {method:'GET', params:{uId: ''}, isArray:true},
+	  update: {method:'PUT', params: {uId: '@uId'}},
+	  employee: {method:'GET', params: {uId: '@uId'}},
+	  save: {method:'POST', params: {uId: ''}},
 	});
 }])
 .factory('Item', ['$resource', function($resource){
