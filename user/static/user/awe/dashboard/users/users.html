@@ -1,0 +1,31 @@
+<table id="example1" class="table table-bordered table-striped" ng-show="data.is_admin">
+    <thead>
+      <tr>
+        <th>Email</th>
+        <th>Is Site Incharge</th>
+        <th>Is Admin</th>
+        <th>Status</th>
+        <th colspan="1">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="user in users | orderBy:'email'">
+        <td>{[{user.email}]}</td>
+        <td><i class="fa" ng-class="{true:'fa-check text-aqua', false:'fa-close text-red'}[user.is_site_manager]"></i></td>
+        <td><i class="fa" ng-class="{true:'fa-check text-aqua', false:'fa-close text-red'}[user.is_admin]"></i></td>
+        <td><i class="fa" ng-class="{true:'fa-check text-aqua', false:'fa-close text-red'}[user.is_active]"></i></td>
+        <td><a href="" title="Edit User" ng-click="openEditUser(user)"><i class="fa fa-edit" ng-hide="user.is_admin"></i></a></td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <th>Email</th>
+        <th>Is Site Incharge</th>
+        <th>Is Admin</th>
+        <th>Status</th>
+        <th colspan="1">Actions</th>
+      </tr>
+    </tfoot>
+</table>
+
+<div ng-hide="data.is_admin"> Only Administrator can Access this page...</div>

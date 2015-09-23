@@ -220,7 +220,7 @@
             <li class="header">MAIN NAVIGATION{{sites}}</li>
             <li><a href="#dashboard"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a></li>
             <li><a href="#/sites/{[{data.site_id}]}"><i class="fa fa-home"></i> Sites</a></li>
-            <li><a href="#/users/"><i class="fa fa-home" ng-if="data.is_admin"></i> Users</a></li>
+            <li ng-if="data.is_admin"><a href="#/users/"><i class="fa fa-user-plus" ></i> Users</a></li>
             <li><a href="#/progress/progress/{[{data.site_id}]}"><i class="fa fa-line-chart"></i> Progress</a></li>
             <li><a href="#/employees/{[{data.site_id}]}"><i class="fa fa-users"></i> Employees</a></li>
             <li><a href="#/account/{[{data.site_id}]}"><i class="fa fa-money"></i> Account</a></li>

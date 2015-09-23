@@ -221,6 +221,18 @@ var es = new Employee();
     };
 })
 
+.controller('UserUpdateModalController', function($scope, $modalInstance, user, User) {
+    var newUser = $scope;
+    newUser.user = angular.copy(user);
+    newUser.ok = function() {
+        $modalInstance.close(newUser.user);
+    };
+
+    newUser.cancel = function() {
+        $modalInstance.dismiss('cancel');
+    };
+})
+
 .controller('EmployeeHistoryModalController', function($scope, $modalInstance, employee, SalaryRecord, Salary) {
     var self = $scope;
     self.employee = angular.copy(employee);
@@ -928,6 +940,51 @@ function($scope, Site, Item, Category, InventoryAccount, $modal, $timeout, $rout
     };
     })
 
+
+.controller('UserController', ['$scope', 'User', '$modal', '$timeout',
+function($scope, User, $modal, $timeout){
+    var self = $scope;
+    var parent = self.$parent;
+    self.users = User.query();
+
+        self.openEditUser = function(user) {
+        var modalInstance = $modal.open({
+            animation: true,
+            templateUrl: djstatic('user/awe/dashboard/users/add_user_modal.html'),
+            controller: 'UserUpdateModalController',
+            windowClass: 'app-modal-window',
+            resolve: {
+            user: function() {
+                return user;
+                }
+            }
+        });
+
+        modalInstance.result.then(function(userdata) {
+        if (!angular.equals({},userdata)){
+        var es = new User();
+            es.email = userdata.email;
+            es.is_site_manager = userdata.is_site_manager;
+            es.is_admin = userdata.is_admin;
+            es.is_active = userdata.is_active;
+            es.$update({uId:userdata.id},
+            function(data) {
+                for( var i=0; i< self.users.length; i++){
+                    if(self.users[i].id == data.id){
+                        self.users[i]= data;
+
+                    }
+                }
+            },
+            function(error) {
+                console.log(error);
+            });
+
+            }
+        });
+    };
+
+}])
 
 .controller('EmployeeController', ['$scope', 'Employee', 'SiteEmployee', 'Site', 'Role', 'SalaryRecord',
 'Salary', 'EmployeePayments','SalaryPayments', '$modal', '$timeout', '$routeParams',
