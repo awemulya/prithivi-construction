@@ -22,6 +22,15 @@ $routeProvider.when('/users/', {
     controller: 'UserController'
   })
 
+$routeProvider.when('/party/', {
+    templateUrl: djstatic('user/awe/dashboard/inventory/party/parties.html'),
+    controller: 'PartyController'
+  })
+$routeProvider.when('/purchase/', {
+    templateUrl: djstatic('user/awe/dashboard/inventory/purchase/purchase.html'),
+    controller: 'PurchaseController'
+  })
+
  $routeProvider.when('/account/:siteId', {
     templateUrl: djstatic('user/awe/dashboard/account/account.html'),
     controller: 'AccountController'
@@ -185,6 +194,18 @@ var es = new Employee();
     };
 
     newEmployee.cancel = function() {
+        $modalInstance.dismiss('cancel');
+    };
+})
+
+.controller('PartyAddModalController', function($scope, $modalInstance, party) {
+    var newParty = $scope;
+    newParty.party = angular.copy(party);
+    newParty.ok = function() {
+        $modalInstance.close(newParty.party);
+    };
+
+    newParty.cancel = function() {
         $modalInstance.dismiss('cancel');
     };
 })
@@ -1126,6 +1147,63 @@ $timeout, $routeParams){
         });
     };
 
+
+}])
+
+.controller('PartyController', ['$scope', 'Party', '$modal', '$timeout', '$routeParams',
+function($scope, Party, $modal, $timeout, $routeParams){
+    var self = $scope;
+    var parent = self.$parent;
+    self.parties = Party.query();
+
+    self.openAddParty = function(party) {
+        var modalInstance = $modal.open({
+            animation: true,
+            templateUrl: djstatic('user/awe/dashboard/inventory/party/add_party_modal.html'),
+            controller: 'PartyAddModalController',
+            windowClass: 'app-modal-window',
+            resolve: {
+            party: function() {
+                return party;
+            }
+            }
+        });
+
+        modalInstance.result.then(function(partyData) {
+        if (!angular.equals({},partyData)){
+        var ps = new Party();
+            ps.name = partyData.name;
+            ps.address = partyData.address;
+            ps.phone_no = partyData.phone_no;
+            ps.pan_no = partyData.pan_no;
+            if(partyData.id){
+                ps.$update({Id:partyData.id},
+                function(data) {
+                    for(var i=0; i<self.parties.length; i++){
+                        if(self.parties[i].id == data.id){
+                            self.parties[i]= data;
+                            i= self.parties.length;
+                        }
+                    }
+                },
+                function(error) {
+                    console.log(error);
+                });
+            }else{
+                ps.$save(null,
+                function(data) {
+                    self.parties.splice(0, 0, data);
+                },
+                function(error) {
+                    console.log(error);
+                });
+
+            }
+
+
+            }
+        });
+    };
 
 }])
 

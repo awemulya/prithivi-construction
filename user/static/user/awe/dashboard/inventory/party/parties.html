@@ -1,0 +1,29 @@
+<table id="example1" class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>Party <a href="" title="Add Party" ng-click="openAddParty({})"><i class="fa fa-plus"></i></a></th>
+        <th>Address</th>
+        <th>Phone</th>
+        <th>PAN NO</th>
+        <th colspan="2">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="party in parties | orderBy:'-name'">
+        <td>{[{party.name}]}</td>
+        <td>{[{party.address}]}</td>
+        <td>{[{party.phone_no}]}</td>
+        <td>{[{party.pan_no}]}</td>
+        <td><a href="" title="Edit Party" ng-click="openAddParty(party)"><i class="fa fa-edit"></i></a></td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <th>Party <a href="" title="Add Party" ng-click="openAddParty({})"><i class="fa fa-plus"></i></a></th>
+        <th>Address</th>
+        <th>Phone</th>
+        <th>PAN NO</th>
+        <th colspan="2">Actions</th>
+      </tr>
+    </tfoot>
+</table>

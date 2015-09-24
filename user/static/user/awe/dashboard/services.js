@@ -150,6 +150,24 @@ angular.module('dashboardServices', ['ngResource'])
 	});
 }])
 
+.factory('Party', ['$resource', function($resource){
+	return $resource('/inventory/party/:Id', {}, {
+	  query: {method:'GET', params:{Id: ''}, isArray:true},
+	  update: {method:'PUT', params: {Id: '@Id'}},
+	  employee: {method:'GET', params: {Id: '@Id'}},
+	  save: {method:'POST', params: {Id: ''}},
+	});
+}])
+
+.factory('Purchase', ['$resource', function($resource){
+	return $resource('/inventory/purchase/:Id', {}, {
+	  query: {method:'GET', params:{Id: ''}, isArray:true},
+	  update: {method:'PUT', params: {Id: '@Id'}},
+	  employee: {method:'GET', params: {Id: '@Id'}},
+	  save: {method:'POST', params: {Id: ''}},
+	});
+}])
+
 .factory('Voucher', ['$resource', function($resource){
 	return $resource('/employee/payroll/:Id', {}, {
 	  query: {method:'GET', params:{Id: ''}, isArray:true},

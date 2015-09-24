@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ModelSerializer
-from inventory.models import Category, Item, InventoryAccount, Demand, DemandRow
+from inventory.models import Category, Item, InventoryAccount, Demand, DemandRow, Party, Purchase, PurchaseRow
 from project.models import Project
 
 
@@ -132,3 +132,85 @@ class SiteDemandsSerializer(serializers.ModelSerializer):
         demand_list = site.demands.all()
         serializer = DemandSerializer(instance=demand_list, many=True)
         return serializer.data
+
+
+class PartySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Party
+
+
+class PurchaseRowSerializer(serializers.ModelSerializer):
+    item_id = serializers.PrimaryKeyRelatedField(source='item', queryset=Item.objects.all())
+    item_name = serializers.ReadOnlyField(source='item.name')
+
+    class Meta:
+        model = PurchaseRow
+        exclude = ['item']
+        extra_kwargs = {
+            "id": {
+                "read_only": False, "required": False, },
+        }
+
+
+class PurchaseSerializer(serializers.ModelSerializer):
+    party_id = serializers.PrimaryKeyRelatedField(source='party', queryset=Party.objects.all())
+    party_name = serializers.ReadOnlyField(source='party.name')
+    rows = PurchaseRowSerializer(many=True)
+
+    class Meta:
+        model = Purchase
+        exclude = ['party']
+        extra_kwargs = {
+            "id": {
+                "read_only": False, "required": False, },
+        }
+
+    def create(self, validated_data):
+        rows_data = validated_data.pop('rows')
+        purchase = Purchase.objects.create(**validated_data)
+        for row_data in rows_data:
+            data = dict(row_data)
+            row = PurchaseRow()
+            row.sn = data.get('sn')
+            row.item = data.get('item')
+            row.unit = data.get('unit','Pieces')
+            row.quantity = data.get('quantity',0.0)
+            row.rate = data.get('rate', 0.0)
+            row.discount = data.get('discount',0.0)
+            row.purchase = purchase
+            row.save()
+        return purchase
+
+    def update(self, instance, validated_data):
+        rows_data = validated_data.pop('rows')
+        purchase = Purchase.objects.get(pk=instance.id)
+        purchase.date = validated_data.pop('date',None)
+        purchase.voucher_no = validated_data.pop('voucher_no')
+        purchase.party = validated_data.pop('party')
+        purchase.save()
+        for row_data in rows_data:
+            data = dict(row_data)
+            id = data.get('id', '')
+            if id:
+                row = PurchaseRow.objects.get(pk=id)
+                row.sn = data.get('sn')
+                row.item = data.get('item')
+                row.unit = data.get('unit','Pieces')
+                row.quantity = data.get('quantity',0.0)
+                row.rate = data.get('rate', 0.0)
+                row.discount = data.get('discount',0.0)
+                row.purchase = purchase
+                row.save()
+            else:
+                row = PurchaseRow()
+                row.sn = data.get('sn')
+                row.item = data.get('item')
+                row.unit = data.get('unit','Pieces')
+                row.quantity = data.get('quantity',0.0)
+                row.rate = data.get('rate', 0.0)
+                row.discount = data.get('discount',0.0)
+                row.purchase = purchase
+                row.save()
+
+        return purchase

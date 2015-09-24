@@ -240,7 +240,9 @@
               </a>
               <ul class="treeview-menu">
                 <li><a href="#/demands/{[{data.site_id}]}" title="Demand Details">
-                  <i class="fa fa-circle">Demands</i></a></li>
+                  <i class="fa fa-circle"> Demands</i></a></li>
+                <li ng-if="data.is_admin"><a href="#/party/" title="Parties"><i class="fa fa-circle"></i> Parties</a></li>
+                <li ng-if="data.is_admin"><a href="#/purchase/" title="Purchases"><i class="fa fa-circle"></i> Purchases</a></li>
               </ul>
             </li>
             <li>

@@ -1,12 +1,15 @@
 from django.conf.urls import patterns, url, include
 from rest_framework.routers import DefaultRouter
-from inventory.viewsets import CategoryViewSet, ItemViewSet, InventoryAccountViewSet, SiteDemandsViewSet, DemandsViewSet
+from inventory.viewsets import CategoryViewSet, ItemViewSet, InventoryAccountViewSet, SiteDemandsViewSet, DemandsViewSet, \
+    PurchaseViewSet, PartyViewSet
 
 router = DefaultRouter()
 router.register(r'categories', CategoryViewSet)
 router.register(r'items', ItemViewSet)
 router.register(r'site-demands', SiteDemandsViewSet)
 router.register(r'demand', DemandsViewSet)
+router.register(r'party', PartyViewSet)
+router.register(r'purchase', PurchaseViewSet)
 router.register(r'account', InventoryAccountViewSet)
 
 urlpatterns = patterns('',

@@ -1,10 +1,9 @@
 from rest_framework import viewsets
-from rest_framework.response import Response
-
-from inventory.models import Category, Item, InventoryAccount, Demand
+from inventory.models import Category, Item, InventoryAccount, Demand, Purchase, Party
 from inventory.serializer import CategorySerializer, ItemSerializer, InventoryAccountSerializer, SiteDemandsSerializer, \
-    DemandSerializer
+    DemandSerializer, PurchaseSerializer, PartySerializer
 from project.models import Project
+from project.permissions import IsAdminOrReadOnly
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -51,6 +50,29 @@ class DemandsViewSet(viewsets.ModelViewSet):
     queryset = Demand.objects.all()
     serializer_class = DemandSerializer
     # permission_classes = [IsOwnerOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save()
+
+    def perform_update(self, serializer):
+        serializer.save()
+
+
+class PartyViewSet(viewsets.ModelViewSet):
+
+    queryset = Party.objects.all()
+    serializer_class = PartySerializer
+    permission_classes = [IsAdminOrReadOnly]
+
+    def perform_create(self, serializer):
+            serializer.save()
+
+
+class PurchaseViewSet(viewsets.ModelViewSet):
+
+    queryset = Purchase.objects.all()
+    serializer_class = PurchaseSerializer
+    permission_classes = [IsAdminOrReadOnly]
 
     def perform_create(self, serializer):
         serializer.save()

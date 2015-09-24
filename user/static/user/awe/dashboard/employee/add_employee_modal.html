@@ -23,7 +23,7 @@
                           <label class="control-label" for="address">
                               <i class="fa fa-times-circle-o"></i> Address</label>
                             <label ng-if="employeeForm.address.$invalid">
-                                Address be Empty.
+                                Cannot be Empty.
                             </label>
                           <input type="text" class="form-control" id="address" ng-model="employee.address"
                                  placeholder="Address ..." required>
@@ -32,7 +32,7 @@
                           <label class="control-label" for="phone">
                               <i class="fa fa-times-circle-o"></i> Phone NO</label>
                             <label ng-if="employeeForm.phone.$invalid">
-                                Address be Empty.
+                                Cannot be Empty.
                             </label>
                           <input type="text" class="form-control" id="phone" ng-model="employee.phone"
                                  placeholder="Phone ..." required>
