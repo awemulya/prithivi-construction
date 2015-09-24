@@ -1,30 +1,32 @@
 <table id="example1" class="table table-bordered table-striped">
     <thead>
       <tr>
-        <th>SN <a href="#/inventory/demand-details/0" title="Add Demand">
+        <th>SN <a href="#/inventory/purchase-details/0" title="Add Purchase">
             <i class="fa fa-plus"></i></a></th>
-      <th>Demand Count</th>
+      <th>Party</th>
+      <th>Purchase Count</th>
+        <th>Voucher No</th>
         <th>Date</th>
-        <th>Purpose</th>
         <th colspan="2">Actions</th>
       </tr>
     </thead>
     <tbody>
-      <tr ng-repeat="demand in demands | orderBy:'-date'">
+      <tr ng-repeat="data in data_list | orderBy:'-voucher_no'">
         <td>{[{$index+1}]} </td>
-          <td>{[{demand.rows.length}]}</td>
-        <td>{[{demand.date}]}</td>
-        <td>{[{demand.purpose}]}</td>
-        <td><a href="#/inventory/demand-details/{[{demand.id}]}" title="Demand Details"><i class="fa fa-bars"></i></a></td>
+          <td>{[{data.rows.length}]}</td>
+        <td>{[{data.voucher_no}]}</td>
+        <td>{[{data.date}]}</td>
+        <td><a href="#/inventory/purchase-details/{[{data.id}]}" title="Purchase Details"><i class="fa fa-bars"></i></a></td>
       </tr>
     </tbody>
     <tfoot>
       <tr>
-        <th>SN <a href="#/inventory/demand-details/0" title="Add Demand">
+        <th>SN <a href="#/inventory/purchase-details/0" title="Add Purchase">
             <i class="fa fa-plus"></i></a></th>
-        <th>Demands Count</th>
+      <th>Party</th>
+      <th>Purchase Count</th>
+        <th>Voucher No</th>
         <th>Date</th>
-        <th>Purpose</th>
         <th colspan="2">Actions</th>
       </tr>
     </tfoot>

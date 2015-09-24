@@ -41,6 +41,11 @@ $routeProvider.when('/inventory/demand-details/:demandId', {
     controller: 'DemandDetailController'
   })
 
+$routeProvider.when('/inventory/purchase-details/:purchaseId', {
+    templateUrl: djstatic('user/awe/dashboard/inventory/purchase/purchase_details.html'),
+    controller: 'PurchaseDetailController'
+  })
+
 $routeProvider.when('/site/site-details/:siteId', {
     templateUrl: djstatic('user/awe/dashboard/site/site_details.html'),
     controller: 'SiteDetailController'
@@ -345,6 +350,23 @@ $timeout, $routeParams){
 
 }])
 
+.controller('PurchaseController', ['$scope', 'Purchase', '$modal', '$timeout', '$routeParams',
+function($scope, Purchase, $modal, $timeout, $routeParams){
+    var self = $scope;
+    self.data_list = {};
+
+    var ps = new Purchase();
+    ps.$query(null,
+            function(data) {
+            self.data_list = data;
+            },
+            function(error) {
+                console.log(error);
+            });
+
+
+}])
+
 .controller('PayrollController', ['$scope', 'SitePayroll', '$routeParams',
 function($scope, SitePayroll, $routeParams){
     var self = $scope;
@@ -389,7 +411,8 @@ function($scope, SiteTasks, $routeParams){
 
 .controller('DemandDetailController', ['$scope', 'Demand', 'Item', 'Category', '$modal', '$timeout', '$routeParams', '$location',
 function($scope, Demand, Item, Category, $modal, $timeout, $routeParams, $location) {
-
+    var newDate = new Date();
+    var today = newDate.toISOString().substring(0, 10);
     var self = $scope;
     var parent = self.$parent;
     self.site_id = parent.data.site_id;
@@ -414,7 +437,7 @@ function($scope, Demand, Item, Category, $modal, $timeout, $routeParams, $locati
                         console.log(error);
                     });
     }else{
-        self.demand = {date:'', site_id:self.site_id, purpose:'',rows:[]};
+        self.demand = {date:today, site_id:self.site_id, purpose:'',rows:[]};
     }
 
     self.saveDemand = function(){
@@ -498,6 +521,176 @@ function($scope, Demand, Item, Category, $modal, $timeout, $routeParams, $locati
             }
         });
     };
+
+}])
+
+
+.controller('PurchaseDetailController', ['$scope', 'Purchase', 'Item', 'Category', 'Party', '$modal', '$timeout',
+'$routeParams', '$location',
+function($scope, Purchase, Item, Category, Party, $modal, $timeout, $routeParams, $location) {
+    var newDate = new Date();
+    var today = newDate.toISOString().substring(0, 10);
+    var self = $scope;
+    var parent = self.$parent;
+    self.site_id = parent.data.site_id;
+    self.$watch('data', function(data) {
+        if(!angular.equals(data,{})){
+         if(!self.site_id){
+         self.site_id = data.site_id;
+         }
+        }
+    }, true);
+    self.purchaseId =  $routeParams.purchaseId;
+    self.items = Item.query();
+    self.parties = Party.query();
+    self.mainData = {};
+    if(self.purchaseId !=0){
+        var ss = new Purchase();
+            ss.$get({Id:self.purchaseId},
+                    function(data) {
+                    self.mainData = data;
+                    },
+                    function(error) {
+                        console.log(error);
+                    });
+    }else{
+        self.mainData = {date:today, party_id:1, voucher_no:'',rows:[]};
+    }
+
+    self.savePurchase = function(){
+    if(self.mainData.id){
+        var ps = new Purchase();
+        ps.id=self.mainData.id;
+        ps.date=self.mainData.date;
+        ps.party_id=self.mainData.party_id;
+        ps.voucher_no=self.mainData.voucher_no;
+        ps.rows = self.mainData.rows;
+        ps.$update({Id:self.mainData.id},
+                function(data) {
+                self.mainData = data;
+                  alert("Purchase "+self.mainData.voucher_no+" Updated ");
+                },
+                function(error) {
+                    console.log(error);
+                });
+
+    }else{
+        var ps = new Purchase();
+        ps.date=self.mainData.date;
+        ps.party_id=self.mainData.party_id;
+        ps.voucher_no=self.mainData.voucher_no;
+        ps.rows = self.mainData.rows;
+        ps.$save(null,
+        function(data) {
+        self.mainData = data;
+          alert("Purchase "+self.mainData.voucher_no+" Saved ");
+                $location.path("/inventory/purchase-details/"+data.id);
+        },
+        function(error) {
+            console.log(error);
+        });
+
+
+    }
+
+    };
+
+    self.newItem = function(){
+    var sn_count = self.mainData.rows.length || 0;
+    sn_count += 1;
+    self.mainData.rows.push({item_id:self.items[0].id,quantity:1,unit:'pieces',rate:0.0,discount:0.0,sn:sn_count});
+
+    };
+
+       self.openAddItem = function(index) {
+        var modalInstance = $modal.open({
+            animation: true,
+            templateUrl: djstatic('user/awe/dashboard/inventory/add_item_modal.html'),
+            controller: 'ItemAddModalController',
+            windowClass: 'app-modal-window',
+            resolve: {
+            Item: function() {
+                return Item;
+            },
+            Category: function() {
+                return Category;
+            }
+            }
+        });
+
+        modalInstance.result.then(function(newItem) {
+        if (!angular.equals({},newItem)){
+        var cs = new Item();
+            cs.name = newItem.name;
+            cs.description = newItem.description;
+            cs.category_id = newItem.category_id;
+            cs.type = newItem.type;
+            cs.unit = newItem.unit;
+            cs.code = newItem.code;
+            cs.$save(null,
+            function(data) {
+                self.items.splice(0, 0, data);
+                self.mainData.rows[index].item_id = data.id;
+            },
+            function(error) {
+                console.log(error);
+            });
+
+            }
+        });
+    };
+
+    self.openAddParty = function(party) {
+        var modalInstance = $modal.open({
+            animation: true,
+            templateUrl: djstatic('user/awe/dashboard/inventory/party/add_party_modal.html'),
+            controller: 'PartyAddModalController',
+            windowClass: 'app-modal-window',
+            resolve: {
+            party: function() {
+                return party;
+            }
+            }
+        });
+
+        modalInstance.result.then(function(partyData) {
+        if (!angular.equals({},partyData)){
+        var ps = new Party();
+            ps.name = partyData.name;
+            ps.address = partyData.address;
+            ps.phone_no = partyData.phone_no;
+            ps.pan_no = partyData.pan_no;
+            if(partyData.id){
+                ps.$update({Id:partyData.id},
+                function(data) {
+                    self.mainData.party_id = data.id;
+                    for(var i=0; i<self.parties.length; i++){
+                        if(self.parties[i].id == data.id){
+                            self.parties[i]= data;
+                            i= self.parties.length;
+                        }
+                    }
+                },
+                function(error) {
+                    console.log(error);
+                });
+            }else{
+                ps.$save(null,
+                function(data) {
+                    self.mainData.party_id = data.id;
+                    self.parties.splice(0, 0, data);
+                },
+                function(error) {
+                    console.log(error);
+                });
+
+            }
+
+
+            }
+        });
+    };
+
 
 }])
 

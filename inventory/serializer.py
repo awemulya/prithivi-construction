@@ -146,7 +146,7 @@ class PurchaseRowSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PurchaseRow
-        exclude = ['item']
+        exclude = ['item','purchase']
         extra_kwargs = {
             "id": {
                 "read_only": False, "required": False, },
