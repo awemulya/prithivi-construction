@@ -10,7 +10,7 @@
          <div class="box">
                 <div class="box-body">
                     <form name="itemForm">
-                        <div class="form-group" ng-class="{ 'has-error': itemForm.$invalid }">
+                        <div class="form-group" ng-class="{ 'has-error': itemForm.name.$invalid }">
                           <label class="control-label" for="name">
                               <i class="fa fa-times-circle-o" ng-show="itemForm.$invalid"></i> Item Name</label>
                             <label ng-if="itemForm.$invalid">
@@ -56,6 +56,12 @@
 
                             </select>
 
+                        </div>
+                        <div class="form-group">
+                          <label class="control-label" for="account_no" ng-class="{ 'has-error': itemForm.account_no.$invalid }">
+                              <i class="fa fa-times-circle-o" ng-show="itemForm.$invalid"></i> Account No</label>
+                          <input type="text" class="form-control" id="account_no" ng-model="newItem.account_no"
+                                 placeholder="Account NO ..." required>
                         </div>
 
                     </form>

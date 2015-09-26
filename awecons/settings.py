@@ -37,6 +37,7 @@ INSTALLED_APPS = (
     'progress',
     'employee',
     'inventory',
+    'ledger',
     'rest_framework',
 )
 

@@ -4,7 +4,11 @@ from django.contrib.contenttypes.models import ContentType
 from mptt.models import MPTTModel, TreeForeignKey
 from django.db import models
 from django.utils.translation import ugettext as _
+from django.db.models import F
+from rest_framework.reverse import reverse_lazy
+from ledger.models import Account
 from project.models import Project
+DEFAULT_PROJECT_ID = 2
 
 
 def none_for_zero(obj):
@@ -38,7 +42,7 @@ class InventoryAccount(models.Model):
     name = models.CharField(max_length=100)
     account_no = models.PositiveIntegerField()
     current_balance = models.FloatField(default=0)
-    opening_balance = models.FloatField(default=0)
+    site = models.ForeignKey(Project, related_name='inventory_account')
 
     def __unicode__(self):
         return str(self.account_no) + ' [' + self.name + ']'
@@ -46,10 +50,10 @@ class InventoryAccount(models.Model):
     def get_absolute_url(self):
         return '/inventory_account/' + str(self.id)
 
+
     @staticmethod
     def get_next_account_no():
         from django.db.models import Max
-
         max_voucher_no = InventoryAccount.objects.all().aggregate(Max('account_no'))['account_no__max']
         if max_voucher_no:
             return max_voucher_no + 1
@@ -65,7 +69,7 @@ class InventoryAccount(models.Model):
             category = item.category
         except:
             return None
-        return category
+        return category.name
 
     def add_category(self, category):
         category_instance, created = Category.objects.get_or_create(name=category)
@@ -77,6 +81,14 @@ class InventoryAccount(models.Model):
     categories = property(get_all_categories)
 
 
+class ConsumptionRow(models.Model):
+    sn = models.PositiveIntegerField(default=1)
+    account = models.ForeignKey(InventoryAccount, related_name='rows')
+    quantity = models.FloatField(default=0.0)
+    date = models.DateField(null=True)
+    purpose = models.CharField(max_length=254, null=True)
+
+
 class Item(models.Model):
     code = models.CharField(max_length=10, blank=True, null=True)
     name = models.CharField(max_length=254)
@@ -86,6 +98,14 @@ class Item(models.Model):
     type_choices = [('consumable', _('Consumable')), ('non-consumable', _('Non-Consumable'))]
     type = models.CharField(choices=type_choices, max_length=15, default='consumable')
     unit = models.CharField(max_length=50, default=_('pieces'))
+    ledger = models.ForeignKey(Account, null=True)
+
+    def save(self, *args, **kwargs):
+        if not self.ledger_id:
+            ledger = Account(name=self.name)
+            ledger.save()
+            self.ledger = ledger
+        super(Item, self).save(*args, **kwargs)
 
 
 class Demand(models.Model):
@@ -186,6 +206,14 @@ class Party(models.Model):
     address = models.CharField(max_length=254, blank=True, null=True)
     phone_no = models.CharField(max_length=100, blank=True, null=True)
     pan_no = models.CharField(max_length=50, blank=True, null=True)
+    account = models.ForeignKey(Account, null=True)
+
+    def save(self, *args, **kwargs):
+        if not self.account_id:
+            account = Account(name=self.name)
+            account.save()
+            self.account = account
+        super(Party, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return self.name
@@ -197,7 +225,19 @@ class Party(models.Model):
 class Purchase(models.Model):
     party = models.ForeignKey(Party)
     voucher_no = models.PositiveIntegerField(blank=True, null=True)
+    credit = models.BooleanField(default=False)
     date = models.DateField(default=datetime.datetime.today)
+
+    @property
+    def total(self):
+        grand_total = 0
+        for obj in self.rows.all():
+            total = obj.quantity * obj.rate
+            grand_total += total
+        return grand_total
+
+    def get_absolute_url(self):
+        return reverse_lazy('purchase-detail', kwargs={'id': self.pk})
 
 
 class PurchaseRow(models.Model):

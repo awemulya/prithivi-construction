@@ -1,0 +1,35 @@
+<table id="example1" class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>Account Name</th>
+        <th>Code</th>
+        <th>Account No</th>
+        <th>Account Category</th>
+        <th>Site Name</th>
+        <th>Current Balance</th>
+        <th>Consumption</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="account in accounts | orderBy:'-name'">
+        <td> {[{account.name}]} </td>
+        <td>{[{account.code}]}</td>
+        <td>{[{account.account_no}]}</td>
+        <td>{[{account.account_category}]}</td>
+        <td>{[{account.site_name}]}</td>
+        <td>{[{account.current_balance}]}</td>
+          <td><a href="#/inventory/item-consumption/{[{account.id}]}" title="Consumptions"><i class="fa fa-edit"></i></a></td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <th>Account Name</th>
+        <th>Code</th>
+        <th>Account No</th>
+        <th>Account Category</th>
+        <th>Site Name</th>
+        <th>Current Balance</th>
+          <th>Consumption</th>
+      </tr>
+    </tfoot>
+</table>

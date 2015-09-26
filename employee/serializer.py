@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 from employee.models import SalaryVoucherRow, SalaryVoucher, Employee
+from ledger.models import set_transactions, Account
 from project.models import Project
 import datetime
 
@@ -51,7 +52,7 @@ class SalaryVoucherSerializer(serializers.ModelSerializer):
         rows_data = validated_data.pop('rows')
         sv = SalaryVoucher.objects.get(pk=instance.id)
         sv.date = validated_data.pop('date',datetime.datetime.today)
-        sv.voucher_no = validated_data.pop('voucher_no','')
+        sv.voucher_no = validated_data.pop('voucher_no',1)
         sv.site = validated_data.pop('site')
         sv.save()
         for row_data in rows_data:
@@ -67,8 +68,10 @@ class SalaryVoucherSerializer(serializers.ModelSerializer):
                 row.last_date = data.get('last_date', datetime.datetime.today)
                 row.salary_voucher = sv
                 row.save()
-            else:
+                set_transactions(row, sv.date, ['dr', Account.objects.get_or_create(name='Salaries Expenses')[0], row.amount])
+                set_transactions(row, sv.date, ['cr', Account.objects.get_or_create(name='Cash')[0], row.amount])
                 row = SalaryVoucherRow()
+            else:
                 row.employee = data.get('employee')
                 row.sn = data.get('sn',1)
                 row.amount = data.get('amount',0)
@@ -77,6 +80,8 @@ class SalaryVoucherSerializer(serializers.ModelSerializer):
                 row.last_date = data.get('last_date',datetime.datetime.today)
                 row.salary_voucher = sv
                 row.save()
+                set_transactions(row, sv.date, ['dr', Account.objects.get_or_create(name='Salaries Expenses')[0],row.amount])
+                set_transactions(row, sv.date, ['cr', Account.objects.get_or_create(name='Cash')[0], row.amount])
 
         return sv
 

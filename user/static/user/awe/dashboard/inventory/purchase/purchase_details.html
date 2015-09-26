@@ -11,6 +11,7 @@
         <th colspan="2">Party</th>
         <th>Date</th>
         <th>Voucher NO</th>
+        <th>Credit</th>
       </tr>
     </thead>
     <tbody>
@@ -24,6 +25,8 @@
         <td> <input type="text" class="form-control" id="date"  ng-model="mainData.date"
              placeholder="Date" datadatepicker/>  </td>
         <td> <input type="text" class="form-control" ng-model="mainData.voucher_no"> </td>
+          <td><input type="checkbox" class="icheckbox_flat-green checked" id="status" ng-model="mainData.credit">
+              <label ng-show="mainData.credit">Credit</label><label ng-hide="mainData.credit">Cash</label></td>
       </tr>
     </tbody>
 

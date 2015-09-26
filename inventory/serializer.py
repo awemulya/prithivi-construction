@@ -1,7 +1,10 @@
+import datetime
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ModelSerializer
-from inventory.models import Category, Item, InventoryAccount, Demand, DemandRow, Party, Purchase, PurchaseRow
+from inventory.models import Category, Item, InventoryAccount, Demand, DemandRow, Party, Purchase, PurchaseRow, \
+    set_transactions, DEFAULT_PROJECT_ID, ConsumptionRow
+from ledger.models import Account, set_transactions as set_ledger_transactions
 from project.models import Project
 
 
@@ -14,21 +17,78 @@ class CategorySerializer(ModelSerializer):
 
 
 class ItemSerializer(serializers.ModelSerializer):
-    account_no = serializers.ReadOnlyField(source='account.account_no')
+    account_no = serializers.CharField(source='account.account_no')
+    # site_id = serializers.CharField(source='account.site.id')
     category_id = serializers.PrimaryKeyRelatedField(source='category', queryset=Category.objects.all())
     category_name = serializers.ReadOnlyField(source='category.name')
 
     class Meta:
         model = Item
-        fields = ('id', 'code', 'name', 'description', 'category_name', 'type', 'unit', 'account_no', 'category_id')
+        fields = ('id', 'code', 'name', 'description', 'category_name', 'type', 'unit', 'account_no', 'category_id',
+                  )
+
+    def create(self, validated_data):
+        account_no = validated_data.pop('account').get('account_no')
+        # site_id = validated_data.pop('site').get('id')
+        item = Item.objects.create(**validated_data)
+        # if not site_id:
+        #     site_id = DEFAULT_PROJECT_ID
+        site_id = DEFAULT_PROJECT_ID
+
+        if not item.ledger_id:
+            ledger = Account(name=item.name)
+            ledger.save()
+            item.ledger = ledger
+
+        if account_no:
+            if item.account:
+                account = item.account
+                if InventoryAccount.objects.filter(account_no=account_no).exists():
+                    account_no = int(account_no) +1
+                account.account_no = account_no
+                account.save()
+            else:
+                account = InventoryAccount(name=item.name, account_no=account_no, site_id=site_id)
+                account.save()
+                item.account = account
+        item.save()
+        return item
+
+    def update(self, instance, validated_data):
+        item = Item.objects.get(pk=instance.id)
+        item.code = validated_data.pop('code')
+        item.name = validated_data.pop('name')
+        item.description = validated_data.pop('description')
+        item.category = validated_data.pop('category')
+        item.type = validated_data.pop('type')
+        item.unit = validated_data.pop('unit')
+        account_no = validated_data.pop('account').get('account_no')
+        site_id = DEFAULT_PROJECT_ID
+        if item.account:
+            site_id = item.account.site.id
+        if account_no:
+            if item.account:
+                account = item.account
+                if InventoryAccount.objects.filter(account_no=account_no).exists():
+                    account_no = int(account_no) +1
+                account.account_no = account_no
+                account.save()
+            else:
+                account = InventoryAccount(name=item.name, account_no=account_no, site_id=site_id)
+                account.save()
+                item.account = account
+        item.save()
+        return item
 
 
 class InventoryAccountSerializer(serializers.ModelSerializer):
     account_category = serializers.CharField(source='get_category', read_only=True)
+    site_id = serializers.PrimaryKeyRelatedField(source='site', queryset=Project.objects.all())
+    site_name = serializers.ReadOnlyField(source='site.name')
 
     class Meta:
         model = InventoryAccount
-        fields = ('id', 'code', 'name', 'account_no', 'opening_balance', 'current_balance', 'account_category')
+        fields = ('id', 'code', 'name', 'account_no', 'current_balance', 'account_category', 'site_id', 'site_name')
 
 
 class DemandRowSerializer(serializers.ModelSerializer):
@@ -84,6 +144,11 @@ class DemandSerializer(serializers.ModelSerializer):
             row.fulfilled_quantity = data.get('fulfilled_quantity',0)
             row.demand = demand
             row.save()
+            if row.fulfilled_quantity:
+                set_transactions(row, row.demand.date, ['dr', InventoryAccount.objects.get_or_create(
+                    site=row.demand.site, name=row.item.name, account_no=row.item.account.account_no),
+                                                        row.fulfilled_quantity])
+                set_transactions(row, row.demand.date, ['cr', row.item.account, row.fulfilled_quantity])
         return demand
 
     def update(self, instance, validated_data):
@@ -106,16 +171,26 @@ class DemandSerializer(serializers.ModelSerializer):
                 row.fulfilled_quantity = data.get('fulfilled_quantity', 0)
                 row.demand = demand
                 row.save()
+                if row.fulfilled_quantity:
+                    set_transactions(row, row.demand.date, ['dr', InventoryAccount.objects.get_or_create(
+                        site=row.demand.site, name=row.item.name, account_no=row.item.account.account_no ),
+                                                            row.fulfilled_quantity])
+                    set_transactions(row, row.demand.date, ['cr', row.item.account, row.fulfilled_quantity])
             else:
                 row = DemandRow()
                 row.item = data.get('item')
-                row.unit = data.get('unit','Pieces')
+                row.unit = data.get('unit', 'Pieces')
                 row.purpose = data.get('purpose','')
                 row.status = data.get('status', False)
                 row.quantity = data.get('quantity',0.0)
                 row.fulfilled_quantity = data.get('fulfilled_quantity',0)
                 row.demand = demand
                 row.save()
+                if row.fulfilled_quantity:
+                    set_transactions(row, row.demand.date, ['dr', InventoryAccount.objects.get_or_create(
+                        site=row.demand.site, name=row.item.name, account_no=row.item.account.account_no),
+                                                            row.fulfilled_quantity])
+                    set_transactions(row, row.demand.date, ['cr', row.item.account, row.fulfilled_quantity])
 
         return demand
 
@@ -134,6 +209,20 @@ class SiteDemandsSerializer(serializers.ModelSerializer):
         return serializer.data
 
 
+class SiteAccountSerializer(serializers.ModelSerializer):
+    # employee = serializers.StringRelatedField()
+    accounts = SerializerMethodField('get__site_accounts', read_only= True)
+
+    class Meta:
+        model = Project
+        fields = ('id', 'accounts',)
+
+    def get__site_accounts(self, site):
+        acc_list = site.inventory_account.all()
+        serializer = InventoryAccountSerializer(instance=acc_list, many=True)
+        return serializer.data
+
+
 class PartySerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -146,7 +235,17 @@ class PurchaseRowSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PurchaseRow
-        exclude = ['item','purchase']
+        exclude = ['item', 'purchase']
+        extra_kwargs = {
+            "id": {
+                "read_only": False, "required": False, },
+        }
+
+
+class ConsumptionIARowSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ConsumptionRow
+        exclude = ['account']
         extra_kwargs = {
             "id": {
                 "read_only": False, "required": False, },
@@ -180,12 +279,25 @@ class PurchaseSerializer(serializers.ModelSerializer):
             row.discount = data.get('discount',0.0)
             row.purchase = purchase
             row.save()
+            iv_account, status = InventoryAccount.objects.get_or_create(
+                    name=row.item.name, site_id=DEFAULT_PROJECT_ID, account_no=row.item.account.account_no)
+            set_transactions(row, row.purchase.date, ['dr', iv_account, row.quantity])
+            if purchase.credit:
+                set_ledger_transactions(row, row.purchase.date, ['dr', purchase.party.account,
+                                                                 row.quantity*row.rate-row.discount])
+                set_ledger_transactions(row, row.purchase.date,
+                                 ['cr', Account.objects.get_or_create(name="Accounts Payable")[0],
+                                  row.quantity+row.rate-row.discount])
+            else:
+                set_ledger_transactions(row, row.purchase.date, ['cr', Account.objects.get_or_create(name ='Cash')[0],
+                                                                 row.quantity*row.rate-row.discount])
         return purchase
 
     def update(self, instance, validated_data):
         rows_data = validated_data.pop('rows')
         purchase = Purchase.objects.get(pk=instance.id)
         purchase.date = validated_data.pop('date',None)
+        purchase.credit = validated_data.pop('credit',False)
         purchase.voucher_no = validated_data.pop('voucher_no')
         purchase.party = validated_data.pop('party')
         purchase.save()
@@ -202,6 +314,18 @@ class PurchaseSerializer(serializers.ModelSerializer):
                 row.discount = data.get('discount',0.0)
                 row.purchase = purchase
                 row.save()
+                iv_account, status = InventoryAccount.objects.get_or_create(
+                    name=row.item.name, site_id=DEFAULT_PROJECT_ID, account_no=row.item.account.account_no)
+                set_transactions(row, row.purchase.date, ['dr', iv_account, row.quantity])
+                if purchase.credit:
+                    set_ledger_transactions(row, row.purchase.date, ['dr', purchase.party.account,
+                                                                     row.quantity*row.rate-row.discount])
+                    set_ledger_transactions(row, row.purchase.date,
+                                     ['cr', Account.objects.get_or_create(name="Accounts Payable")[0],
+                                      row.quantity+row.rate-row.discount])
+                else:
+                    set_ledger_transactions(row, row.purchase.date, ['cr', Account.objects.get_or_create(name ='Cash')[0],
+                                                                     row.quantity*row.rate-row.discount])
             else:
                 row = PurchaseRow()
                 row.sn = data.get('sn')
@@ -212,5 +336,54 @@ class PurchaseSerializer(serializers.ModelSerializer):
                 row.discount = data.get('discount',0.0)
                 row.purchase = purchase
                 row.save()
-
+                iv_account, status = InventoryAccount.objects.get_or_create(
+                    name=row.item.name, site_id=DEFAULT_PROJECT_ID, account_no=row.item.account.account_no)
+                set_transactions(row, row.purchase.date, ['dr',iv_account, row.quantity])
+                if purchase.credit:
+                    set_ledger_transactions(row, row.purchase.date, ['dr', purchase.party.account,
+                                                                     row.quantity*row.rate-row.discount])
+                    set_ledger_transactions(row, row.purchase.date,
+                                     ['cr', Account.objects.get_or_create(name="Accounts Payable")[0],
+                                      row.quantity+row.rate-row.discount])
+                else:
+                    set_ledger_transactions(row, row.purchase.date, ['cr', Account.objects.get_or_create(name ='Cash')[0],
+                                                                     row.quantity*row.rate-row.discount])
         return purchase
+
+
+class ConsumptionIASerializer(serializers.ModelSerializer):
+    rows = ConsumptionIARowSerializer(many=True)
+
+    class Meta:
+        model = InventoryAccount
+        exclude = ['site']
+        extra_kwargs = {
+            "id": {
+                "read_only": False, "required": False, },
+            "name": {
+                "read_only": True, "required": False, },
+            "code": {
+                "read_only": True, "required": False, },
+            "account_no": {
+                "read_only": True, "required": False, },
+            "current_balance": {
+                "read_only": True, "required": False, },
+        }
+
+    def update(self, instance, validated_data):
+        rows_data = validated_data.pop('rows')
+        ia = InventoryAccount.objects.get(pk=instance.id)
+        for row_data in rows_data:
+            data = dict(row_data)
+            id = data.get('id', '')
+            if not id:
+                row = ConsumptionRow()
+                row.sn = data.get('sn')
+                row.quantity = data.get('quantity',0.0)
+                row.purpose = data.get('purpose',0.0)
+                row.date = data.get('date',datetime.date.today)
+                row.account = ia
+                row.save()
+                ia.current_balance -=row.quantity
+                ia.save()
+        return ia

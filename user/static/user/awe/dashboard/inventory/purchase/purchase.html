@@ -7,15 +7,18 @@
       <th>Purchase Count</th>
         <th>Voucher No</th>
         <th>Date</th>
+        <th>Purchased IN</th>
         <th colspan="2">Actions</th>
       </tr>
     </thead>
     <tbody>
       <tr ng-repeat="data in data_list | orderBy:'-voucher_no'">
         <td>{[{$index+1}]} </td>
+        <td>{[{data.party_name}]} </td>
           <td>{[{data.rows.length}]}</td>
         <td>{[{data.voucher_no}]}</td>
         <td>{[{data.date}]}</td>
+        <td><label ng-show="data.credit">Credit</label><label ng-hide="data.credit">Cash</label></td>
         <td><a href="#/inventory/purchase-details/{[{data.id}]}" title="Purchase Details"><i class="fa fa-bars"></i></a></td>
       </tr>
     </tbody>
@@ -27,6 +30,7 @@
       <th>Purchase Count</th>
         <th>Voucher No</th>
         <th>Date</th>
+           <th>Purchased IN</th>
         <th colspan="2">Actions</th>
       </tr>
     </tfoot>

@@ -1,0 +1,41 @@
+<table id="example1" class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>Name <a href="" title="Add Account" ng-click="openAddAccount()"><i class="fa fa-plus"></i></a></th>
+        <th>Code</th>
+        <th>Current Dr</th>
+        <th>Current Cr</th>
+        <th>Tax Rate</th>
+        <th>Opening Cr</th>
+        <th>Opening Dr</th>
+        <th>Parent Account</th>
+        <th>Category</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="account in accounts | orderBy:'-name'">
+        <td>{[{account.name}]}</td>
+        <td>{[{account.code}]}</td>
+        <td>{[{account.current_dr}]}</td>
+        <td>{[{account.current_cr}]}</td>
+        <td>{[{account.tax_rate}]}</td>
+        <td>{[{account.opening_cr}]}</td>
+        <td>{[{account.opening_dr}]}</td>
+        <td>{[{account.parent}]}</td>
+        <td>{[{account.category}]}</td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <th>Name <a href="" title="Add Account" ng-click="openAddAccount()"><i class="fa fa-plus"></i></a></th>
+        <th>Code</th>
+        <th>Current Dr</th>
+        <th>Current Cr</th>
+        <th>Tax Rate</th>
+        <th>Opening Cr</th>
+        <th>Opening Dr</th>
+        <th>Parent Account</th>
+        <th>Category</th>
+      </tr>
+    </tfoot>
+</table>

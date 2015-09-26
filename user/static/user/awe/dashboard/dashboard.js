@@ -31,8 +31,13 @@ $routeProvider.when('/purchase/', {
     controller: 'PurchaseController'
   })
 
- $routeProvider.when('/account/:siteId', {
-    templateUrl: djstatic('user/awe/dashboard/account/account.html'),
+ $routeProvider.when('/account/summary/:siteId', {
+    templateUrl: djstatic('user/awe/dashboard/account/account_summary.html'),
+    controller: 'AccountSummaryController'
+  })
+
+$routeProvider.when('/account/accounts/', {
+    templateUrl: djstatic('user/awe/dashboard/account/accounts.html'),
     controller: 'AccountController'
   })
 
@@ -95,6 +100,16 @@ $routeProvider.when('/inventory/item-modify/:itemId', {
 $routeProvider.when('/inventories/:siteId', {
     templateUrl: djstatic('user/awe/dashboard/inventory/site_inventory.html'),
     controller: 'InventoryController'
+  })
+
+$routeProvider.when('/inventories/account/:siteId', {
+    templateUrl: djstatic('user/awe/dashboard/inventory/inventory_account.html'),
+    controller: 'InventoryAccountController'
+  })
+
+$routeProvider.when('/inventory/item-consumption/:accountId', {
+    templateUrl: djstatic('user/awe/dashboard/inventory/inventory_account_consumption.html'),
+    controller: 'InventoryAccountConsumptionController'
   })
 
   $routeProvider.when('/employees/:siteId/:eId', {
@@ -316,7 +331,7 @@ var es = new Employee();
     };
 })
 
-.controller('AccountController', ['$scope', 'Employee', 'SiteEmployee', 'Site', 'Role', 'SalaryRecord',
+.controller('AccountSummaryController', ['$scope', 'Employee', 'SiteEmployee', 'Site', 'Role', 'SalaryRecord',
 'Salary', 'EmployeePayments','SalaryPayments', '$modal', '$timeout', '$routeParams',
 function($scope, Employee, SiteEmployee, Site, Role, SalaryRecord, Salary, EmployeePayments, SalaryPayments, $modal,
 $timeout, $routeParams){
@@ -324,6 +339,15 @@ $timeout, $routeParams){
     var parent = self.$parent;
     self.siteID =  $routeParams.siteId;
     parent.data.site_id = self.siteID;
+
+
+}])
+
+.controller('AccountController', ['$scope', 'LedgerAccount', '$modal', '$timeout', '$routeParams',
+function($scope, LedgerAccount, $modal, $timeout, $routeParams){
+    var self = $scope;
+    var parent = self.$parent;
+    self.accounts = LedgerAccount.query();
 
 
 }])
@@ -353,16 +377,16 @@ $timeout, $routeParams){
 .controller('PurchaseController', ['$scope', 'Purchase', '$modal', '$timeout', '$routeParams',
 function($scope, Purchase, $modal, $timeout, $routeParams){
     var self = $scope;
-    self.data_list = {};
+    self.data_list = Purchase.query();
 
-    var ps = new Purchase();
-    ps.$query(null,
-            function(data) {
-            self.data_list = data;
-            },
-            function(error) {
-                console.log(error);
-            });
+//    var ps = new Purchase();
+//    ps.$query(null,
+//            function(data) {
+//            self.data_list = data;
+//            },
+//            function(error) {
+//                console.log(error);
+//            });
 
 
 }])
@@ -409,8 +433,8 @@ function($scope, SiteTasks, $routeParams){
 
 }])
 
-.controller('DemandDetailController', ['$scope', 'Demand', 'Item', 'Category', '$modal', '$timeout', '$routeParams', '$location',
-function($scope, Demand, Item, Category, $modal, $timeout, $routeParams, $location) {
+.controller('DemandDetailController', ['$scope', 'Demand', 'Item', 'Category', 'NextAccountNo', '$modal', '$timeout', '$routeParams', '$location',
+function($scope, Demand, Item, Category, NextAccountNo, $modal, $timeout, $routeParams, $location) {
     var newDate = new Date();
     var today = newDate.toISOString().substring(0, 10);
     var self = $scope;
@@ -496,6 +520,9 @@ function($scope, Demand, Item, Category, $modal, $timeout, $routeParams, $locati
             },
             Category: function() {
                 return Category;
+            },
+            NextAccountNo: function() {
+                return NextAccountNo;
             }
             }
         });
@@ -506,6 +533,18 @@ function($scope, Demand, Item, Category, $modal, $timeout, $routeParams, $locati
             cs.name = newItem.name;
             cs.description = newItem.description;
             cs.category_id = newItem.category_id;
+              if(!newItem.account_no){
+                    self.next_account_data = NextAccountNo.query(null,
+                    function(data) {
+                    newItem.account_no = data.ac_no;
+                    cs.account_no = newItem.account_no;
+                    },
+                    function(error) {
+                        console.log(error);
+                    });
+                    }else{
+                        cs.account_no = newItem.account_no;
+                    }
             cs.type = newItem.type;
             cs.unit = newItem.unit;
             cs.code = newItem.code;
@@ -525,9 +564,9 @@ function($scope, Demand, Item, Category, $modal, $timeout, $routeParams, $locati
 }])
 
 
-.controller('PurchaseDetailController', ['$scope', 'Purchase', 'Item', 'Category', 'Party', '$modal', '$timeout',
+.controller('PurchaseDetailController', ['$scope', 'Purchase', 'Item', 'Category', 'Party', 'NextAccountNo', '$modal', '$timeout',
 '$routeParams', '$location',
-function($scope, Purchase, Item, Category, Party, $modal, $timeout, $routeParams, $location) {
+function($scope, Purchase, Item, Category, Party, NextAccountNo, $modal, $timeout, $routeParams, $location) {
     var newDate = new Date();
     var today = newDate.toISOString().substring(0, 10);
     var self = $scope;
@@ -544,7 +583,9 @@ function($scope, Purchase, Item, Category, Party, $modal, $timeout, $routeParams
     self.items = Item.query();
     self.parties = Party.query();
     self.mainData = {};
-    if(self.purchaseId !=0){
+    if(self.purchaseId && self.purchaseId !=0){
+    console.log(self.purchaseId);
+        console.log('not zero');
         var ss = new Purchase();
             ss.$get({Id:self.purchaseId},
                     function(data) {
@@ -558,10 +599,14 @@ function($scope, Purchase, Item, Category, Party, $modal, $timeout, $routeParams
     }
 
     self.savePurchase = function(){
+        if(!self.mainData.voucher_no){
+            alert("please Enter Voucher NO");
+        }else{
     if(self.mainData.id){
         var ps = new Purchase();
         ps.id=self.mainData.id;
         ps.date=self.mainData.date;
+        ps.credit=self.mainData.credit;
         ps.party_id=self.mainData.party_id;
         ps.voucher_no=self.mainData.voucher_no;
         ps.rows = self.mainData.rows;
@@ -577,6 +622,7 @@ function($scope, Purchase, Item, Category, Party, $modal, $timeout, $routeParams
     }else{
         var ps = new Purchase();
         ps.date=self.mainData.date;
+        ps.credit=self.mainData.credit;
         ps.party_id=self.mainData.party_id;
         ps.voucher_no=self.mainData.voucher_no;
         ps.rows = self.mainData.rows;
@@ -584,13 +630,14 @@ function($scope, Purchase, Item, Category, Party, $modal, $timeout, $routeParams
         function(data) {
         self.mainData = data;
           alert("Purchase "+self.mainData.voucher_no+" Saved ");
-                $location.path("/inventory/purchase-details/"+data.id);
+                $location.path("/inventory/purchase-details/"+data.id, false);
         },
         function(error) {
             console.log(error);
         });
 
 
+    }
     }
 
     };
@@ -614,6 +661,9 @@ function($scope, Purchase, Item, Category, Party, $modal, $timeout, $routeParams
             },
             Category: function() {
                 return Category;
+            },
+            NextAccountNo: function() {
+                return NextAccountNo;
             }
             }
         });
@@ -624,6 +674,20 @@ function($scope, Purchase, Item, Category, Party, $modal, $timeout, $routeParams
             cs.name = newItem.name;
             cs.description = newItem.description;
             cs.category_id = newItem.category_id;
+              if(!newItem.account_no){
+                    self.next_account_data = NextAccountNo.query(null,
+                    function(data) {
+                    newItem.account_no = data.ac_no;
+                    cs.account_no = newItem.account_no;
+                    },
+                    function(error) {
+                        console.log(error);
+                    });
+                    }else{
+                cs.account_no = newItem.account_no;
+
+                    }
+
             cs.type = newItem.type;
             cs.unit = newItem.unit;
             cs.code = newItem.code;
@@ -990,9 +1054,64 @@ function($scope, Site, Item, Category, InventoryAccount, $modal, $timeout, $rout
 
 }])
 
-.controller('AddItemController', ['$scope','Site', 'Item', 'Category', 'InventoryAccount', '$modal', '$timeout',
+.controller('InventoryAccountController', ['$scope','Site', 'Item', 'Category', 'InventoryAccount',
+'SiteInventoryAccount', '$modal', '$timeout', '$routeParams',
+function($scope, Site, Item, Category, InventoryAccount, SiteInventoryAccount, $modal, $timeout, $routeParams){
+    var self = $scope;
+    var parent = self.$parent;
+    self.siteID =  $routeParams.siteId;
+    parent.data.site_id = self.siteID;
+      var sia = new SiteInventoryAccount();
+        sia.$get({Id:self.siteID},
+            function(data) {
+                self.accounts = data.accounts;
+            },
+            function(error) {
+                console.log(error);
+            });
+
+
+}])
+
+.controller('InventoryAccountConsumptionController', ['$scope', 'InventoryAccountConsumption', '$modal', '$timeout', '$routeParams',
+function($scope,  InventoryAccountConsumption, $modal, $timeout, $routeParams){
+    var newDate = new Date();
+    var today = newDate.toISOString().substring(0, 10);
+    var self = $scope;
+    self.accountId =  $routeParams.accountId;
+      var sia = new InventoryAccountConsumption();
+        sia.$get({Id:self.accountId},
+            function(data) {
+                self.mainData = data;
+            },
+            function(error) {
+                console.log(error);
+            });
+    self.newConsumption = function(){
+     var sn = self.mainData.rows.length || 0;
+    self.mainData.rows.push({'sn':sn+1,'purpose':'','quantity':0.0,date:today});
+
+    };
+
+    self.saveData = function(){
+    var iac = new InventoryAccountConsumption();
+        iac.id = self.mainData.id;
+        iac.rows = self.mainData.rows;
+        iac.$update({Id:self.accountId},
+                function(data) {
+                self.mainData = data;
+                  alert("Consumption  "+self.mainData.name+" Updated ");
+                },
+                function(error) {
+                    console.log(error);
+                });
+
+    };
+}])
+
+.controller('AddItemController', ['$scope','Site', 'Item', 'Category', 'InventoryAccount', 'NextAccountNo', '$modal', '$timeout',
 '$routeParams', '$location',
-function($scope, Site, Item, Category, InventoryAccount, $modal, $timeout, $routeParams, $location){
+function($scope, Site, Item, Category, InventoryAccount, NextAccountNo, $modal, $timeout, $routeParams, $location){
     var self = $scope;
     var parent = self.$parent;
     self.options = ['consumable', 'non-consumable'];
@@ -1014,6 +1133,15 @@ function($scope, Site, Item, Category, InventoryAccount, $modal, $timeout, $rout
         itemService.$get({itemId:self.item_id},
             function(data) {
                 self.item = data;
+                if(!self.item.account_no){
+                    self.next_account_data = NextAccountNo.query(null,
+                    function(data) {
+                    self.item.account_no = data.ac_no;
+                    },
+                    function(error) {
+                        console.log(error);
+                    });
+                    }
                 for(var i=0;i<self.categories.length;i++){
                     if(self.categories[i].id == self.item.category_id){
                         self.item.category = self.categories[i];
@@ -1025,6 +1153,15 @@ function($scope, Site, Item, Category, InventoryAccount, $modal, $timeout, $rout
             });
 
 
+    }else{
+        self.next_account_data = NextAccountNo.query(null,
+        function(data) {
+        self.item.account_no = data.ac_no;
+        },
+        function(error) {
+            console.log(error);
+        });
+
     }
        self.save = function() {
         if (self.item_id){
@@ -1035,6 +1172,7 @@ function($scope, Site, Item, Category, InventoryAccount, $modal, $timeout, $rout
             itemService.type = self.item.type;
             itemService.unit = self.item.unit;
             itemService.category_id = self.item.category.id;
+            itemService.account_no = self.item.account_no;
             itemService.$update({itemId:self.item_id},
                 function(data) {
                   alert("Item "+self.item.name+" Updated ");
@@ -1053,7 +1191,7 @@ function($scope, Site, Item, Category, InventoryAccount, $modal, $timeout, $rout
         itemService.type = self.item.type;
         itemService.unit = self.item.unit;
         itemService.category_id = self.item.category.id;
-        //        itemService.account_no = self.item.account_no;
+        itemService.account_no = self.item.account_no;
         itemService.$save({},
             function(data) {
                 alert("Item "+self.item.name+" Saved");
@@ -1128,7 +1266,7 @@ function($scope, Site, Item, Category, InventoryAccount, $modal, $timeout, $rout
     })
 
 
-.controller('ItemAddModalController', function($scope, $modalInstance, Item, Category) {
+.controller('ItemAddModalController', function($scope, $modalInstance, Item, Category, NextAccountNo) {
     var self = $scope;
     self.options = ['consumable', 'non-consumable'];
     self.newItem = {};
@@ -1142,6 +1280,16 @@ function($scope, Site, Item, Category, InventoryAccount, $modal, $timeout, $rout
         function(error) {
             console.log(error);
         });
+
+      if(!self.newItem.account_no){
+                    self.next_account_data = NextAccountNo.query(null,
+                    function(data) {
+                    self.newItem.account_no = data.ac_no;
+                    },
+                    function(error) {
+                        console.log(error);
+                    });
+                    }
 
     self.ok = function() {
 

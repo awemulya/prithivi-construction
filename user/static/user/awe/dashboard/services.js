@@ -122,6 +122,23 @@ angular.module('dashboardServices', ['ngResource'])
 	});
 }])
 
+.factory('SiteInventoryAccount', ['$resource', function($resource){
+	return $resource('/inventory/site-account/:Id', {}, {
+	  query: {method:'GET', params:{Id: '@Id'}},
+	  update: {method:'PUT', params: {Id: '@Id'}},
+	  employee: {method:'GET', params: {Id: '@Id'}},
+	  save: {method:'POST', params: {Id: ''}},
+	});
+}])
+.factory('LedgerAccount', ['$resource', function($resource){
+	return $resource('/ledger/account/:Id', {}, {
+	  query: {method:'GET', params:{Id: ''}, isArray:true},
+	  update: {method:'PUT', params: {Id: '@Id'}},
+	  employee: {method:'GET', params: {Id: '@Id'}},
+	  save: {method:'POST', params: {Id: ''}},
+	});
+}])
+
 .factory('SiteDemands', ['$resource', function($resource){
 	return $resource('/inventory/site-demands/:siteID', {}, {
 	  query: {method:'GET', params:{siteID: '@siteID'}},
@@ -144,6 +161,14 @@ angular.module('dashboardServices', ['ngResource'])
 .factory('Demand', ['$resource', function($resource){
 	return $resource('/inventory/demand/:Id', {}, {
 	  query: {method:'GET', params:{Id: ''}, isArray:true},
+	  update: {method:'PUT', params: {Id: '@Id'}},
+	  employee: {method:'GET', params: {Id: '@Id'}},
+	  save: {method:'POST', params: {Id: ''}},
+	});
+}])
+.factory('InventoryAccountConsumption', ['$resource', function($resource){
+	return $resource('/inventory/consumption/:Id', {}, {
+	  query: {method:'GET', params:{Id: '@Id'}, isArray:true},
 	  update: {method:'PUT', params: {Id: '@Id'}},
 	  employee: {method:'GET', params: {Id: '@Id'}},
 	  save: {method:'POST', params: {Id: ''}},
@@ -183,6 +208,12 @@ angular.module('dashboardServices', ['ngResource'])
 	  update: {method:'PUT', params: {Id: '@Id'}},
 	  employee: {method:'GET', params: {Id: '@Id'}},
 	  save: {method:'POST', params: {Id: ''}},
+	});
+}])
+
+.factory('NextAccountNo', ['$resource', function($resource){
+	return $resource('/inventory/next-account-no/', {}, {
+	  query: {method:'GET', params:{}},
 	});
 }])
 
