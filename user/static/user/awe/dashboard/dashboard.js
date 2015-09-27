@@ -31,6 +31,16 @@ $routeProvider.when('/purchase/', {
     controller: 'PurchaseController'
   })
 
+$routeProvider.when('/purchase/:partyId', {
+    templateUrl: djstatic('user/awe/dashboard/inventory/purchase/purchase.html'),
+    controller: 'PartyPurchaseController'
+  })
+
+$routeProvider.when('/payment/:partyId', {
+    templateUrl: djstatic('user/awe/dashboard/inventory/party/payments.html'),
+    controller: 'PartyPaymentController'
+  })
+
  $routeProvider.when('/account/summary/:siteId', {
     templateUrl: djstatic('user/awe/dashboard/account/account_summary.html'),
     controller: 'AccountSummaryController'
@@ -312,6 +322,19 @@ var es = new Employee();
     };
 })
 
+.controller('PartyAddPaymentModalController', function($scope, $modalInstance, party) {
+    var self = $scope;
+    self.party = angular.copy(party);
+
+      self.ok = function() {
+        self.party.date = self.date;
+        $modalInstance.close(self.party);
+    };
+    self.cancel = function() {
+        $modalInstance.dismiss('cancel');
+    };
+})
+
 .controller('EmployeePaymentsModalController', function($scope, $modalInstance, employee, EmployeePayments) {
     var self = $scope;
     self.employee = angular.copy(employee);
@@ -378,17 +401,22 @@ $timeout, $routeParams){
 function($scope, Purchase, $modal, $timeout, $routeParams){
     var self = $scope;
     self.data_list = Purchase.query();
+}])
 
-//    var ps = new Purchase();
-//    ps.$query(null,
-//            function(data) {
-//            self.data_list = data;
-//            },
-//            function(error) {
-//                console.log(error);
-//            });
-
-
+.controller('PartyPurchaseController', ['$scope', 'PartyPurchase', '$modal', '$timeout', '$routeParams',
+function($scope, PartyPurchase, $modal, $timeout, $routeParams){
+    var self = $scope;
+    self.partyId = $routeParams.partyId;
+    self.data_list = {};
+    var ps = new PartyPurchase();
+    ps.$query({Id:self.partyId},
+            function(data) {
+            self.data_list = data.purchase;
+            self.party_name = data.name;
+            },
+            function(error) {
+                console.log(error);
+            });
 }])
 
 .controller('PayrollController', ['$scope', 'SitePayroll', '$routeParams',
@@ -465,6 +493,9 @@ function($scope, Demand, Item, Category, NextAccountNo, $modal, $timeout, $route
     }
 
     self.saveDemand = function(){
+    if (!self.demand.purpose){
+        alert("please enter demand purpose");
+    }else{
     if(self.demand.id){
         var ds = new Demand();
         ds.id=self.demand.id;
@@ -498,6 +529,7 @@ function($scope, Demand, Item, Category, NextAccountNo, $modal, $timeout, $route
         });
 
 
+    }
     }
 
     };
@@ -563,6 +595,47 @@ function($scope, Demand, Item, Category, NextAccountNo, $modal, $timeout, $route
 
 }])
 
+
+.controller('PartyPaymentController', ['$scope', 'PartyPayment', '$modal', '$timeout',
+'$routeParams', '$location',
+function($scope, PartyPayment, $modal, $timeout, $routeParams, $location) {
+    var newDate = new Date();
+    var today = newDate.toISOString().substring(0, 10);
+    var self = $scope;
+    self.partyId = $routeParams.partyId;
+    self.mainData = {};
+    var ps = new PartyPayment();
+    ps.$query({Id:self.partyId},
+            function(data) {
+            self.mainData = data;
+            },
+            function(error) {
+                console.log(error);
+            });
+
+ self.newPurchase = function(){
+
+    self.mainData.rows.push({'date':today,'voucher_no':1,'amount':0.00});
+
+    };
+
+    self.savePayment = function(){
+        var ps = new PartyPayment();
+            ps.rows = self.mainData.rows;
+            ps.id = self.mainData.id;
+                ps.$update({Id:self.mainData.id},
+                function(data) {
+                self.mainData = data;
+                    alert("payment Saved");
+                },
+                function(error) {
+                    console.log(error);
+                });
+
+
+    };
+
+}])
 
 .controller('PurchaseDetailController', ['$scope', 'Purchase', 'Item', 'Category', 'Party', 'NextAccountNo', '$modal', '$timeout',
 '$routeParams', '$location',
@@ -1491,8 +1564,8 @@ $timeout, $routeParams){
 
 }])
 
-.controller('PartyController', ['$scope', 'Party', '$modal', '$timeout', '$routeParams',
-function($scope, Party, $modal, $timeout, $routeParams){
+.controller('PartyController', ['$scope', 'Party', 'PartyPayment', '$modal', '$timeout', '$routeParams',
+function($scope, Party, PartyPayment, $modal, $timeout, $routeParams){
     var self = $scope;
     var parent = self.$parent;
     self.parties = Party.query();
@@ -1545,6 +1618,7 @@ function($scope, Party, $modal, $timeout, $routeParams){
             }
         });
     };
+
 
 }])
 

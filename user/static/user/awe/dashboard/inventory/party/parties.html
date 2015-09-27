@@ -5,7 +5,9 @@
         <th>Address</th>
         <th>Phone</th>
         <th>PAN NO</th>
-        <th colspan="2">Actions</th>
+        <th>Cr Amount</th>
+        <th>Dr Amount</th>
+        <th colspan="3">Actions</th>
       </tr>
     </thead>
     <tbody>
@@ -14,7 +16,11 @@
         <td>{[{party.address}]}</td>
         <td>{[{party.phone_no}]}</td>
         <td>{[{party.pan_no}]}</td>
+        <td>{[{party.cr_balance}]}</td>
+        <td>{[{party.dr_balance}]}</td>
         <td><a href="" title="Edit Party" ng-click="openAddParty(party)"><i class="fa fa-edit"></i></a></td>
+        <td><a href="#/purchase/{[{party.id}]}" title="Party Purchases" ><i class="fa fa-bars"></i></a></td>
+        <td><a href="#payment/{[{party.id}]}" title="Party Payments" ><i class="fa fa-money"></i></a></td>
       </tr>
     </tbody>
     <tfoot>
@@ -23,6 +29,8 @@
         <th>Address</th>
         <th>Phone</th>
         <th>PAN NO</th>
+           <th>Advance Paid</th>
+        <th>To Be Paid</th>
         <th colspan="2">Actions</th>
       </tr>
     </tfoot>

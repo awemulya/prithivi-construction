@@ -1,0 +1,59 @@
+<div class="col-sm-9 col-sm-offset-3">
+    <a href="#/party/" title="All parties">
+          <i class="fa fa-level-up">All Parties</i></a>
+</div>
+<form name="demandForm">
+<table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>Party</th>
+        <th>Dr Balance</th>
+        <th>Cr Balance</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+
+        <td> {[{mainData.name}]}</td>
+        <td> {[{mainData.dr_balance}]}</td>
+        <td> {[{mainData.cr_balance}]}</td>
+      </tr>
+    </tbody>
+
+</table>
+<div class="col-sm-9 col-sm-offset-3" ng-show="mainData.rows.length"><h1>Payment Entries</h1></div>
+<table class="table table-bordered table-striped" ng-show="mainData.rows.length">
+    <thead>
+      <tr>
+        <th>SN</th>
+        <th>Voucher No</th>
+        <th>Date</th>
+          <th>Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="row in mainData.rows | orderBy:'-voucher_no'">
+        <td> {[{$index+1}]} </td>
+        <td><input type="number" step="1" class="form-control" ng-model="row.voucher_no" ng-readonly="row.id"></td>
+        <td> <input type="text" class="form-control" ng-model="row.date" ng-readonly="row.id"> </td>
+        <td> <input type="number" step="0.01" class="form-control" ng-model="row.amount" ng-readonly="row.id"></td>
+      </tr>
+    </tbody>
+     <tfoot>
+      <tr>
+        <th>SN</th>
+        <th>Voucher No</th>
+        <th>Date</th>
+          <th>Amount</th>
+      </tr>
+    </tfoot>
+
+</table>
+    <div class="row">
+        <div class="col-sm-10 col-sm-offset-2">
+            <div class="col-sm-6"><button class="btn btn-info" ng-click="newPurchase()">New Payment</button></div>
+            <div class="col-sm-6"><button class="btn btn-info" ng-click="savePayment()">Save Payment</button></div>
+        </div>
+    </div>
+
+</form>

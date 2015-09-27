@@ -222,8 +222,15 @@ class Party(models.Model):
         verbose_name_plural = 'Parties'
 
 
+class PartyPayment(models.Model):
+    party = models.ForeignKey(Party, related_name='rows')
+    date = models.DateField(null=True)
+    amount = models.FloatField(default=0.0)
+    voucher_no = models.PositiveIntegerField(blank=True, null=True)
+
+
 class Purchase(models.Model):
-    party = models.ForeignKey(Party)
+    party = models.ForeignKey(Party, related_name='purchase')
     voucher_no = models.PositiveIntegerField(blank=True, null=True)
     credit = models.BooleanField(default=False)
     date = models.DateField(default=datetime.datetime.today)

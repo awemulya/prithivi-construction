@@ -3,7 +3,8 @@
       <tr>
         <th>SN <a href="#/inventory/purchase-details/0" title="Add Purchase">
             <i class="fa fa-plus"></i></a></th>
-      <th>Party</th>
+      <th>Party <a href="#/party" title="All Parties">
+            <i class="fa fa-user"></i></a></th>
       <th>Purchase Count</th>
         <th>Voucher No</th>
         <th>Date</th>
@@ -14,7 +15,7 @@
     <tbody>
       <tr ng-repeat="data in data_list | orderBy:'-voucher_no'">
         <td>{[{$index+1}]} </td>
-        <td>{[{data.party_name}]} </td>
+        <td><label ng-show="data.party_name">{[{data.party_name}]}</label><label ng-show="party_name">{[{party_name}]}</label> </td>
           <td>{[{data.rows.length}]}</td>
         <td>{[{data.voucher_no}]}</td>
         <td>{[{data.date}]}</td>
@@ -26,7 +27,8 @@
       <tr>
         <th>SN <a href="#/inventory/purchase-details/0" title="Add Purchase">
             <i class="fa fa-plus"></i></a></th>
-      <th>Party</th>
+      <th>Party  <a href="#/party" title="All Parties">
+            <i class="fa fa-user"></i></a></th>
       <th>Purchase Count</th>
         <th>Voucher No</th>
         <th>Date</th>

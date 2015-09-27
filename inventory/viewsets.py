@@ -1,7 +1,8 @@
 from rest_framework import viewsets
 from inventory.models import Category, Item, InventoryAccount, Demand, Purchase, Party
 from inventory.serializer import CategorySerializer, ItemSerializer, InventoryAccountSerializer, SiteDemandsSerializer, \
-    DemandSerializer, PurchaseSerializer, PartySerializer, SiteAccountSerializer, ConsumptionIASerializer
+    DemandSerializer, PurchaseSerializer, PartySerializer, SiteAccountSerializer, ConsumptionIASerializer, \
+    PartyPaymentSerializer, PartyPurchaseSerializer
 from project.models import Project
 from project.permissions import IsAdminOrReadOnly
 
@@ -71,6 +72,25 @@ class PartyViewSet(viewsets.ModelViewSet):
 
     queryset = Party.objects.all()
     serializer_class = PartySerializer
+    permission_classes = [IsAdminOrReadOnly]
+
+    def perform_create(self, serializer):
+            serializer.save()
+
+class PartyPaymentViewSet(viewsets.ModelViewSet):
+
+    queryset = Party.objects.all()
+    serializer_class = PartyPaymentSerializer
+    permission_classes = [IsAdminOrReadOnly]
+
+    def perform_create(self, serializer):
+            serializer.save()
+
+
+class PartyPurchaseViewSet(viewsets.ModelViewSet):
+
+    queryset = Party.objects.all()
+    serializer_class = PartyPurchaseSerializer
     permission_classes = [IsAdminOrReadOnly]
 
     def perform_create(self, serializer):

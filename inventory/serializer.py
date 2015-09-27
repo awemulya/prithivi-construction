@@ -3,7 +3,7 @@ from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ModelSerializer
 from inventory.models import Category, Item, InventoryAccount, Demand, DemandRow, Party, Purchase, PurchaseRow, \
-    set_transactions, DEFAULT_PROJECT_ID, ConsumptionRow
+    set_transactions, DEFAULT_PROJECT_ID, ConsumptionRow, PartyPayment
 from ledger.models import Account, set_transactions as set_ledger_transactions
 from project.models import Project
 
@@ -146,7 +146,7 @@ class DemandSerializer(serializers.ModelSerializer):
             row.save()
             if row.fulfilled_quantity:
                 set_transactions(row, row.demand.date, ['dr', InventoryAccount.objects.get_or_create(
-                    site=row.demand.site, name=row.item.name, account_no=row.item.account.account_no),
+                    site=row.demand.site, name=row.item.name, account_no=row.item.account.account_no)[0],
                                                         row.fulfilled_quantity])
                 set_transactions(row, row.demand.date, ['cr', row.item.account, row.fulfilled_quantity])
         return demand
@@ -173,7 +173,7 @@ class DemandSerializer(serializers.ModelSerializer):
                 row.save()
                 if row.fulfilled_quantity:
                     set_transactions(row, row.demand.date, ['dr', InventoryAccount.objects.get_or_create(
-                        site=row.demand.site, name=row.item.name, account_no=row.item.account.account_no ),
+                        site=row.demand.site, name=row.item.name, account_no=row.item.account.account_no)[0],
                                                             row.fulfilled_quantity])
                     set_transactions(row, row.demand.date, ['cr', row.item.account, row.fulfilled_quantity])
             else:
@@ -188,7 +188,7 @@ class DemandSerializer(serializers.ModelSerializer):
                 row.save()
                 if row.fulfilled_quantity:
                     set_transactions(row, row.demand.date, ['dr', InventoryAccount.objects.get_or_create(
-                        site=row.demand.site, name=row.item.name, account_no=row.item.account.account_no),
+                        site=row.demand.site, name=row.item.name, account_no=row.item.account.account_no)[0],
                                                             row.fulfilled_quantity])
                     set_transactions(row, row.demand.date, ['cr', row.item.account, row.fulfilled_quantity])
 
@@ -224,6 +224,8 @@ class SiteAccountSerializer(serializers.ModelSerializer):
 
 
 class PartySerializer(serializers.ModelSerializer):
+    cr_balance = serializers.ReadOnlyField(source='account.current_cr')
+    dr_balance = serializers.ReadOnlyField(source='account.current_dr')
 
     class Meta:
         model = Party
@@ -242,6 +244,49 @@ class PurchaseRowSerializer(serializers.ModelSerializer):
         }
 
 
+class PartyPaymentRowSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PartyPayment
+        exclude = ['party']
+        extra_kwargs = {
+            "id": {
+                "read_only": False, "required": False, },
+        }
+
+
+class PartyPaymentSerializer(serializers.ModelSerializer):
+    rows = PartyPaymentRowSerializer(many=True)
+    dr_balance = serializers.ReadOnlyField(source='account.current_dr')
+    cr_balance = serializers.ReadOnlyField(source='account.current_cr')
+
+    class Meta:
+        model = Party
+        fields = ['id', 'name', 'rows', 'dr_balance', 'cr_balance']
+        extra_kwargs = {
+            "id": {
+                "read_only": False, "required": False, },
+            "name": {
+                "read_only": True, "required": False, },
+        }
+
+    def update(self, instance, validated_data):
+        rows_data = validated_data.pop('rows')
+        party = Party.objects.get(pk=instance.id)
+        for row_data in rows_data:
+            data = dict(row_data)
+            amount = data.get('amount',0.0)
+            date = data.get('date',0.0)
+            voucher_no = data.get('voucher_no',1)
+            row = PartyPayment(amount=amount, date=date, party=party, voucher_no=voucher_no)
+            row.save()
+        set_ledger_transactions(row, row.date, ['cr', party.account, row.amount])
+        set_ledger_transactions(row, row.date,
+                                ['dr', Account.objects.get_or_create(name="Accounts Payable")[0],
+                                 row.amount])
+        return party
+
+
 class ConsumptionIARowSerializer(serializers.ModelSerializer):
     class Meta:
         model = ConsumptionRow
@@ -251,6 +296,17 @@ class ConsumptionIARowSerializer(serializers.ModelSerializer):
                 "read_only": False, "required": False, },
         }
 
+
+class PurchaseInfoSerializer(serializers.ModelSerializer):
+    rows = PurchaseRowSerializer(many=True)
+
+    class Meta:
+        model = Purchase
+        exclude = ['party']
+        extra_kwargs = {
+            "id": {
+                "read_only": False, "required": False, },
+        }
 
 class PurchaseSerializer(serializers.ModelSerializer):
     party_id = serializers.PrimaryKeyRelatedField(source='party', queryset=Party.objects.all())
@@ -387,3 +443,17 @@ class ConsumptionIASerializer(serializers.ModelSerializer):
                 ia.current_balance -=row.quantity
                 ia.save()
         return ia
+
+
+class PartyPurchaseSerializer(serializers.ModelSerializer):
+    purchase = PurchaseInfoSerializer(many=True)
+    # create payment rows class
+    class Meta:
+        model = Party
+        fields = ['id', 'purchase','name']
+        extra_kwargs = {
+            "id": {
+                "read_only": False, "required": False, },
+            "name": {
+                "read_only": True, "required": False, },
+        }

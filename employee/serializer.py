@@ -46,6 +46,8 @@ class SalaryVoucherSerializer(serializers.ModelSerializer):
             row.last_date = data.get('last_date', datetime.datetime.today)
             row.salary_voucher = sv
             row.save()
+            set_transactions(row, sv.date, ['dr', Account.objects.get_or_create(name='Salaries Expenses')[0],row.amount])
+            set_transactions(row, sv.date, ['cr', Account.objects.get_or_create(name='Cash')[0], row.amount])
         return sv
 
     def update(self, instance, validated_data):
