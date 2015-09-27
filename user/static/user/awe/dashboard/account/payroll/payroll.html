@@ -12,7 +12,9 @@
     <tbody>
       <tr ng-repeat="voucher in payrolls | orderBy:'-voucher_no'">
         <td>{[{$index+1}]} </td>
-          <td>{[{voucher.rows.length}]}</td>
+          <td><label ng-repeat="row in voucher.rows"><span ng-show="$index<2">{[{row.employee_name}]},</span>
+              <span ng-show="$index>1 &&  $index<4">..</span></label>({[{voucher.rows.length}]})
+             </td>
         <td>{[{voucher.date}]}</td>
         <td>{[{voucher.voucher_no}]}</td>
         <td><a href="#/employee/voucher-details/{[{voucher.id}]}" title="Payroll Details"><i class="fa fa-bars"></i></a></td>

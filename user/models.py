@@ -20,7 +20,7 @@ class MyUserManager(BaseUserManager):
         )
 
         user.set_password(password)
-        user.is_site_manager = True
+        user.is_site_manager = False
         user.save(using=self._db)
         return user
 
@@ -33,7 +33,7 @@ class MyUserManager(BaseUserManager):
             password=password,
         )
         user.is_admin = True
-        user.is_site_manager = False
+        user.is_site_manager = True
         user.save(using=self._db)
         return user
 
@@ -54,6 +54,9 @@ class AweUser(AbstractBaseUser):
 
     def user_admin(self):
         return self.is_admin
+
+    def user_site_manager(self):
+        return self.is_site_manager
 
     def get_full_name(self):
         # The user is identified by their email address

@@ -17,5 +17,5 @@ router.register(r'employee-payments', EmployeePaymentsViewSet)
 urlpatterns = patterns('',
                        url(r'^', include(router.urls)),
                        url(r'^app/$', views.dashboard, name='dashboard'),
-                       url(r'^employees/$', views.employee_list, name='employee_list'),
+                       # url(r'^employees/$', views.employee_list, name='employee_list'),
                        )

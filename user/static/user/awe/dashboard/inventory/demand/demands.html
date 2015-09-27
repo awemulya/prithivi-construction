@@ -12,7 +12,8 @@
     <tbody>
       <tr ng-repeat="demand in demands | orderBy:'-date'">
         <td>{[{$index+1}]} </td>
-          <td>{[{demand.rows.length}]}</td>
+          <td><label ng-repeat="row in demand.rows"><span ng-show="$index<2">{[{row.item_name}]},</span>
+              <span ng-show="$index>1 &&  $index<4">..</span></label>({[{demand.rows.length}]})</td>
         <td>{[{demand.date}]}</td>
         <td>{[{demand.purpose}]}</td>
         <td><a href="#/inventory/demand-details/{[{demand.id}]}" title="Demand Details"><i class="fa fa-bars"></i></a></td>

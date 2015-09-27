@@ -7,7 +7,12 @@ from user.forms import UserCreationForm
 
 def index(request):
     if request.user.is_authenticated():
+        pass
+    if request.user.user_site_manager():
         return render(request, 'dashboard_index.html')
+    else:
+        return render(request, 'dashboard_invalid.html')
+
     return login(request)
 
 

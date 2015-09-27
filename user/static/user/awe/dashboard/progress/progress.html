@@ -16,7 +16,8 @@
       <tr ng-repeat="task in tasks | orderBy:'-start_date'">
         <td>{[{$index+1}]} </td>
           <td>{[{task.description}]}</td>
-          <td>{[{task.rows.length}]}</td>
+          <td><label ng-repeat="row in task.rows"><span ng-show="$index<2">{[{row.description}]},</span>
+              <span ng-show="$index>1 &&  $index<4">..</span></label>({[{task.rows.length}]})</td>
           <td>{[{task.start_date}]}</td>
           <td>{[{task.deadline}]}</td>
           <td>{[{task.progress_status}]}</td>
