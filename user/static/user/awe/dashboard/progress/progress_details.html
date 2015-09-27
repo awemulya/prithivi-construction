@@ -21,8 +21,8 @@
                                  placeholder="Start Date" /> </td>
           <td><input type="text" class="form-control"  ng-model="tasks.deadline"
                                  placeholder="Deadline Date" /> </td>
-          <td><select class="form-control" ng-init="tasks.project_status = tasks.project_status || options[0]"
-                        ng-model="tasks.project_status"
+          <td><select class="form-control" ng-init="tasks.progress_status = tasks.project_status || options[0]"
+                        ng-model="tasks.progress_status"
                         ng-options="option as option for option in options "></select>
         </td>
         <td>  <input type="checkbox" class="icheckbox_flat-green checked"  ng-model="tasks.status">
