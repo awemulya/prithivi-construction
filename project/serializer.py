@@ -60,11 +60,12 @@ class EmployeeSerializer(serializers.ModelSerializer):
     role_id = serializers.PrimaryKeyRelatedField(source='role', queryset=EmployeeRole.objects.all())
     role_name = serializers.PrimaryKeyRelatedField(source='role.role', read_only=True)
     employee_age = serializers.IntegerField(source='age', read_only=True)
+    employee_salary = serializers.ReadOnlyField(source='current_salary')
 
     class Meta:
         model = Employee
         fields = ('id', 'name', 'address', 'date_of_birth', 'role_name', 'sex','marital_status',
-                  'date_joined', 'site_id', 'role_id', 'employee_age', 'status', 'phone')
+                  'date_joined', 'site_id', 'role_id', 'employee_age', 'status', 'phone', 'employee_salary')
 
 
 class SalarySerializer(serializers.ModelSerializer):

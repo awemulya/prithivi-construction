@@ -1071,8 +1071,18 @@ function($scope, Voucher, Employee, SiteEmployee, Role, $modal, $timeout, $route
 
     self.newItem = function(){
     var sn = self.voucher.rows.length || 0;
-    self.voucher.rows.push({'sn':sn+1,employee_id:self.employees[0].id,amount:0.0,paid_date:today,
+    self.voucher.rows.push({'sn':sn+1,employee_id:self.employees[0].id,amount:self.employees[0].employee_salary,paid_date:today,
     start_date:today,last_date:today});
+
+    };
+
+    self.changedValue = function(emp_id, index){
+    for (var e=0; e<self.employees.length; e++){
+        if(emp_id == self.employees[e].id){
+            self.voucher.rows[index].amount =  self.employees[e].employee_salary;
+            e = self.employees.length;
+        }
+    }
 
     };
 

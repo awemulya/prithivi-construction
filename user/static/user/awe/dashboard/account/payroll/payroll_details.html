@@ -44,7 +44,7 @@
         <td><a href="" title="Add New Employee" ng-click="openAddEmployee($index)">
             <i class="fa fa-plus" ng-hide="row.id"></i></a></td>
           <td><select class="form-control pull-right" data-ng-options="o.id as o.name for o in employees"
-                      data-ng-model="row.employee_id" ng-readonly="row.id"></select>
+                      data-ng-model="row.employee_id" ng-readonly="row.id" ng-change="changedValue(row.employee_id,$index)"></select>
         </td>
         <td> <input type="number" step="1" class="form-control" ng-model="row.amount" ng-hide="row.id">
             <span ng-show="row.id">{[{row.amount | rs}]}</span></td>

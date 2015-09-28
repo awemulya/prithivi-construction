@@ -29,6 +29,10 @@ class Employee(models.Model):
             return None
         return int((datetime.date.today() - self.date_of_birth).days / 365.25)
 
+    def current_salary(self):
+        return self.salary.all().order_by('-date')[0].salary if \
+            self.salary.all().exists() else 0
+
     def __unicode__(self):
         return '{0} ->  {1}'.format(self.name, self.role.role)
 
@@ -68,7 +72,7 @@ class SalaryVoucher(models.Model):
 
 class SalaryVoucherRow(models.Model):
     sn = models.PositiveIntegerField()
-    employee = models.ForeignKey(Employee , related_name="payment")
+    employee = models.ForeignKey(Employee, related_name="payment")
     paid_date = models.DateField(default=datetime.datetime.today)
     amount = models.FloatField()
     start_date = models.DateField()
