@@ -20,17 +20,17 @@
       <tr>
           <td>VOucher NO</td>
           <td>Date</td>
-          <td>Bank</td>
+          <td>Bank <a class="fa fa-plus" ng-click="openAddBank({})"></a></td>
           <td>Received Amount</label></td>
           <td>Action</td>
       </tr>
       <tr>
-        <td><input type="text" class="form-control" ng-model="voucher_no"></td>
-          <td><input type="text" class="form-control" ng-model="date"></td>
+        <td><input type="text" class="form-control" ng-model="rows[0].voucher_no"></td>
+          <td><input type="text" class="form-control" ng-model="rows[0].date"></td>
           <td> <select class="form-control pull-right" id="role"
-                data-ng-options="o.id as o.name for o in banks" data-ng-model="bank_id"></select>
+                data-ng-options="o.id as o.name for o in banks" data-ng-model="rows[0].bank_id"></select>
           </td>
-          <td><input type="text" class="form-control" ng-model="amount"></td>
+          <td><input type="text" class="form-control" ng-model="rows[0].amount"></td>
         </td>
         <td><button class="btn-info" ng-click="withdrawAmount()">
            Save</button>

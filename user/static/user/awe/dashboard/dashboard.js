@@ -37,7 +37,7 @@ $routeProvider.when('/vendor/', {
     controller: 'VendorController'
   })
 
-$routeProvider.when('/bank-withdraw/:vendorId', {
+$routeProvider.when('/bank-withdraw/:bankId', {
     templateUrl: djstatic('user/awe/dashboard/account/bank/withdraw.html'),
     controller: 'BankWithDrawController'
   })
@@ -1746,7 +1746,9 @@ function($scope, Bank, BankWithdraw, $modal, $timeout, $routeParams){
             function(error) {
                 console.log(error);
             });
-    }
+    };
+
+
 
 }])
 
@@ -1765,29 +1767,61 @@ function($scope, Bank, Vendor, VendorPayment, $modal, $timeout, $routeParams){
         function(error) {
             console.log(error);
         });
-    self.amount = 0.00;
-    self.voucher_no = 1;
-    self.bank_id = 1;
     var newDate = new Date();
     var today = newDate.toISOString().substring(0, 10);
-    self.date = today;
+    self.rows= [];
+   self.rows.push({'amount':0.00,'date':today,'bank_id':1,'voucher_no':1});
     self.withdrawAmount = function(){
        var bws = new VendorPayment();
        bws.vendor_id = self.vendorId;
-       bws.rows= [];
-       bws.rows.push({'amount':self.amount,'date':self.date,'bank_id':self.bank_id,'voucher_no':self.voucher_no});
+       bws.rows= self.rows;
         bws.$update({Id:self.vendorId},
             function(data) {
             alert("withdraw Complete")
             self.vendor.current_dr = data.dr_balance;
             self.vendor.current_cr = data.cr_balance;
-            self.amount = 0.00;
-            self.date = today;
+            self.rows[0].amount = 0.00;
+            self.rows[0].date = today;
             },
             function(error) {
                 console.log(error);
             });
-    }
+    };
+
+    self.openAddBank = function(bank) {
+        var modalInstance = $modal.open({
+            animation: true,
+            templateUrl: djstatic('user/awe/dashboard/account/bank/add_bank_modal.html'),
+            controller: 'BankAddModalController',
+            windowClass: 'app-modal-window',
+            resolve: {
+            bank: function() {
+                return bank;
+            }
+            }
+        });
+
+        modalInstance.result.then(function(bankData) {
+        if (!angular.equals({},bankData)){
+        var ps = new Bank();
+            ps.name = bankData.name;
+            ps.address = bankData.address;
+            ps.phone_no = bankData.phone_no;
+            ps.code = bankData.code;
+            ps.current_dr = bankData.current_dr;
+            ps.current_cr = bankData.current_cr;
+            ps.$save(null,
+                function(data) {
+                alert("bank "+data.name+" added");
+                    self.banks.splice(0, 0, data);
+                    self.rows[0].bank_id = data.id;
+                },
+                function(error) {
+                    console.log(error);
+                });
+            }
+        });
+    };
 
 }])
 
