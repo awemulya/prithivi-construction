@@ -77,6 +77,7 @@ class PartyViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
             serializer.save()
 
+
 class PartyPaymentViewSet(viewsets.ModelViewSet):
 
     queryset = Party.objects.all()

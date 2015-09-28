@@ -1,0 +1,47 @@
+<table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>Bank <a href="#/bank" title="All Banks">
+            <i class="fa fa-home"></i></a></th>
+          <th>Dr Amount</th>
+          <th>Cr Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{[{data_list.name}]}</td>
+        <td>{[{data_list.dr_balance}]}</td>
+          <td>{[{data_list.cr_balance}]}</td>
+      </tr>
+</tbody>
+</table>
+
+<table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>SN </th>
+          <th>Amount</th>
+          <th>Voucher No</th>
+          <th>Date</th>
+        <th colspan="2">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="row in data_list.rows | orderBy:'-voucher_no'">
+        <td>{[{$index+1}]} </td>
+        <td>{[{row.amount}]}</td>
+        <td>{[{row.voucher_no}]}</td>
+        <td>{[{row.date}]}</td>
+        <td><label ng-show="row.is_deposit">Deposit</label><label ng-hide="row.is_deposit">Withdraw</label></td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+          <th>SN</th>
+          <th>Amount</th>
+          <th>Voucher No</th>
+          <th>Date</th>
+        <th colspan="2">Actions</th>
+      </tr>
+    </tfoot>
+</table>

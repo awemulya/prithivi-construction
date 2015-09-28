@@ -4,5 +4,5 @@ from inventory.models import InventoryAccount
 
 
 def next_account_no(request):
-    ac_no =  InventoryAccount.get_next_account_no()
+    ac_no = InventoryAccount.get_next_account_no()
     return JsonResponse({'ac_no': ac_no})

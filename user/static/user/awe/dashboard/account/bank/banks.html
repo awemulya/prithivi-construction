@@ -1,0 +1,34 @@
+<table id="example1" class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>Bank <a href="" title="Add Bank" ng-click="openAddBank({})"><i class="fa fa-plus"></i></a></th>
+        <th>Address</th>
+        <th>Phone</th>
+          <th>Dr Amount</th>
+          <th>Cr Amount</th>
+        <th colspan="3">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="bank in banks | orderBy:'-name'">
+        <td>{[{bank.name}]}</td>
+        <td>{[{bank.address}]}</td>
+        <td>{[{bank.phone_no}]}</td>
+        <td>{[{bank.current_dr}]}</td>
+          <td>{[{bank.current_cr}]}</td>
+          <td><a href="" title="Edit Bank" ng-click="openAddBank(bank)"><i class="fa fa-edit"></i></a></td>
+        <td><a href="#/bank-withdraw-list/{[{bank.id}]}" title="Bank Statement" ><i class="fa fa-bars"></i></a></td>
+        <td><a href="#/bank-withdraw/{[{bank.id}]}" title="Withdraw Amount" ><i class="fa fa-money"></i></a></td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <th>Bank <a href="" title="Add Bank" ng-click="openAddBank({})"><i class="fa fa-plus"></i></a></th>
+        <th>Address</th>
+        <th>Phone</th>
+           <th>Dr Amount</th>
+        <th>Cr Amount</th>
+        <th colspan="2">Actions</th>
+      </tr>
+    </tfoot>
+</table>

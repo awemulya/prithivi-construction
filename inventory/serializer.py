@@ -35,11 +35,6 @@ class ItemSerializer(serializers.ModelSerializer):
         #     site_id = DEFAULT_PROJECT_ID
         site_id = DEFAULT_PROJECT_ID
 
-        if not item.ledger_id:
-            ledger = Account(name=item.name)
-            ledger.save()
-            item.ledger = ledger
-
         if account_no:
             if item.account:
                 account = item.account
@@ -163,35 +158,22 @@ class DemandSerializer(serializers.ModelSerializer):
             id = data.get('id', '')
             if id:
                 row = DemandRow.objects.get(pk=id)
-                row.item = data.get('item')
-                row.unit = data.get('unit', 'Pieces')
-                row.purpose = data.get('purpose', '')
-                row.status = data.get('status', False)
-                row.quantity = data.get('quantity', 0.0)
-                row.fulfilled_quantity = data.get('fulfilled_quantity', 0)
-                row.demand = demand
-                row.save()
-                if row.fulfilled_quantity:
-                    set_transactions(row, row.demand.date, ['dr', InventoryAccount.objects.get_or_create(
-                        site=row.demand.site, name=row.item.name, account_no=row.item.account.account_no)[0],
-                                                            row.fulfilled_quantity])
-                    set_transactions(row, row.demand.date, ['cr', row.item.account, row.fulfilled_quantity])
             else:
                 row = DemandRow()
-                row.item = data.get('item')
-                row.unit = data.get('unit', 'Pieces')
-                row.purpose = data.get('purpose','')
-                row.status = data.get('status', False)
-                row.quantity = data.get('quantity',0.0)
-                row.fulfilled_quantity = data.get('fulfilled_quantity',0)
-                row.demand = demand
-                row.save()
-                if row.fulfilled_quantity:
-                    set_transactions(row, row.demand.date, ['dr', InventoryAccount.objects.get_or_create(
-                        site=row.demand.site, name=row.item.name, account_no=row.item.account.account_no)[0],
-                                                            row.fulfilled_quantity])
-                    set_transactions(row, row.demand.date, ['cr', row.item.account, row.fulfilled_quantity])
 
+            row.item = data.get('item')
+            row.unit = data.get('unit', 'Pieces')
+            row.purpose = data.get('purpose', '')
+            row.status = data.get('status', False)
+            row.quantity = data.get('quantity', 0.0)
+            row.fulfilled_quantity = data.get('fulfilled_quantity', 0)
+            row.demand = demand
+            row.save()
+            if row.fulfilled_quantity:
+                set_transactions(row, row.demand.date, ['dr', InventoryAccount.objects.get_or_create(
+                    site=row.demand.site, name=row.item.name, account_no=row.item.account.account_no)[0],
+                                                        row.fulfilled_quantity])
+                set_transactions(row, row.demand.date, ['cr', row.item.account, row.fulfilled_quantity])
         return demand
 
 
@@ -275,15 +257,17 @@ class PartyPaymentSerializer(serializers.ModelSerializer):
         party = Party.objects.get(pk=instance.id)
         for row_data in rows_data:
             data = dict(row_data)
-            amount = data.get('amount',0.0)
-            date = data.get('date',0.0)
-            voucher_no = data.get('voucher_no',1)
-            row = PartyPayment(amount=amount, date=date, party=party, voucher_no=voucher_no)
-            row.save()
-        set_ledger_transactions(row, row.date, ['cr', party.account, row.amount])
-        set_ledger_transactions(row, row.date,
-                                ['dr', Account.objects.get_or_create(name="Accounts Payable")[0],
-                                 row.amount])
+            row_id = data.get('id',0)
+            if not row_id:
+                amount = data.get('amount',0.0)
+                date = data.get('date',0.0)
+                voucher_no = data.get('voucher_no',1)
+                row = PartyPayment(amount=amount, date=date, party=party, voucher_no=voucher_no)
+                row.save()
+                set_ledger_transactions(row, row.date, ['dr', party.account, row.amount])
+                set_ledger_transactions(row, row.date,
+                                        ['cr', Account.objects.get_or_create(name="Cash")[0],
+                                         row.amount])
         return party
 
 
@@ -307,6 +291,7 @@ class PurchaseInfoSerializer(serializers.ModelSerializer):
             "id": {
                 "read_only": False, "required": False, },
         }
+
 
 class PurchaseSerializer(serializers.ModelSerializer):
     party_id = serializers.PrimaryKeyRelatedField(source='party', queryset=Party.objects.all())
@@ -338,12 +323,12 @@ class PurchaseSerializer(serializers.ModelSerializer):
             iv_account, status = InventoryAccount.objects.get_or_create(
                     name=row.item.name, site_id=DEFAULT_PROJECT_ID, account_no=row.item.account.account_no)
             set_transactions(row, row.purchase.date, ['dr', iv_account, row.quantity])
+            set_ledger_transactions(row, row.purchase.date,
+                                 ['dr', row.item.ledger,
+                                  row.quantity*row.rate-row.discount])
             if purchase.credit:
-                set_ledger_transactions(row, row.purchase.date, ['dr', purchase.party.account,
+                set_ledger_transactions(row, row.purchase.date, ['cr', purchase.party.account,
                                                                  row.quantity*row.rate-row.discount])
-                set_ledger_transactions(row, row.purchase.date,
-                                 ['cr', Account.objects.get_or_create(name="Accounts Payable")[0],
-                                  row.quantity+row.rate-row.discount])
             else:
                 set_ledger_transactions(row, row.purchase.date, ['cr', Account.objects.get_or_create(name ='Cash')[0],
                                                                  row.quantity*row.rate-row.discount])
@@ -359,51 +344,39 @@ class PurchaseSerializer(serializers.ModelSerializer):
         purchase.save()
         for row_data in rows_data:
             data = dict(row_data)
-            id = data.get('id', '')
-            if id:
-                row = PurchaseRow.objects.get(pk=id)
-                row.sn = data.get('sn')
-                row.item = data.get('item')
-                row.unit = data.get('unit','Pieces')
-                row.quantity = data.get('quantity',0.0)
-                row.rate = data.get('rate', 0.0)
-                row.discount = data.get('discount',0.0)
-                row.purchase = purchase
-                row.save()
-                iv_account, status = InventoryAccount.objects.get_or_create(
-                    name=row.item.name, site_id=DEFAULT_PROJECT_ID, account_no=row.item.account.account_no)
-                set_transactions(row, row.purchase.date, ['dr', iv_account, row.quantity])
-                if purchase.credit:
-                    set_ledger_transactions(row, row.purchase.date, ['dr', purchase.party.account,
-                                                                     row.quantity*row.rate-row.discount])
-                    set_ledger_transactions(row, row.purchase.date,
-                                     ['cr', Account.objects.get_or_create(name="Accounts Payable")[0],
-                                      row.quantity+row.rate-row.discount])
-                else:
-                    set_ledger_transactions(row, row.purchase.date, ['cr', Account.objects.get_or_create(name ='Cash')[0],
-                                                                     row.quantity*row.rate-row.discount])
+            row_id = data.get('id', '')
+            if row_id:
+                row = PurchaseRow.objects.get(pk=row_id)
+                # if not row.item == data.get('item'):
+                #     iv_account, status = InventoryAccount.objects.get_or_create(
+                #         name=row.item.name, site_id=DEFAULT_PROJECT_ID, account_no=row.item.account.account_no)
+                #     set_transactions(row, row.purchase.date, ['cr', iv_account, row.quantity])
+                #     set_ledger_transactions(row, row.purchase.date, ['cr', row.item.ledger,
+                #                                                      row.quantity*row.rate-row.discount])
+
             else:
                 row = PurchaseRow()
-                row.sn = data.get('sn')
-                row.item = data.get('item')
-                row.unit = data.get('unit','Pieces')
-                row.quantity = data.get('quantity',0.0)
-                row.rate = data.get('rate', 0.0)
-                row.discount = data.get('discount',0.0)
-                row.purchase = purchase
-                row.save()
-                iv_account, status = InventoryAccount.objects.get_or_create(
-                    name=row.item.name, site_id=DEFAULT_PROJECT_ID, account_no=row.item.account.account_no)
-                set_transactions(row, row.purchase.date, ['dr',iv_account, row.quantity])
-                if purchase.credit:
-                    set_ledger_transactions(row, row.purchase.date, ['dr', purchase.party.account,
-                                                                     row.quantity*row.rate-row.discount])
-                    set_ledger_transactions(row, row.purchase.date,
-                                     ['cr', Account.objects.get_or_create(name="Accounts Payable")[0],
-                                      row.quantity+row.rate-row.discount])
-                else:
-                    set_ledger_transactions(row, row.purchase.date, ['cr', Account.objects.get_or_create(name ='Cash')[0],
-                                                                     row.quantity*row.rate-row.discount])
+            row.sn = data.get('sn')
+            row.item = data.get('item')
+            row.unit = data.get('unit','Pieces')
+            row.quantity = data.get('quantity',0.0)
+            row.rate = data.get('rate', 0.0)
+            row.discount = data.get('discount',0.0)
+            row.purchase = purchase
+            row.save()
+            iv_account, status = InventoryAccount.objects.get_or_create(
+                name=row.item.name, site_id=DEFAULT_PROJECT_ID, account_no=row.item.account.account_no)
+            set_transactions(row, row.purchase.date, ['dr', iv_account, row.quantity])
+            set_ledger_transactions(row, row.purchase.date,
+                                 ['dr', row.item.ledger,
+                                  row.quantity*row.rate-row.discount])
+            if purchase.credit:
+                set_ledger_transactions(row, row.purchase.date, ['cr', purchase.party.account,
+                                                                 row.quantity*row.rate-row.discount])
+            else:
+                set_ledger_transactions(row, row.purchase.date, ['cr', Account.objects.get_or_create(name ='Cash')[0],
+                                                                 row.quantity*row.rate-row.discount])
+
         return purchase
 
 

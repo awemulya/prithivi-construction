@@ -26,6 +26,36 @@ $routeProvider.when('/party/', {
     templateUrl: djstatic('user/awe/dashboard/inventory/party/parties.html'),
     controller: 'PartyController'
   })
+
+$routeProvider.when('/bank/', {
+    templateUrl: djstatic('user/awe/dashboard/account/bank/banks.html'),
+    controller: 'BankController'
+  })
+
+$routeProvider.when('/vendor/', {
+    templateUrl: djstatic('user/awe/dashboard/account/vendor/vendors.html'),
+    controller: 'VendorController'
+  })
+
+$routeProvider.when('/bank-withdraw/:vendorId', {
+    templateUrl: djstatic('user/awe/dashboard/account/bank/withdraw.html'),
+    controller: 'BankWithDrawController'
+  })
+
+$routeProvider.when('/vendor-payment/:vendorId', {
+    templateUrl: djstatic('user/awe/dashboard/account/vendor/payment.html'),
+    controller: 'VendorPaymentController'
+  })
+
+$routeProvider.when('/bank-withdraw-list/:bankId', {
+    templateUrl: djstatic('user/awe/dashboard/account/bank/withdraw_list.html'),
+    controller: 'BankWithDrawListController'
+  })
+
+$routeProvider.when('/vendor-payment-list/:vendorId', {
+    templateUrl: djstatic('user/awe/dashboard/account/vendor/payment_list.html'),
+    controller: 'VendorPaymentListController'
+  })
 $routeProvider.when('/purchase/', {
     templateUrl: djstatic('user/awe/dashboard/inventory/purchase/purchase.html'),
     controller: 'PurchaseController'
@@ -240,6 +270,30 @@ var es = new Employee();
     };
 })
 
+.controller('BankAddModalController', function($scope, $modalInstance, bank) {
+    var self = $scope;
+    self.bank = angular.copy(bank);
+    self.ok = function() {
+        $modalInstance.close(self.bank);
+    };
+
+    self.cancel = function() {
+        $modalInstance.dismiss('cancel');
+    };
+})
+
+.controller('VendorAddModalController', function($scope, $modalInstance, vendor) {
+    var self = $scope;
+    self.vendor = angular.copy(vendor);
+    self.ok = function() {
+        $modalInstance.close(self.vendor);
+    };
+
+    self.cancel = function() {
+        $modalInstance.dismiss('cancel');
+    };
+})
+
 .controller('EmployeeUpdateModalController', function($scope, $modalInstance, employee, Roles) {
     var newEmployee = $scope;
     newEmployee.employee = angular.copy(employee);
@@ -401,6 +455,38 @@ $timeout, $routeParams){
 function($scope, Purchase, $modal, $timeout, $routeParams){
     var self = $scope;
     self.data_list = Purchase.query();
+}])
+
+.controller('BankWithDrawListController', ['$scope', 'BankWithdraw', '$modal', '$timeout', '$routeParams',
+function($scope, BankWithdraw, $modal, $timeout, $routeParams){
+    var self = $scope;
+    self.bankId = $routeParams.bankId;
+    self.data_list = {};
+    var ps = new BankWithdraw();
+    ps.$query({Id:self.bankId},
+            function(data) {
+            self.data_list = data;
+            self.bank_name = data.name;
+            },
+            function(error) {
+                console.log(error);
+            });
+}])
+
+.controller('VendorPaymentListController', ['$scope', 'VendorPayment', '$modal', '$timeout', '$routeParams',
+function($scope, VendorPayment, $modal, $timeout, $routeParams){
+    var self = $scope;
+    self.vendorId = $routeParams.vendorId;
+    self.data_list = {};
+    var ps = new VendorPayment();
+    ps.$query({Id:self.vendorId},
+            function(data) {
+            self.data_list = data;
+            self.vendor_name = data.name;
+            },
+            function(error) {
+                console.log(error);
+            });
 }])
 
 .controller('PartyPurchaseController', ['$scope', 'PartyPurchase', '$modal', '$timeout', '$routeParams',
@@ -1607,6 +1693,213 @@ function($scope, Party, PartyPayment, $modal, $timeout, $routeParams){
                 ps.$save(null,
                 function(data) {
                     self.parties.splice(0, 0, data);
+                },
+                function(error) {
+                    console.log(error);
+                });
+
+            }
+
+
+            }
+        });
+    };
+
+
+}])
+
+
+.controller('BankWithDrawController', ['$scope', 'Bank','BankWithdraw', '$modal', '$timeout', '$routeParams',
+function($scope, Bank, BankWithdraw, $modal, $timeout, $routeParams){
+    var self = $scope;
+    var parent = self.$parent;
+    self.bankId = $routeParams.bankId;
+    self.bank = {};
+     var bs = new Bank();
+       bs.$bank({Id:self.bankId},
+        function(data) {
+        self.bank = data;
+        },
+        function(error) {
+            console.log(error);
+        });
+    self.amount = 0.00;
+    self.voucher_no = 1;
+    self.is_deposit = false;
+    var newDate = new Date();
+    var today = newDate.toISOString().substring(0, 10);
+    self.date = today;
+    self.withdrawAmount = function(){
+       var bws = new BankWithdraw();
+       bws.bank_id = self.bankId;
+       bws.rows= [];
+       bws.rows.push({'amount':self.amount,'date':self.date,'is_deposit':self.is_deposit,'voucher_no':self.voucher_no});
+        bws.$update({Id:self.bankId},
+            function(data) {
+            alert("Transaction Complete")
+            console.log(data);
+            self.bank.current_dr = data.dr_balance;
+            self.bank.current_cr = data.cr_balance;
+            self.amount = 0.00;
+            self.date = today;
+            },
+            function(error) {
+                console.log(error);
+            });
+    }
+
+}])
+
+.controller('VendorPaymentController', ['$scope', 'Bank','Vendor', 'VendorPayment', '$modal', '$timeout', '$routeParams',
+function($scope, Bank, Vendor, VendorPayment, $modal, $timeout, $routeParams){
+    var self = $scope;
+    var parent = self.$parent;
+    self.vendorId = $routeParams.vendorId;
+    self.banks = Bank.query();
+    self.vendor = {};
+     var bs = new Vendor();
+       bs.$vendor({Id:self.vendorId},
+        function(data) {
+        self.vendor = data;
+        },
+        function(error) {
+            console.log(error);
+        });
+    self.amount = 0.00;
+    self.voucher_no = 1;
+    self.bank_id = 1;
+    var newDate = new Date();
+    var today = newDate.toISOString().substring(0, 10);
+    self.date = today;
+    self.withdrawAmount = function(){
+       var bws = new VendorPayment();
+       bws.vendor_id = self.vendorId;
+       bws.rows= [];
+       bws.rows.push({'amount':self.amount,'date':self.date,'bank_id':self.bank_id,'voucher_no':self.voucher_no});
+        bws.$update({Id:self.vendorId},
+            function(data) {
+            alert("withdraw Complete")
+            self.vendor.current_dr = data.dr_balance;
+            self.vendor.current_cr = data.cr_balance;
+            self.amount = 0.00;
+            self.date = today;
+            },
+            function(error) {
+                console.log(error);
+            });
+    }
+
+}])
+
+.controller('BankController', ['$scope', 'Bank', '$modal', '$timeout', '$routeParams',
+function($scope, Bank, $modal, $timeout, $routeParams){
+    var self = $scope;
+    var parent = self.$parent;
+    self.banks = Bank.query();
+
+    self.openAddBank = function(bank) {
+        var modalInstance = $modal.open({
+            animation: true,
+            templateUrl: djstatic('user/awe/dashboard/account/bank/add_bank_modal.html'),
+            controller: 'BankAddModalController',
+            windowClass: 'app-modal-window',
+            resolve: {
+            bank: function() {
+                return bank;
+            }
+            }
+        });
+
+        modalInstance.result.then(function(bankData) {
+        if (!angular.equals({},bankData)){
+        var ps = new Bank();
+            ps.name = bankData.name;
+            ps.address = bankData.address;
+            ps.phone_no = bankData.phone_no;
+            ps.code = bankData.code;
+            ps.current_dr = bankData.current_dr;
+            ps.current_cr = bankData.current_cr;
+            if(bankData.id){
+                ps.$update({Id:bankData.id},
+                function(data) {
+                alert("bank "+data.name+" updated");
+                    for(var i=0; i<self.banks.length; i++){
+                        if(self.banks[i].id == data.id){
+                            self.banks[i]= data;
+                            i= self.banks.length;
+                        }
+                    }
+                },
+                function(error) {
+                    console.log(error);
+                });
+            }else{
+                ps.$save(null,
+                function(data) {
+                alert("bank "+data.name+" added");
+                    self.banks.splice(0, 0, data);
+                },
+                function(error) {
+                    console.log(error);
+                });
+
+            }
+
+
+            }
+        });
+    };
+
+
+}])
+
+.controller('VendorController', ['$scope', 'Vendor', '$modal', '$timeout', '$routeParams',
+function($scope, Vendor, $modal, $timeout, $routeParams){
+    var self = $scope;
+    var parent = self.$parent;
+    self.vendors = Vendor.query();
+
+    self.openAddVendor = function(vendor) {
+        var modalInstance = $modal.open({
+            animation: true,
+            templateUrl: djstatic('user/awe/dashboard/account/vendor/add_vendor_modal.html'),
+            controller: 'VendorAddModalController',
+            windowClass: 'app-modal-window',
+            resolve: {
+            vendor: function() {
+                return vendor;
+            }
+            }
+        });
+
+        modalInstance.result.then(function(objData) {
+        if (!angular.equals({},objData)){
+        var ps = new Vendor();
+            ps.name = objData.name;
+            ps.address = objData.address;
+            ps.phone_no = objData.phone_no;
+            ps.code = objData.code;
+            ps.current_dr = objData.current_dr;
+            ps.current_cr = objData.current_cr;
+            if(objData.id){
+                ps.$update({Id:objData.id},
+                function(data) {
+                alert("Vendor "+data.name+" updated");
+                    for(var i=0; i<self.vendors.length; i++){
+                        if(self.vendors[i].id == data.id){
+                            self.vendors[i]= data;
+                            i= self.vendors.length;
+                        }
+                    }
+                },
+                function(error) {
+                    console.log(error);
+                });
+            }else{
+                ps.$save(null,
+                function(data) {
+                alert("vendor "+data.name+" added");
+                    self.vendors.splice(0, 0, data);
                 },
                 function(error) {
                     console.log(error);

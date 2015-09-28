@@ -105,6 +105,10 @@ class Item(models.Model):
             ledger = Account(name=self.name)
             ledger.save()
             self.ledger = ledger
+        else:
+            if not self.ledger.name == self.name:
+                self.ledger.name = self.name
+                self.ledger.save()
         super(Item, self).save(*args, **kwargs)
 
 

@@ -28,7 +28,6 @@ angular.module('dashboardServices', ['ngResource'])
 	return $resource('/dashboard/site-employee/:siteID', {}, {
 	  query: {method:'GET', params:{siteID: '@siteID'}},
 	  update: {method:'PUT', params: {siteID: '@siteID'}},
-	  player: {method:'GET', params: {siteID: '@siteID'}},
 	  save: {method:'POST', params: {siteID: '@siteID'}},
 	});
 }])
@@ -37,7 +36,6 @@ angular.module('dashboardServices', ['ngResource'])
 	return $resource('/dashboard/employee-salary/:eId', {}, {
 	  query: {method:'GET', params:{eId: '@eId'}},
 	  update: {method:'PUT', params: {eId: '@eId'}},
-	  player: {method:'GET', params: {eId: '@eId'}},
 	  save: {method:'POST', params: {eId: '@eId'}},
 	});
 }])
@@ -46,7 +44,6 @@ angular.module('dashboardServices', ['ngResource'])
 	return $resource('/dashboard/employee-payments/:eId', {}, {
 	  query: {method:'GET', params:{eId: '@eId'}},
 	  update: {method:'PUT', params: {eId: '@eId'}},
-	  player: {method:'GET', params: {eId: '@eId'}},
 	  save: {method:'POST', params: {eId: '@eId'}},
 	});
 }])
@@ -55,7 +52,6 @@ angular.module('dashboardServices', ['ngResource'])
 	return $resource('/dashboard/salary-payments/:spId', {}, {
 	  query: {method:'GET', params:{spId: '@spId'}},
 	  update: {method:'PUT', params: {spId: '@spId'}},
-	  player: {method:'GET', params: {spId: '@spId'}},
 	  save: {method:'POST', params: {spId: '@spId'}},
 	});
 }])
@@ -73,7 +69,6 @@ angular.module('dashboardServices', ['ngResource'])
 	return $resource('/dashboard/employee/:eId', {}, {
 	  query: {method:'GET', params:{eId: ''},isArray:true},
 	  update: {method:'PUT', params: {eId: '@eId'}},
-	  employee: {method:'GET', params: {eId: '@eId'}},
 	  save: {method:'POST', params: {eId: ''}},
 	});
 }])
@@ -82,7 +77,6 @@ angular.module('dashboardServices', ['ngResource'])
 	return $resource('/dashboard/role/:roleId', {}, {
 	  query: {method:'GET', params:{roleId: ''}, isArray:true},
 	  update: {method:'PUT', params: {roleId: '@roleId'}},
-	  employee: {method:'GET', params: {roleId: '@roleId'}},
 	  save: {method:'POST', params: {roleId: ''}},
 	});
 }])
@@ -91,7 +85,6 @@ angular.module('dashboardServices', ['ngResource'])
 	return $resource('/user/:uId', {}, {
 	  query: {method:'GET', params:{uId: ''}, isArray:true},
 	  update: {method:'PUT', params: {uId: '@uId'}},
-	  employee: {method:'GET', params: {uId: '@uId'}},
 	  save: {method:'POST', params: {uId: ''}},
 	});
 }])
@@ -99,7 +92,6 @@ angular.module('dashboardServices', ['ngResource'])
 	return $resource('/inventory/items/:itemId', {}, {
 	  query: {method:'GET', params:{itemId: ''}, isArray:true},
 	  update: {method:'PUT', params: {itemId: '@itemId'}},
-	  employee: {method:'GET', params: {itemId: '@itemId'}},
 	  save: {method:'POST', params: {itemId: ''}},
 	});
 }])
@@ -108,7 +100,6 @@ angular.module('dashboardServices', ['ngResource'])
 	return $resource('/inventory/categories/:cId', {}, {
 	  query: {method:'GET', params:{cId: ''}, isArray:true},
 	  update: {method:'PUT', params: {cId: '@cId'}},
-	  employee: {method:'GET', params: {cId: '@cId'}},
 	  save: {method:'POST', params: {cId: ''}},
 	});
 }])
@@ -117,7 +108,6 @@ angular.module('dashboardServices', ['ngResource'])
 	return $resource('/inventory/account/:Id', {}, {
 	  query: {method:'GET', params:{Id: ''}, isArray:true},
 	  update: {method:'PUT', params: {Id: '@Id'}},
-	  employee: {method:'GET', params: {Id: '@Id'}},
 	  save: {method:'POST', params: {Id: ''}},
 	});
 }])
@@ -134,8 +124,41 @@ angular.module('dashboardServices', ['ngResource'])
 	return $resource('/ledger/account/:Id', {}, {
 	  query: {method:'GET', params:{Id: ''}, isArray:true},
 	  update: {method:'PUT', params: {Id: '@Id'}},
-	  employee: {method:'GET', params: {Id: '@Id'}},
 	  save: {method:'POST', params: {Id: ''}},
+	});
+}])
+
+.factory('Bank', ['$resource', function($resource){
+	return $resource('/ledger/bank/:Id', {}, {
+	  query: {method:'GET', params:{Id: ''}, isArray:true},
+	  update: {method:'PUT', params: {Id: '@Id'}},
+	  bank: {method:'GET', params: {Id: '@Id'}},
+	  save: {method:'POST', params: {Id: ''}},
+	});
+}])
+
+.factory('Vendor', ['$resource', function($resource){
+	return $resource('/ledger/vendor/:Id', {}, {
+	  query: {method:'GET', params:{Id: ''}, isArray:true},
+	  update: {method:'PUT', params: {Id: '@Id'}},
+	  vendor: {method:'GET', params: {Id: '@Id'}},
+	  save: {method:'POST', params: {Id: ''}},
+	});
+}])
+
+.factory('BankWithdraw', ['$resource', function($resource){
+	return $resource('/ledger/bank-withdraw/:Id', {}, {
+	  post: {method:'POST', params:{Id: '@Id'}},
+	  update: {method:'PUT', params: {Id: '@Id'}},
+	  query: {method:'GET', params: {Id: '@id'}},
+	});
+}])
+
+.factory('VendorPayment', ['$resource', function($resource){
+	return $resource('/ledger/vendor-payment/:Id', {}, {
+	  post: {method:'POST', params:{Id: '@Id'}},
+	  update: {method:'PUT', params: {Id: '@Id'}},
+	  query: {method:'GET', params: {Id: '@id'}},
 	});
 }])
 
@@ -143,7 +166,6 @@ angular.module('dashboardServices', ['ngResource'])
 	return $resource('/inventory/site-demands/:siteID', {}, {
 	  query: {method:'GET', params:{siteID: '@siteID'}},
 	  update: {method:'PUT', params: {siteID: '@siteID'}},
-	  player: {method:'GET', params: {siteID: '@siteID'}},
 	  save: {method:'POST', params: {siteID: '@siteID'}},
 	});
 }])
@@ -152,7 +174,6 @@ angular.module('dashboardServices', ['ngResource'])
 	return $resource('/employee/site-payrolls/:siteID', {}, {
 	  query: {method:'GET', params:{siteID: '@siteID'}},
 	  update: {method:'PUT', params: {siteID: '@siteID'}},
-	  player: {method:'GET', params: {siteID: '@siteID'}},
 	  save: {method:'POST', params: {siteID: '@siteID'}},
 	});
 }])
@@ -162,7 +183,6 @@ angular.module('dashboardServices', ['ngResource'])
 	return $resource('/inventory/demand/:Id', {}, {
 	  query: {method:'GET', params:{Id: ''}, isArray:true},
 	  update: {method:'PUT', params: {Id: '@Id'}},
-	  employee: {method:'GET', params: {Id: '@Id'}},
 	  save: {method:'POST', params: {Id: ''}},
 	});
 }])
@@ -170,7 +190,6 @@ angular.module('dashboardServices', ['ngResource'])
 	return $resource('/inventory/consumption/:Id', {}, {
 	  query: {method:'GET', params:{Id: '@Id'}, isArray:true},
 	  update: {method:'PUT', params: {Id: '@Id'}},
-	  employee: {method:'GET', params: {Id: '@Id'}},
 	  save: {method:'POST', params: {Id: ''}},
 	});
 }])
@@ -179,7 +198,6 @@ angular.module('dashboardServices', ['ngResource'])
 	return $resource('/inventory/party/:Id', {}, {
 	  query: {method:'GET', params:{Id: ''}, isArray:true},
 	  update: {method:'PUT', params: {Id: '@Id'}},
-	  employee: {method:'GET', params: {Id: '@Id'}},
 	  save: {method:'POST', params: {Id: ''}},
 	});
 }])
@@ -188,7 +206,6 @@ angular.module('dashboardServices', ['ngResource'])
 	return $resource('/inventory/party-payment/:Id', {}, {
 	  query: {method:'GET', params:{Id: '@Id'}},
 	  update: {method:'PUT', params: {Id: '@Id'}},
-	  employee: {method:'GET', params: {Id: '@Id'}},
 	  save: {method:'POST', params: {Id: ''}},
 	});
 }])
@@ -212,7 +229,6 @@ angular.module('dashboardServices', ['ngResource'])
 	return $resource('/employee/payroll/:Id', {}, {
 	  query: {method:'GET', params:{Id: ''}, isArray:true},
 	  update: {method:'PUT', params: {Id: '@Id'}},
-	  employee: {method:'GET', params: {Id: '@Id'}},
 	  save: {method:'POST', params: {Id: ''}},
 	});
 }])
@@ -221,7 +237,6 @@ angular.module('dashboardServices', ['ngResource'])
 	return $resource('/inventory/demands-rows/:Id', {}, {
 	  query: {method:'GET', params:{Id: ''}, isArray:true},
 	  update: {method:'PUT', params: {Id: '@Id'}},
-	  employee: {method:'GET', params: {Id: '@Id'}},
 	  save: {method:'POST', params: {Id: ''}},
 	});
 }])
@@ -236,7 +251,6 @@ angular.module('dashboardServices', ['ngResource'])
 	return $resource('/progress/tasks/:Id', {}, {
 	  query: {method:'GET', params:{Id: ''}, isArray:true},
 	  update: {method:'PUT', params: {Id: '@Id'}},
-	  employee: {method:'GET', params: {Id: '@Id'}},
 	  save: {method:'POST', params: {Id: ''}},
 	});
 }])
@@ -245,7 +259,6 @@ angular.module('dashboardServices', ['ngResource'])
 	return $resource('/progress/site-tasks/:siteID', {}, {
 	  query: {method:'GET', params:{siteID: '@siteID'}},
 	  update: {method:'PUT', params: {siteID: '@siteID'}},
-	  player: {method:'GET', params: {siteID: '@siteID'}},
 	  save: {method:'POST', params: {siteID: '@siteID'}},
 	});
 }])

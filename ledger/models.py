@@ -9,11 +9,13 @@ from django.db.models import F
 from django.contrib.contenttypes import generic
 
 # from users.models import Company
+
 def none_for_zero(obj):
     if not obj:
         return None
     else:
         return obj
+
 
 def zero_for_none(obj):
     if obj is None:
@@ -125,6 +127,55 @@ class Account(models.Model):
 
     def __unicode__(self):
         return self.name
+
+
+class Bank(models.Model):
+    name = models.CharField(max_length=254)
+    address = models.CharField(max_length=254, blank=True, null=True)
+    phone_no = models.CharField(max_length=100, blank=True, null=True)
+    account = models.ForeignKey(Account, null=True)
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name_plural = 'Banks'
+
+
+class BankWithdrawAndDeposit(models.Model):
+    is_deposit = models.BooleanField(default=True)
+    bank = models.ForeignKey(Bank, related_name='rows')
+    date = models.DateField(null=True)
+    amount = models.FloatField(default=0.0)
+    voucher_no = models.PositiveIntegerField(blank=True, null=True)
+
+
+class Vendor(models.Model):
+    name = models.CharField(max_length=254)
+    address = models.CharField(max_length=254, blank=True, null=True)
+    phone_no = models.CharField(max_length=100, blank=True, null=True)
+    account = models.ForeignKey(Account, null=True)
+
+    def save(self, *args, **kwargs):
+        if not self.account_id:
+            account = Account(name=self.name)
+            account.save()
+            self.account = account
+        super(Vendor, self).save(*args, **kwargs)
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name_plural = 'Vendors'
+
+
+class VendorPayments(models.Model):
+    vendor = models.ForeignKey(Vendor, related_name='rows')
+    date = models.DateField(null=True)
+    amount = models.FloatField(default=0.0)
+    bank = models.ForeignKey(Bank)
+    voucher_no = models.PositiveIntegerField(blank=True, null=True)
 
 
 class JournalEntry(models.Model):

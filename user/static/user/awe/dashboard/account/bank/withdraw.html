@@ -1,0 +1,39 @@
+<table id="example1" class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>Bank <a href="#/bank" title="All Banks">
+            <i class="fa fa-home"></i></a></th>
+        <th>Address</th>
+        <th>Phone</th>
+          <th>Dr Amount</th>
+          <th>Cr Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{[{bank.name}]}</td>
+        <td>{[{bank.address}]}</td>
+        <td>{[{bank.phone_no}]}</td>
+        <td>{[{bank.current_dr}]}</td>
+          <td>{[{bank.current_cr}]}</td>
+      </tr>
+      <tr>
+          <td>VOucher NO</td>
+          <td><label ng-show="is_deposit">Deposit Amount</label><label ng-hide="is_deposit">Withdrawn Amount</label> </td>
+          <td>Date</td>
+          <td><label ng-show="is_deposit">Deposit</label><label ng-hide="is_deposit">Withdrawn</label></td>
+          <td>Action</td>
+      </tr>
+      <tr>
+        <td><input type="text" class="form-control" ng-model="voucher_no"></td>
+        <td><input type="text" class="form-control" ng-model="amount"></td>
+        <td><input type="text" class="form-control" ng-model="date"></td>
+        <td><input type="checkbox" class="icheckbox_flat-green checked" ng-model="is_deposit">
+        <label ng-show="is_deposit">Deposit</label><label ng-hide="is_deposit">Withdrawn</label>
+        </td>
+        <td><button class="btn-info" ng-click="withdrawAmount()">
+            <label ng-show="is_deposit">Deposit</label><label ng-hide="is_deposit">Withdrawn</label></button></td>
+    </tr>
+    </tbody>
+
+</table>
