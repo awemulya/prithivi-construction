@@ -32,6 +32,28 @@ config(function($interpolateProvider) {
         return original.apply($location, [path]);
     };
 }])
+.filter('rs', ['$filter', function ($filter) {
+  return function(input) {
+   if(!input){
+    return 'RS 0.00';
+   }
+    input = parseFloat(input);
+
+    input = input.toFixed(2);
+    var inputStr = input.toString();
+    if(inputStr.length<7){
+        return 'RS ' +inputStr;
+
+    }else{
+        var lastFive = inputStr.substr(inputStr.length - 6);
+        var lastFiveBar = inputStr.substr(0, inputStr.length - 6);
+        return 'RS ' + lastFiveBar.replace(/\B(?=(\d{2})+(?!\d))/g, ",")+','+lastFive;
+
+
+    }
+  };
+}])
+
 .directive('jqdatepicker', function () {
     return {
         restrict: 'A',

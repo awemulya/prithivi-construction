@@ -60,20 +60,22 @@ class SalaryVoucherSerializer(serializers.ModelSerializer):
         for row_data in rows_data:
             data = dict(row_data)
             id = data.get('id', '')
-            if id:
-                row = SalaryVoucherRow.objects.get(pk=id)
-                row.employee = data.get('employee')
-                row.sn = data.get('sn',1)
-                row.amount = data.get('amount',0)
-                row.paid_date = data.get('paid_date', datetime.datetime.today)
-                row.start_date = data.get('start_date',datetime.datetime.today)
-                row.last_date = data.get('last_date', datetime.datetime.today)
-                row.salary_voucher = sv
-                row.save()
-                set_transactions(row, sv.date, ['dr', Account.objects.get_or_create(name='Salaries Expenses')[0], row.amount])
-                set_transactions(row, sv.date, ['cr', Account.objects.get_or_create(name='Cash')[0], row.amount])
+            # if id:
+            #     row = SalaryVoucherRow.objects.get(pk=id)
+            #     row.employee = data.get('employee')
+            #     row.sn = data.get('sn',1)
+            #     row.amount = data.get('amount',0)
+            #     row.paid_date = data.get('paid_date', datetime.datetime.today)
+            #     row.start_date = data.get('start_date',datetime.datetime.today)
+            #     row.last_date = data.get('last_date', datetime.datetime.today)
+            #     row.salary_voucher = sv
+            #     row.save()
+            #     set_transactions(row, sv.date, ['dr', Account.objects.get_or_create(name='Salaries Expenses')[0], row.amount])
+            #     set_transactions(row, sv.date, ['cr', Account.objects.get_or_create(name='Cash')[0], row.amount])
+            #     row = SalaryVoucherRow()
+            # else:
+            if not id:
                 row = SalaryVoucherRow()
-            else:
                 row.employee = data.get('employee')
                 row.sn = data.get('sn',1)
                 row.amount = data.get('amount',0)

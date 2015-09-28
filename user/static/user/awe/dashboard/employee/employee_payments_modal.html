@@ -1,57 +1,35 @@
 <div class="modal-title">
     <div class="row">
         <div class="col-sm-10 col-sm-offset-2">
-            <label>Employee Salary Payment History of {[{employee.name}]}</label></div>
+            <label>Employee Salary Payment History of {[{name}]}</label></div>
     </div>
 </div>
  <div class="modal-body">
     <table id="example1" class="table table-bordered table-striped" ng-show="records.length">
         <thead>
           <tr>
-            <th>Monthly Salary</th>
-            <th>Salary</th>
-            <th>Payment Date</th>
-            <th>Salary Of</th>
+            <th>Paid Amount</th>
+            <th colspan="2">Salary Of</th>
+              <th>Payment Date</th>
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="record in records | orderBy:'-date'">
-            <td>{[{record.monthly_salary}]}</td>
-            <td>{[{record.salary_amount}]}</td>
-            <td>{[{record.date}]}</td>
-            <td>{[{record.year}]}/{[{record.month}]}</td>
+          <tr ng-repeat="record in records | orderBy:'-paid_date'">
+            <td>{[{record.amount | rs}]}</td>
+              <td colspan="2">{[{record.start_date}]} To {[{record.last_date}]}</td>
+              <td>{[{record.paid_date}]}</td>
           </tr>
         </tbody>
         <tfoot>
           <tr>
-            <th>Salary</th>
-            <th>Date</th>
+            <th>Paid Amount</th>
+            <th colspan="2">Salary Of</th>
+              <th>Payment Date</th>
           </tr>
         </tfoot>
     </table>
      <div class="row" ng-hide="records.length"><div class="col-sm-9 col-sm-offset-3">NO Salary Payment Records</div></div>
 
-<!--<form name="employeeSalaryForm">-->
-    <!--<div class="form-group" ng-class="{ 'has-error': employeeSalaryForm.$invalid }">-->
-          <!--<label class="control-label" for="salary">-->
-              <!--<i class="fa fa-times-circle-o" ng-show="employeeSalaryForm.$invalid"></i> New Salary</label>-->
-            <!--<label ng-if="employeeSalaryForm.$invalid">-->
-                <!--Cannot be Empty.-->
-            <!--</label>-->
-          <!--<input class="form-control" id="salary" type="number" min="0" max="1000000"-->
-                 <!--ng-model="newSalary.salary"  placeholder="Salary ..." required/>-->
-    <!--</div>-->
-    <!--<div class="form-group">-->
-      <!--<label class="control-label" for="date_joined"><i class="fa fa-times-circle-o"></i> Active Date.</label>-->
-      <!--<input type="text" class="form-control" id="date_joined" ng-model="newSalary.date"-->
-             <!--placeholder="Active Date" salarydatedatepicker/>-->
-    <!--</div>-->
-    <!--<div class="form-group">-->
-      <!--<button class="btn btn-primary" ng-click="save()" ng-disabled="employeeSalaryForm.$invalid">-->
-          <!--Save New Salary-->
-      <!--</button>-->
-    <!--</div>-->
-<!--</form>-->
  </div>
 <div class="modal-footer">
     <button class="btn btn-info" ng-click="cancel()">Done</button>

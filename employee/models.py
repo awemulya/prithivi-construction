@@ -42,22 +42,22 @@ class Salary(models.Model):
         return '{0} -> {1}'.format(self.employee.name, self.salary)
 
 
-class Payment(models.Model):
-    employee = models.ForeignKey(Employee, related_name="payment")
-    absent_days = models.IntegerField(default=0)
-    date = models.DateField(default=datetime.date.today)
-    year = models.IntegerField()
-    month = models.CharField(max_length=2)
-
-    def current_salary(self):
-        return self.employee.salary.all().filter(date__lt=self.date).order_by('-date')[0].salary if self.employee.salary.all() else 0
-
-    def amount(self):
-        salary = self.current_salary()
-        return salary-(salary*(self.absent_days))/30
-
-    def __unicode__(self):
-        return '{0} -> {1}'.format(self.employee.name, self.amount())
+# class Payment(models.Model):
+#     employee = models.ForeignKey(Employee, related_name="payment")
+#     absent_days = models.IntegerField(default=0)
+#     date = models.DateField(default=datetime.date.today)
+#     year = models.IntegerField()
+#     month = models.CharField(max_length=2)
+#
+#     def current_salary(self):
+#         return self.employee.salary.all().filter(date__lt=self.date).order_by('-date')[0].salary if self.employee.salary.all() else 0
+#
+#     def amount(self):
+#         salary = self.current_salary()
+#         return salary-(salary*(self.absent_days))/30
+#
+#     def __unicode__(self):
+#         return '{0} -> {1}'.format(self.employee.name, self.amount())
 
 
 class SalaryVoucher(models.Model):
@@ -68,7 +68,7 @@ class SalaryVoucher(models.Model):
 
 class SalaryVoucherRow(models.Model):
     sn = models.PositiveIntegerField()
-    employee = models.ForeignKey(Employee)
+    employee = models.ForeignKey(Employee , related_name="payment")
     paid_date = models.DateField(default=datetime.datetime.today)
     amount = models.FloatField()
     start_date = models.DateField()

@@ -38,21 +38,23 @@
       </tr>
     </thead>
     <tbody>
-      <tr ng-repeat="row in voucher.rows">
-        <td><input type="number" step="1" class="form-control" ng-model="row.sn" ng-readonly="!data.is_admin"></td>
+      <tr ng-repeat="row in voucher.rows | orderBy:'sn'">
+        <td><input type="number" step="1" class="form-control" ng-model="row.sn" ng-hide="row.id">
+        <span ng-show="row.id">{[{row.sn}]}</span></td>
         <td><a href="" title="Add New Employee" ng-click="openAddEmployee($index)">
-            <i class="fa fa-plus"></i></a></td>
+            <i class="fa fa-plus" ng-hide="row.id"></i></a></td>
           <td><select class="form-control pull-right" data-ng-options="o.id as o.name for o in employees"
-                      data-ng-model="row.employee_id"></select>
+                      data-ng-model="row.employee_id" ng-readonly="row.id"></select>
         </td>
-        <td> <input type="number" step="1" class="form-control" ng-model="row.amount"> </td>
-        <td><input type="text" class="form-control" id="sd" ng-model="row.start_date"
-                                 placeholder="Start Date" /> </td>
+        <td> <input type="number" step="1" class="form-control" ng-model="row.amount" ng-hide="row.id">
+            <span ng-show="row.id">{[{row.amount | rs}]}</span></td>
+        <td><input type="text" class="form-control" id="sd" ng-model="row.start_date" ng-hide="row.id"
+                                 placeholder="Start Date" /> <span ng-show="row.id">{[{row.start_date}]}</span></td>
 
-          <td><input type="text" class="form-control" id="ed" ng-model="row.last_date"
-                                 placeholder="Last Date" /> </td>
-          <td><input type="text" class="form-control" id="pd" ng-model="row.paid_date"
-                                 placeholder="Paid Date" /> </td>
+          <td><input type="text" class="form-control" id="ed" ng-model="row.last_date" ng-hide="row.id"
+                                 placeholder="Last Date" /> <span ng-show="row.id">{[{row.last_date}]}</span></td>
+          <td><input type="text" class="form-control" id="pd" ng-model="row.paid_date" ng-hide="row.id"
+                                 placeholder="Paid Date" /><span ng-show="row.id">{[{row.paid_date}]}</span> </td>
       </tr>
     </tbody>
 

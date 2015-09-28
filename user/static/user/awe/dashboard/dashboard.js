@@ -397,6 +397,7 @@ var es = new Employee();
     salaryRC.$query({eId:self.employee.id},
             function(data) {
             self.records = data.employee_payments;
+            self.name = data.name;
             },
             function(error) {
                 console.log(error);

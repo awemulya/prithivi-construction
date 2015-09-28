@@ -1,7 +1,7 @@
 import datetime
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
-from employee.models import Employee, EmployeeRole, Salary, Payment
+from employee.models import Employee, EmployeeRole, Salary, SalaryVoucherRow
 from project.models import Project
 from user.models import AweUser
 from user.serializer import  UserIDSerializer
@@ -76,13 +76,13 @@ class SalarySerializer(serializers.ModelSerializer):
 
 
 class PaymentSerializer(serializers.ModelSerializer):
-    employee_id = serializers.PrimaryKeyRelatedField(source='employee', queryset=Employee.objects.all())
-    monthly_salary = serializers.IntegerField(source='current_salary', read_only=True)
-    salary_amount = serializers.IntegerField(source='amount', read_only=True)
+    # employee_id = serializers.PrimaryKeyRelatedField(source='employee', queryset=Employee.objects.all())
+    # monthly_salary = serializers.IntegerField(source='current_salary', read_only=True)
+    # salary_amount = serializers.IntegerField(source='amount', read_only=True)
 
     class Meta:
-        model = Payment
-        fields = ('id', 'absent_days', 'date', 'year', 'monthly_salary', 'salary_amount', 'month', 'employee_id')
+        model = SalaryVoucherRow
+        exclude = ['salary_voucher','employee']
 
 
 class InChargeSerializer(serializers.ModelSerializer):
@@ -134,7 +134,13 @@ class EmployeePaymentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Employee
-        fields = ('id', 'employee_payments',)
+        fields = ('id', 'name', 'employee_payments',)
+        extra_kwargs = {
+            "id": {
+                "read_only": False, "required": False, },
+            "name": {
+                "read_only": True, "required": False, },
+        }
 
     def get_payments(self, employee):
         salary_list = employee.payment.all()

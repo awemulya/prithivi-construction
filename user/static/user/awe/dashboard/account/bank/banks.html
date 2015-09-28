@@ -14,8 +14,8 @@
         <td>{[{bank.name}]}</td>
         <td>{[{bank.address}]}</td>
         <td>{[{bank.phone_no}]}</td>
-        <td>{[{bank.current_dr}]}</td>
-          <td>{[{bank.current_cr}]}</td>
+        <td>{[{bank.current_dr | rs}]}</td>
+          <td>{[{bank.current_cr | rs}]}</td>
           <td><a href="" title="Edit Bank" ng-click="openAddBank(bank)"><i class="fa fa-edit"></i></a></td>
         <td><a href="#/bank-withdraw-list/{[{bank.id}]}" title="Bank Statement" ><i class="fa fa-bars"></i></a></td>
         <td><a href="#/bank-withdraw/{[{bank.id}]}" title="Withdraw Amount" ><i class="fa fa-money"></i></a></td>

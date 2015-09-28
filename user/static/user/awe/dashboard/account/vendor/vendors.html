@@ -14,8 +14,8 @@
         <td>{[{vendor.name}]}</td>
         <td>{[{vendor.address}]}</td>
         <td>{[{vendor.phone_no}]}</td>
-        <td>{[{vendor.current_dr}]}</td>
-          <td>{[{vendor.current_cr}]}</td>
+        <td>{[{vendor.current_dr | rs}]}</td>
+          <td>{[{vendor.current_cr |rs}]}</td>
           <td><a href="" title="Edit Vendor" ng-click="openAddVendor(vendor)"><i class="fa fa-edit"></i></a></td>
         <td><a href="#/vendor-payment-list/{[{vendor.id}]}" title="Receives List" ><i class="fa fa-bars"></i></a></td>
         <td><a href="#/vendor-payment/{[{vendor.id}]}" title="Receive Payment" ><i class="fa fa-money"></i></a></td>

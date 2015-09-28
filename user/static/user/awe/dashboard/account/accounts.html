@@ -16,11 +16,11 @@
       <tr ng-repeat="account in accounts | orderBy:'-name'">
         <td>{[{account.name}]}</td>
         <td>{[{account.code}]}</td>
-        <td>{[{account.current_dr}]}</td>
-        <td>{[{account.current_cr}]}</td>
+        <td>{[{account.current_dr | rs}]}</td>
+        <td>{[{account.current_cr | rs}]}</td>
         <td>{[{account.tax_rate}]}</td>
-        <td>{[{account.opening_cr}]}</td>
-        <td>{[{account.opening_dr}]}</td>
+        <td>{[{account.opening_cr | rs}]}</td>
+        <td>{[{account.opening_dr | rs}]}</td>
         <td>{[{account.parent}]}</td>
         <td>{[{account.category}]}</td>
       </tr>

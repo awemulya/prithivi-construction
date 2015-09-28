@@ -39,6 +39,31 @@ class BankSerializer(serializers.ModelSerializer):
         bank.save()
         return bank
 
+    def update(self, instance, validated_data):
+        bank = Bank.objects.get(pk=instance.id)
+        bank.name = validated_data.pop('name')
+        bank.address = validated_data.pop('address')
+        bank.phone_no = validated_data.pop('phone_no')
+        bank.save()
+        account = validated_data.pop('account')
+        code = account.get('code')
+        current_dr = account.get('current_dr')
+        current_cr = account.get('current_cr')
+
+        if bank.account:
+            account = bank.account
+            account.code = code
+            account.name = bank.name
+            account.current_dr = current_dr
+            account.current_cr = current_cr
+            account.save()
+        else:
+            account = Account(name=bank.name, code=code, current_dr=current_dr, current_cr=current_cr)
+            account.save()
+            bank.account = account
+            bank.save()
+        return bank
+
 
 class BankWithdrawRowSerializer(serializers.ModelSerializer):
 

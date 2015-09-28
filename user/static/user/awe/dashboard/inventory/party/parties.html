@@ -16,8 +16,8 @@
         <td>{[{party.address}]}</td>
         <td>{[{party.phone_no}]}</td>
         <td>{[{party.pan_no}]}</td>
-        <td>{[{party.dr_balance}]}</td>
-          <td>{[{party.cr_balance}]}</td>
+        <td>{[{party.dr_balance | rs }]}</td>
+          <td>{[{party.cr_balance |rs }]}</td>
           <td><a href="" title="Edit Party" ng-click="openAddParty(party)"><i class="fa fa-edit"></i></a></td>
         <td><a href="#/purchase/{[{party.id}]}" title="Party Purchases" ><i class="fa fa-bars"></i></a></td>
         <td><a href="#payment/{[{party.id}]}" title="Party Payments" ><i class="fa fa-money"></i></a></td>
