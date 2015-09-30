@@ -5,10 +5,13 @@
             <i class="fa fa-plus"></i></a></th>
       <th>Party <a href="#/party" title="All Parties">
             <i class="fa fa-user"></i></a></th>
-      <th>Purchase Count</th>
-        <th>Voucher No</th>
-        <th>Date</th>
+          <th>Purchase Count</th>
+          <th>Pan NO</th>
+          <th>Purchased Date</th>
+          <th>Bill NO</th>
         <th>Purchased IN</th>
+        <th>Vat</th>
+        <th>Purchase Amount</th>
         <th colspan="2">Actions</th>
       </tr>
     </thead>
@@ -18,10 +21,13 @@
         <td><label ng-show="data.party_name">{[{data.party_name}]}</label><label ng-show="party_name">{[{party_name}]}</label> </td>
           <td><label ng-repeat="row in data.rows"><span ng-show="$index<2">{[{row.item_name}]},</span>
               <span ng-show="$index>1 &&  $index<4">..</span></label>({[{data.rows.length}]})</td>
-        <td>{[{data.voucher_no}]}</td>
-        <td>{[{data.date}]}</td>
+          <td>{[{data.pan_no}]}</td>
+          <td>{[{data.date}]}</td>
+          <td>{[{data.voucher_no}]}</td>
         <td><label ng-show="data.credit">Credit</label><label ng-hide="data.credit">Cash</label></td>
-        <td><a href="#/inventory/purchase-details/{[{data.id}]}" title="Purchase Details"><i class="fa fa-bars"></i></a></td>
+          <td>{[{data.total_vat |rs }]}</td>
+          <td>{[{data.total_amt | rs}]}</td>
+          <td><a href="#/inventory/purchase-details/{[{data.id}]}" title="Purchase Details"><i class="fa fa-bars"></i></a></td>
       </tr>
     </tbody>
     <tfoot>

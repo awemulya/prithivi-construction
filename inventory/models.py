@@ -245,6 +245,14 @@ class Purchase(models.Model):
         for obj in self.rows.all():
             total = obj.quantity * obj.rate
             grand_total += total
+        return grand_total+self.vat
+
+    @property
+    def vat(self):
+        grand_total = 0
+        for obj in self.rows.all():
+            vat = obj.quantity * obj.rate*0.13 if obj.is_vatable else 0
+            grand_total += vat
         return grand_total
 
     def get_absolute_url(self):
@@ -256,6 +264,7 @@ class PurchaseRow(models.Model):
     item = models.ForeignKey(Item)
     quantity = models.FloatField()
     rate = models.FloatField()
+    is_vatable = models.BooleanField(default=True)
     discount = models.FloatField(default=0)
     unit = models.CharField(max_length=50, default=_('pieces'))
     purchase = models.ForeignKey(Purchase, related_name='rows')

@@ -744,8 +744,6 @@ function($scope, Purchase, Item, Category, Party, NextAccountNo, $modal, $timeou
     self.parties = Party.query();
     self.mainData = {};
     if(self.purchaseId && self.purchaseId !=0){
-    console.log(self.purchaseId);
-        console.log('not zero');
         var ss = new Purchase();
             ss.$get({Id:self.purchaseId},
                     function(data) {
@@ -805,10 +803,53 @@ function($scope, Purchase, Item, Category, Party, NextAccountNo, $modal, $timeou
     self.newItem = function(){
     var sn_count = self.mainData.rows.length || 0;
     sn_count += 1;
-    self.mainData.rows.push({item_id:self.items[0].id,quantity:1,unit:'pieces',rate:0.0,discount:0.0,sn:sn_count});
+    self.mainData.rows.push({item_id:self.items[0].id,quantity:1,unit:'pieces',rate:0.0,discount:0.0,sn:sn_count,
+    is_vatable:true});
+
 
     };
 
+    self.vat = function(quantity, rate, is_vat){
+        if (is_vat){
+            return quantity*rate*0.13;
+        }
+    };
+
+    self.totalVat = function (){
+        if(!self.mainData.rows) return 0;
+            var tv= 0;
+        for (var j=0; j<self.mainData.rows.length; j++){
+                var rd = self.mainData.rows[j];
+                if (rd.is_vatable){
+                    tv  += rd.quantity*rd.rate*0.13;
+                }
+        }
+        return tv;
+    };
+
+    self.totalDiscount = function (){
+        if(!self.mainData.rows) return 0;
+            var tv= 0;
+        for (var j=0; j<self.mainData.rows.length; j++){
+                var rd = self.mainData.rows[j];
+                    tv += rd.discount;
+        }
+        return tv;
+    };
+
+    self.totalAmount = function (){
+    if(!self.mainData.rows) return 0;
+            var tv= 0;
+        for (var j=0; j<self.mainData.rows.length; j++){
+                var rd = self.mainData.rows[j];
+                    if(rd.is_vatable){
+                    tv += rd.quantity*rd.rate*1.13-rd.discount;
+                    }else{
+                    tv += rd.quantity*rd.rate-rd.discount;
+                    }
+        }
+        return tv;
+    };
        self.openAddItem = function(index) {
         var modalInstance = $modal.open({
             animation: true,
@@ -1524,6 +1565,20 @@ function($scope, Employee, SiteEmployee, Site, Role, SalaryRecord, Salary, Emplo
 $timeout, $routeParams){
     var self = $scope;
     var parent = self.$parent;
+    self.totalItems = 100;
+      self.currentPage = 1;
+      self.itemsPerPage = 5;
+
+      self.setPage = function (pageNo) {
+        self.currentPage = pageNo;
+      };
+
+      self.pageChanged = function() {
+      self.employees = self.employeesAll.slice((self.currentPage-1)*5, self.currentPage*5);
+//        console.log('Page changed to: ' + self.currentPage);
+      };
+
+
     self.siteID =  $routeParams.siteId;
     parent.data.site_id = self.siteID;
     self.employees = {};
@@ -1531,7 +1586,9 @@ $timeout, $routeParams){
     var employeeService = new SiteEmployee();
     employeeService.$query({siteID:self.siteID},
             function(data) {
-            self.employees = data.employee;
+            self.employeesAll = data.employee;
+            self.employees = self.employeesAll.slice((self.currentPage-1)*5, self.currentPage*5);
+            self.totalItems = self.employeesAll.length;
             self.site = data.id;
             },
             function(error) {

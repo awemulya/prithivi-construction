@@ -296,6 +296,9 @@ class PurchaseInfoSerializer(serializers.ModelSerializer):
 class PurchaseSerializer(serializers.ModelSerializer):
     party_id = serializers.PrimaryKeyRelatedField(source='party', queryset=Party.objects.all())
     party_name = serializers.ReadOnlyField(source='party.name')
+    pan_no = serializers.ReadOnlyField(source='party.pan_no')
+    total_vat = serializers.ReadOnlyField(source='vat')
+    total_amt = serializers.ReadOnlyField(source='total')
     rows = PurchaseRowSerializer(many=True)
 
     class Meta:
@@ -316,22 +319,27 @@ class PurchaseSerializer(serializers.ModelSerializer):
             row.item = data.get('item')
             row.unit = data.get('unit','Pieces')
             row.quantity = data.get('quantity',0.0)
+            row.is_vatable = data.get('is_vatable',True)
             row.rate = data.get('rate', 0.0)
             row.discount = data.get('discount',0.0)
             row.purchase = purchase
             row.save()
             iv_account, status = InventoryAccount.objects.get_or_create(
-                    name=row.item.name, site_id=DEFAULT_PROJECT_ID, account_no=row.item.account.account_no)
+                name=row.item.name, site_id=DEFAULT_PROJECT_ID, account_no=row.item.account.account_no)
             set_transactions(row, row.purchase.date, ['dr', iv_account, row.quantity])
+            if not row.is_vatable:
+                row_amount = row.quantity*row.rate-row.discount
+            else:
+                row_amount = row.quantity*row.rate*1.13-row.discount
             set_ledger_transactions(row, row.purchase.date,
-                                 ['dr', row.item.ledger,
-                                  row.quantity*row.rate-row.discount])
+                                    ['dr', row.item.ledger,
+                                     row_amount])
             if purchase.credit:
                 set_ledger_transactions(row, row.purchase.date, ['cr', purchase.party.account,
-                                                                 row.quantity*row.rate-row.discount])
+                                                                 row_amount])
             else:
                 set_ledger_transactions(row, row.purchase.date, ['cr', Account.objects.get_or_create(name ='Cash')[0],
-                                                                 row.quantity*row.rate-row.discount])
+                                                                 row_amount])
         return purchase
 
     def update(self, instance, validated_data):
@@ -360,6 +368,7 @@ class PurchaseSerializer(serializers.ModelSerializer):
             row.item = data.get('item')
             row.unit = data.get('unit','Pieces')
             row.quantity = data.get('quantity',0.0)
+            row.is_vatable = data.get('is_vatable',True)
             row.rate = data.get('rate', 0.0)
             row.discount = data.get('discount',0.0)
             row.purchase = purchase
@@ -367,15 +376,19 @@ class PurchaseSerializer(serializers.ModelSerializer):
             iv_account, status = InventoryAccount.objects.get_or_create(
                 name=row.item.name, site_id=DEFAULT_PROJECT_ID, account_no=row.item.account.account_no)
             set_transactions(row, row.purchase.date, ['dr', iv_account, row.quantity])
+            if not row.is_vatable:
+                row_amount = row.quantity*row.rate-row.discount
+            else:
+                row_amount = row.quantity*row.rate*1.13-row.discount
             set_ledger_transactions(row, row.purchase.date,
                                  ['dr', row.item.ledger,
-                                  row.quantity*row.rate-row.discount])
+                                  row_amount])
             if purchase.credit:
                 set_ledger_transactions(row, row.purchase.date, ['cr', purchase.party.account,
-                                                                 row.quantity*row.rate-row.discount])
+                                                                 row_amount])
             else:
                 set_ledger_transactions(row, row.purchase.date, ['cr', Account.objects.get_or_create(name ='Cash')[0],
-                                                                 row.quantity*row.rate-row.discount])
+                                                                 row_amount])
 
         return purchase
 
