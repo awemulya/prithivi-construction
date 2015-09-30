@@ -259,6 +259,32 @@ class Purchase(models.Model):
         return reverse_lazy('purchase-detail', kwargs={'id': self.pk})
 
 
+class Sales(models.Model):
+    party = models.ForeignKey(Party, related_name='sales')
+    voucher_no = models.PositiveIntegerField(blank=True, null=True)
+    credit = models.BooleanField(default=False)
+    date = models.DateField(default=datetime.datetime.today)
+
+    @property
+    def total(self):
+        grand_total = 0
+        for obj in self.rows.all():
+            total = obj.quantity * obj.rate
+            grand_total += total
+        return grand_total+self.vat
+
+    @property
+    def vat(self):
+        grand_total = 0
+        for obj in self.rows.all():
+            vat = obj.quantity * obj.rate*0.13 if obj.is_vatable else 0
+            grand_total += vat
+        return grand_total
+
+    def get_absolute_url(self):
+        return reverse_lazy('sales-detail', kwargs={'id': self.pk})
+
+
 class PurchaseRow(models.Model):
     sn = models.PositiveIntegerField()
     item = models.ForeignKey(Item)
@@ -271,3 +297,17 @@ class PurchaseRow(models.Model):
 
     def get_voucher_no(self):
         return self.purchase.voucher_no
+
+
+class SalesRow(models.Model):
+    sn = models.PositiveIntegerField()
+    item = models.ForeignKey(Item)
+    quantity = models.FloatField()
+    rate = models.FloatField()
+    is_vatable = models.BooleanField(default=True)
+    discount = models.FloatField(default=0)
+    unit = models.CharField(max_length=50, default=_('pieces'))
+    sales = models.ForeignKey(Sales, related_name='rows')
+
+    def get_voucher_no(self):
+        return self.sales.voucher_no

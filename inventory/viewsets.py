@@ -1,8 +1,8 @@
 from rest_framework import viewsets
-from inventory.models import Category, Item, InventoryAccount, Demand, Purchase, Party
+from inventory.models import Category, Item, InventoryAccount, Demand, Purchase, Party, Sales
 from inventory.serializer import CategorySerializer, ItemSerializer, InventoryAccountSerializer, SiteDemandsSerializer, \
     DemandSerializer, PurchaseSerializer, PartySerializer, SiteAccountSerializer, ConsumptionIASerializer, \
-    PartyPaymentSerializer, PartyPurchaseSerializer
+    PartyPaymentSerializer, PartyPurchaseSerializer, SalesSerializer
 from project.models import Project
 from project.permissions import IsAdminOrReadOnly
 
@@ -44,6 +44,7 @@ class SiteDemandsViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
             serializer.save()
+
 
 class SiteInventoryAccountViewSet(viewsets.ModelViewSet):
 
@@ -102,6 +103,19 @@ class PurchaseViewSet(viewsets.ModelViewSet):
 
     queryset = Purchase.objects.all()
     serializer_class = PurchaseSerializer
+    permission_classes = [IsAdminOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save()
+
+    def perform_update(self, serializer):
+        serializer.save()
+
+
+class SalesViewSet(viewsets.ModelViewSet):
+
+    queryset = Sales.objects.all()
+    serializer_class = SalesSerializer
     permission_classes = [IsAdminOrReadOnly]
 
     def perform_create(self, serializer):

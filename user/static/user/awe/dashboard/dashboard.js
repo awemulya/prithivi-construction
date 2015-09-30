@@ -61,6 +61,11 @@ $routeProvider.when('/purchase/', {
     controller: 'PurchaseController'
   })
 
+$routeProvider.when('/sales/', {
+    templateUrl: djstatic('user/awe/dashboard/inventory/sales/sales.html'),
+    controller: 'SalesController'
+  })
+
 $routeProvider.when('/purchase/:partyId', {
     templateUrl: djstatic('user/awe/dashboard/inventory/purchase/purchase.html'),
     controller: 'PartyPurchaseController'
@@ -89,6 +94,11 @@ $routeProvider.when('/inventory/demand-details/:demandId', {
 $routeProvider.when('/inventory/purchase-details/:purchaseId', {
     templateUrl: djstatic('user/awe/dashboard/inventory/purchase/purchase_details.html'),
     controller: 'PurchaseDetailController'
+  })
+
+$routeProvider.when('/inventory/sales-details/:salesId', {
+    templateUrl: djstatic('user/awe/dashboard/inventory/sales/sales_details.html'),
+    controller: 'SalesDetailController'
   })
 
 $routeProvider.when('/site/site-details/:siteId', {
@@ -458,6 +468,12 @@ function($scope, Purchase, $modal, $timeout, $routeParams){
     self.data_list = Purchase.query();
 }])
 
+.controller('SalesController', ['$scope', 'Sales', '$modal', '$timeout', '$routeParams',
+function($scope, Sales, $modal, $timeout, $routeParams){
+    var self = $scope;
+    self.data_list = Sales.query();
+}])
+
 .controller('BankWithDrawListController', ['$scope', 'BankWithdraw', '$modal', '$timeout', '$routeParams',
 function($scope, BankWithdraw, $modal, $timeout, $routeParams){
     var self = $scope;
@@ -758,7 +774,7 @@ function($scope, Purchase, Item, Category, Party, NextAccountNo, $modal, $timeou
 
     self.savePurchase = function(){
         if(!self.mainData.voucher_no){
-            alert("please Enter Voucher NO");
+            alert("please Enter Bill NO");
         }else{
     if(self.mainData.id){
         var ps = new Purchase();
@@ -789,6 +805,241 @@ function($scope, Purchase, Item, Category, Party, NextAccountNo, $modal, $timeou
         self.mainData = data;
           alert("Purchase "+self.mainData.voucher_no+" Saved ");
                 $location.path("/inventory/purchase-details/"+data.id, false);
+        },
+        function(error) {
+            console.log(error);
+        });
+
+
+    }
+    }
+
+    };
+
+    self.newItem = function(){
+    var sn_count = self.mainData.rows.length || 0;
+    sn_count += 1;
+    self.mainData.rows.push({item_id:self.items[0].id,quantity:1,unit:'pieces',rate:0.0,discount:0.0,sn:sn_count,
+    is_vatable:true});
+
+
+    };
+
+    self.vat = function(quantity, rate, is_vat){
+        if (is_vat){
+            return quantity*rate*0.13;
+        }
+    };
+
+    self.totalVat = function (){
+        if(!self.mainData.rows) return 0;
+            var tv= 0;
+        for (var j=0; j<self.mainData.rows.length; j++){
+                var rd = self.mainData.rows[j];
+                if (rd.is_vatable){
+                    tv  += rd.quantity*rd.rate*0.13;
+                }
+        }
+        return tv;
+    };
+
+    self.totalDiscount = function (){
+        if(!self.mainData.rows) return 0;
+            var tv= 0;
+        for (var j=0; j<self.mainData.rows.length; j++){
+                var rd = self.mainData.rows[j];
+                    tv += rd.discount;
+        }
+        return tv;
+    };
+
+    self.totalAmount = function (){
+    if(!self.mainData.rows) return 0;
+            var tv= 0;
+        for (var j=0; j<self.mainData.rows.length; j++){
+                var rd = self.mainData.rows[j];
+                    if(rd.is_vatable){
+                    tv += rd.quantity*rd.rate*1.13-rd.discount;
+                    }else{
+                    tv += rd.quantity*rd.rate-rd.discount;
+                    }
+        }
+        return tv;
+    };
+       self.openAddItem = function(index) {
+        var modalInstance = $modal.open({
+            animation: true,
+            templateUrl: djstatic('user/awe/dashboard/inventory/add_item_modal.html'),
+            controller: 'ItemAddModalController',
+            windowClass: 'app-modal-window',
+            resolve: {
+            Item: function() {
+                return Item;
+            },
+            Category: function() {
+                return Category;
+            },
+            NextAccountNo: function() {
+                return NextAccountNo;
+            }
+            }
+        });
+
+        modalInstance.result.then(function(newItem) {
+        if (!angular.equals({},newItem)){
+        var cs = new Item();
+            cs.name = newItem.name;
+            cs.description = newItem.description;
+            cs.category_id = newItem.category_id;
+              if(!newItem.account_no){
+                    self.next_account_data = NextAccountNo.query(null,
+                    function(data) {
+                    newItem.account_no = data.ac_no;
+                    cs.account_no = newItem.account_no;
+                    },
+                    function(error) {
+                        console.log(error);
+                    });
+                    }else{
+                cs.account_no = newItem.account_no;
+
+                    }
+
+            cs.type = newItem.type;
+            cs.unit = newItem.unit;
+            cs.code = newItem.code;
+            cs.$save(null,
+            function(data) {
+                self.items.splice(0, 0, data);
+                self.mainData.rows[index].item_id = data.id;
+            },
+            function(error) {
+                console.log(error);
+            });
+
+            }
+        });
+    };
+
+    self.openAddParty = function(party) {
+        var modalInstance = $modal.open({
+            animation: true,
+            templateUrl: djstatic('user/awe/dashboard/inventory/party/add_party_modal.html'),
+            controller: 'PartyAddModalController',
+            windowClass: 'app-modal-window',
+            resolve: {
+            party: function() {
+                return party;
+            }
+            }
+        });
+
+        modalInstance.result.then(function(partyData) {
+        if (!angular.equals({},partyData)){
+        var ps = new Party();
+            ps.name = partyData.name;
+            ps.address = partyData.address;
+            ps.phone_no = partyData.phone_no;
+            ps.pan_no = partyData.pan_no;
+            if(partyData.id){
+                ps.$update({Id:partyData.id},
+                function(data) {
+                    self.mainData.party_id = data.id;
+                    for(var i=0; i<self.parties.length; i++){
+                        if(self.parties[i].id == data.id){
+                            self.parties[i]= data;
+                            i= self.parties.length;
+                        }
+                    }
+                },
+                function(error) {
+                    console.log(error);
+                });
+            }else{
+                ps.$save(null,
+                function(data) {
+                    self.mainData.party_id = data.id;
+                    self.parties.splice(0, 0, data);
+                },
+                function(error) {
+                    console.log(error);
+                });
+
+            }
+
+
+            }
+        });
+    };
+
+
+}])
+
+.controller('SalesDetailController', ['$scope', 'Sales', 'Item', 'Category', 'Party', 'NextAccountNo', '$modal', '$timeout',
+'$routeParams', '$location',
+function($scope, Sales, Item, Category, Party, NextAccountNo, $modal, $timeout, $routeParams, $location) {
+    var newDate = new Date();
+    var today = newDate.toISOString().substring(0, 10);
+    var self = $scope;
+    var parent = self.$parent;
+    self.site_id = parent.data.site_id;
+    self.$watch('data', function(data) {
+        if(!angular.equals(data,{})){
+         if(!self.site_id){
+         self.site_id = data.site_id;
+         }
+        }
+    }, true);
+    self.salesId =  $routeParams.salesId;
+    self.items = Item.query();
+    self.parties = Party.query();
+    self.mainData = {};
+    if(self.salesId && self.salesId !=0){
+        var ss = new Sales();
+            ss.$get({Id:self.salesId},
+                    function(data) {
+                    self.mainData = data;
+                    },
+                    function(error) {
+                        console.log(error);
+                    });
+    }else{
+        self.mainData = {date:today, party_id:1, voucher_no:'',rows:[]};
+    }
+
+    self.savePurchase = function(){
+        if(!self.mainData.voucher_no){
+            alert("please Enter BIll NO");
+        }else{
+    if(self.mainData.id){
+        var ps = new Sales();
+        ps.id=self.mainData.id;
+        ps.date=self.mainData.date;
+        ps.credit=self.mainData.credit;
+        ps.party_id=self.mainData.party_id;
+        ps.voucher_no=self.mainData.voucher_no;
+        ps.rows = self.mainData.rows;
+        ps.$update({Id:self.mainData.id},
+                function(data) {
+                self.mainData = data;
+                  alert("Sales "+self.mainData.voucher_no+" Updated ");
+                },
+                function(error) {
+                    console.log(error);
+                });
+
+    }else{
+        var ps = new Sales();
+        ps.date=self.mainData.date;
+        ps.credit=self.mainData.credit;
+        ps.party_id=self.mainData.party_id;
+        ps.voucher_no=self.mainData.voucher_no;
+        ps.rows = self.mainData.rows;
+        ps.$save(null,
+        function(data) {
+        self.mainData = data;
+          alert("Sales "+self.mainData.voucher_no+" Saved ");
+                $location.path("/inventory/sales-details/"+data.id, false);
         },
         function(error) {
             console.log(error);
@@ -1071,7 +1322,17 @@ function($scope, Voucher, Employee, SiteEmployee, Role, $modal, $timeout, $route
     }else{
         self.voucher = {date:today, site_id:self.site_id, voucher_no:1, rows:[]};
     }
+    self.total = function(){
 
+        if(!self.voucher.rows) return 0;
+            var tv= 0;
+        for (var j=0; j<self.voucher.rows.length; j++){
+            var rd = self.voucher.rows[j];
+                tv += rd.amount;
+        }
+        return tv;
+
+    };
     self.saveVoucher = function(){
     if(self.voucher.id){
         var ds = new Voucher();

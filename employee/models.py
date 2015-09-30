@@ -69,6 +69,13 @@ class SalaryVoucher(models.Model):
     date = models.DateField(default=datetime.datetime.today)
     site = models.ForeignKey(Project, related_name='salary_voucher')
 
+    @property
+    def total(self):
+        total = 0
+        for obj in self.rows.all():
+            total += obj.amount
+        return total
+
 
 class SalaryVoucherRow(models.Model):
     sn = models.PositiveIntegerField()

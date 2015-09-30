@@ -10,7 +10,7 @@
             <i class="fa fa-plus"></i></a></th>
         <th>Date</th>
         <th>Voucher NO</th>
-      </tr>
+        </tr>
     </thead>
     <tbody>
       <tr>
@@ -21,6 +21,7 @@
         </td>
         <td> <input type="number" step="1" class="form-control" ng-model="voucher.voucher_no">
             </td>
+
       </tr>
     </tbody>
 
@@ -55,6 +56,11 @@
                                  placeholder="Last Date" /> <span ng-show="row.id">{[{row.last_date}]}</span></td>
           <td><input type="text" class="form-control" id="pd" ng-model="row.paid_date" ng-hide="row.id"
                                  placeholder="Paid Date" /><span ng-show="row.id">{[{row.paid_date}]}</span> </td>
+      </tr>
+    <tr>
+        <th></th>
+        <th colspan="2">Total Amount</th>
+        <th>{[{total() | rs}]}</th>
       </tr>
     </tbody>
 

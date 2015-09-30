@@ -26,9 +26,11 @@ class SalaryVoucherSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SalaryVoucher
-        fields = ('id', 'date', 'voucher_no', 'site_id', 'site_name', 'rows')
+        fields = ('id', 'date', 'voucher_no', 'site_id', 'site_name', 'rows', 'total')
         extra_kwargs = {
             "id": {
+                "read_only": False, "required": False, },
+            "total": {
                 "read_only": False, "required": False, },
         }
 

@@ -1,17 +1,17 @@
 <table id="example1" class="table table-bordered table-striped">
     <thead>
       <tr>
-        <th>SN <a href="#/inventory/purchase-details/0" title="Add Purchase">
+        <th>SN <a href="#/inventory/sales-details/0" title="Add Sales">
             <i class="fa fa-plus"></i></a></th>
       <th>Party <a href="#/party" title="All Parties">
             <i class="fa fa-user"></i></a></th>
-          <th>Purchase Count</th>
+          <th>Sales Count</th>
           <th>Pan NO</th>
-          <th>Purchased Date</th>
+          <th>Sales Date</th>
           <th>Bill NO</th>
         <th>Purchased IN</th>
         <th>Vat</th>
-        <th>Purchase Amount</th>
+        <th>Sales Amount</th>
         <th colspan="2">Actions</th>
       </tr>
     </thead>
@@ -27,22 +27,22 @@
         <td><label ng-show="data.credit">Credit</label><label ng-hide="data.credit">Cash</label></td>
           <td>{[{data.total_vat |rs }]}</td>
           <td>{[{data.total_amt | rs}]}</td>
-          <td><a href="#/inventory/purchase-details/{[{data.id}]}" title="Purchase Details"><i class="fa fa-bars"></i></a></td>
+          <td><a href="#/inventory/sales-details/{[{data.id}]}" title="Sales Details"><i class="fa fa-bars"></i></a></td>
       </tr>
     </tbody>
     <tfoot>
-      <tr>
-        <th>SN <a href="#/inventory/purchase-details/0" title="Add Purchase">
+            <tr>
+        <th>SN <a href="#/inventory/sales-details/0" title="Add Sales">
             <i class="fa fa-plus"></i></a></th>
       <th>Party <a href="#/party" title="All Parties">
             <i class="fa fa-user"></i></a></th>
-          <th>Purchase Count</th>
+          <th>Sales Count</th>
           <th>Pan NO</th>
-          <th>Purchased Date</th>
+          <th>Sales Date</th>
           <th>Bill NO</th>
         <th>Purchased IN</th>
         <th>Vat</th>
-        <th>Purchase Amount</th>
+        <th>Sales Amount</th>
         <th colspan="2">Actions</th>
       </tr>
     </tfoot>

@@ -3,7 +3,7 @@ from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ModelSerializer
 from inventory.models import Category, Item, InventoryAccount, Demand, DemandRow, Party, Purchase, PurchaseRow, \
-    set_transactions, DEFAULT_PROJECT_ID, ConsumptionRow, PartyPayment
+    set_transactions, DEFAULT_PROJECT_ID, ConsumptionRow, PartyPayment, SalesRow, Sales
 from ledger.models import Account, set_transactions as set_ledger_transactions
 from project.models import Project
 
@@ -226,6 +226,19 @@ class PurchaseRowSerializer(serializers.ModelSerializer):
         }
 
 
+class SalesRowSerializer(serializers.ModelSerializer):
+    item_id = serializers.PrimaryKeyRelatedField(source='item', queryset=Item.objects.all())
+    item_name = serializers.ReadOnlyField(source='item.name')
+
+    class Meta:
+        model = SalesRow
+        exclude = ['item', 'sales']
+        extra_kwargs = {
+            "id": {
+                "read_only": False, "required": False, },
+        }
+
+
 class PartyPaymentRowSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -391,6 +404,106 @@ class PurchaseSerializer(serializers.ModelSerializer):
                                                                  row_amount])
 
         return purchase
+
+
+class SalesSerializer(serializers.ModelSerializer):
+    party_id = serializers.PrimaryKeyRelatedField(source='party', queryset=Party.objects.all())
+    party_name = serializers.ReadOnlyField(source='party.name')
+    pan_no = serializers.ReadOnlyField(source='party.pan_no')
+    total_vat = serializers.ReadOnlyField(source='vat')
+    total_amt = serializers.ReadOnlyField(source='total')
+    rows = SalesRowSerializer(many=True)
+
+    class Meta:
+        model = Sales
+        exclude = ['party']
+        extra_kwargs = {
+            "id": {
+                "read_only": False, "required": False, },
+        }
+
+    def create(self, validated_data):
+        rows_data = validated_data.pop('rows')
+        sales = Sales.objects.create(**validated_data)
+        for row_data in rows_data:
+            data = dict(row_data)
+            row = SalesRow()
+            row.sn = data.get('sn')
+            row.item = data.get('item')
+            row.unit = data.get('unit','Pieces')
+            row.quantity = data.get('quantity',0.0)
+            row.is_vatable = data.get('is_vatable',True)
+            row.rate = data.get('rate', 0.0)
+            row.discount = data.get('discount',0.0)
+            row.sales = sales
+            row.save()
+            iv_account, status = InventoryAccount.objects.get_or_create(
+                name=row.item.name, site_id=DEFAULT_PROJECT_ID, account_no=row.item.account.account_no)
+            set_transactions(row, row.sales.date, ['cr', iv_account, row.quantity])
+            if not row.is_vatable:
+                row_amount = row.quantity*row.rate-row.discount
+            else:
+                row_amount = row.quantity*row.rate*1.13-row.discount
+            set_ledger_transactions(row, row.sales.date,
+                                    ['cr', row.item.ledger,
+                                     row_amount])
+            if sales.credit:
+                set_ledger_transactions(row, row.sales.date, ['dr', sales.party.account,
+                                                                 row_amount])
+            else:
+                set_ledger_transactions(row, row.sales.date, ['dr', Account.objects.get_or_create(name='Cash')[0],
+                                                                 row_amount])
+        return sales
+
+    def update(self, instance, validated_data):
+        rows_data = validated_data.pop('rows')
+        sales = Sales.objects.get(pk=instance.id)
+        sales.date = validated_data.pop('date',None)
+        sales.credit = validated_data.pop('credit',False)
+        sales.voucher_no = validated_data.pop('voucher_no')
+        sales.party = validated_data.pop('party')
+        sales.save()
+        for row_data in rows_data:
+            data = dict(row_data)
+            row_id = data.get('id', '')
+            if row_id:
+                row = SalesRow.objects.get(pk=row_id)
+                # if not row.item == data.get('item'):
+                #     iv_account, status = InventoryAccount.objects.get_or_create(
+                #         name=row.item.name, site_id=DEFAULT_PROJECT_ID, account_no=row.item.account.account_no)
+                #     set_transactions(row, row.purchase.date, ['cr', iv_account, row.quantity])
+                #     set_ledger_transactions(row, row.purchase.date, ['cr', row.item.ledger,
+                #                                                      row.quantity*row.rate-row.discount])
+
+            else:
+                row = SalesRow()
+            row.sn = data.get('sn')
+            row.item = data.get('item')
+            row.unit = data.get('unit','Pieces')
+            row.quantity = data.get('quantity',0.0)
+            row.is_vatable = data.get('is_vatable',True)
+            row.rate = data.get('rate', 0.0)
+            row.discount = data.get('discount',0.0)
+            row.sales = sales
+            row.save()
+            iv_account, status = InventoryAccount.objects.get_or_create(
+                name=row.item.name, site_id=DEFAULT_PROJECT_ID, account_no=row.item.account.account_no)
+            set_transactions(row, row.sales.date, ['cr', iv_account, row.quantity])
+            if not row.is_vatable:
+                row_amount = row.quantity*row.rate-row.discount
+            else:
+                row_amount = row.quantity*row.rate*1.13-row.discount
+            set_ledger_transactions(row, row.sales.date,
+                                 ['cr', row.item.ledger,
+                                  row_amount])
+            if sales.credit:
+                set_ledger_transactions(row, row.sales.date, ['dr', sales.party.account,
+                                                                 row_amount])
+            else:
+                set_ledger_transactions(row, row.sales.date, ['dr', Account.objects.get_or_create(name='Cash')[0],
+                                                                 row_amount])
+
+        return sales
 
 
 class ConsumptionIASerializer(serializers.ModelSerializer):

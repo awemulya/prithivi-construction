@@ -225,6 +225,15 @@ angular.module('dashboardServices', ['ngResource'])
 	});
 }])
 
+.factory('Sales', ['$resource', function($resource){
+	return $resource('/inventory/sales/:Id', {}, {
+	  query: {method:'GET', params:{Id: ''}, isArray:true},
+	  update: {method:'PUT', params: {Id: '@Id'}},
+	  employee: {method:'GET', params: {Id: '@Id'}},
+	  save: {method:'POST', params: {Id: ''}},
+	});
+}])
+
 .factory('Voucher', ['$resource', function($resource){
 	return $resource('/employee/payroll/:Id', {}, {
 	  query: {method:'GET', params:{Id: ''}, isArray:true},

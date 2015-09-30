@@ -6,6 +6,7 @@
       <th>Employees Count</th>
         <th>Date</th>
         <th>Voucher NO</th>
+          <th>Amount Paid</th>
         <th colspan="2">Actions</th>
       </tr>
     </thead>
@@ -17,6 +18,7 @@
              </td>
         <td>{[{voucher.date}]}</td>
         <td>{[{voucher.voucher_no}]}</td>
+           <td>{[{voucher.total | rs}]}</td>
         <td><a href="#/employee/voucher-details/{[{voucher.id}]}" title="Payroll Details"><i class="fa fa-bars"></i></a></td>
       </tr>
     </tbody>
