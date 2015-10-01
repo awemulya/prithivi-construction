@@ -1,7 +1,14 @@
+
 <table id="example1" class="table table-bordered table-striped" ng-show="data.is_admin">
+    <tr>
+        <td colspan="5"><input type="text" name="q" ng-model="query" class="form-control" placeholder="Search..."></td>
+    </tr>
+
     <thead>
       <tr>
-        <th>Email</th>
+        <th><a href="" title="Order By Ascending" ng-click="SetOrder('email')"><i class="fa  fa-sort-alpha-asc"></i></a>
+           <span> Email </span>
+        <a href="" title="Order By Descending" ng-click="SetOrder('-email')"><i class="fa  fa-sort-alpha-desc"></i></a></th>
         <th>Is Site Incharge</th>
         <th>Is Admin</th>
         <th>Status</th>
@@ -9,7 +16,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr ng-repeat="user in users | orderBy:'email'">
+      <tr ng-repeat="user in users |filter: query | orderBy:order_by">
         <td>{[{user.email}]}</td>
         <td><i class="fa" ng-class="{true:'fa-check text-aqua', false:'fa-close text-red'}[user.is_site_manager]"></i></td>
         <td><i class="fa" ng-class="{true:'fa-check text-aqua', false:'fa-close text-red'}[user.is_admin]"></i></td>

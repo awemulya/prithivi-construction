@@ -1,17 +1,18 @@
 <table id="example1" class="table table-bordered table-striped">
+    <tr><td colspan="8"><input type="text" name="q" ng-model="query" class="form-control" placeholder="Search..."></td></tr>
     <thead>
       <tr>
         <th>SN <a href="#/employee/voucher-details/0" title="Add Voucher">
             <i class="fa fa-plus"></i></a></th>
       <th>Employees Count</th>
-        <th>Date</th>
-        <th>Voucher NO</th>
-          <th>Amount Paid</th>
+        <th><a href="" title="Order By Date" ng-click="SetOrder('date')"><i class="fa  fa-arrows-v"></i></a>Date</th>
+        <th><a href="" title="Order By Voucher" ng-click="SetOrder('voucher_no')"><i class="fa  fa-arrows-v"></i></a>Voucher NO</th>
+          <th><a href="" title="Order By Paid Amount" ng-click="SetOrder('total')"><i class="fa  fa-arrows-v"></i></a>Amount Paid</th>
         <th colspan="2">Actions</th>
       </tr>
     </thead>
     <tbody>
-      <tr ng-repeat="voucher in payrolls | orderBy:'-voucher_no'">
+      <tr ng-repeat="voucher in payrolls | filter:query | orderBy:order_by">
         <td>{[{$index+1}]} </td>
           <td><label ng-repeat="row in voucher.rows"><span ng-show="$index<2">{[{row.employee_name}]},</span>
               <span ng-show="$index>1 &&  $index<4">..</span></label>({[{voucher.rows.length}]})

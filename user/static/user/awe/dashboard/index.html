@@ -1,47 +1,51 @@
-<div class="row">
-    <div class="col-sm-9 col-sm-offset-3"><h2>My Sites <a href="#/site/site-details/0" title="Add Site">
+<div class="col-sm-9 col-sm-offset-3"><h2>My Sites <a href="#/site/site-details/0" title="Add Site">
                   <i class="fa fa-plus" ng-hide="!data.is_admin"></i></a></h2></div>
-    <div class="col-md-12 col-sm-12 col-xs-12" ng-repeat="site in sites">
+<table id="example1" class="table table-bordered table-striped">
+    <tr>
+        <td colspan="8"><input type="text" name="q" ng-model="query" class="form-control" placeholder="Search..."></td>
+    </tr>
+    <thead>
+      <tr>
+        <th><a href="" title="Order By Name" ng-click="SetOrder('name')"><i class="fa  fa-arrows-v"></i></a>
+            Site Name
+            <a href="#/site/site-details/0" title="Add Site">
+                  <i class="fa fa-plus" ng-hide="!data.is_admin"></i></a></th>
+        <th><a href="" title="Order By Description" ng-click="SetOrder('description')"><i class="fa  fa-arrows-v"></i></a>Description</th>
+        <th><a href="" title="Order By Address" ng-click="SetOrder('address')"><i class="fa  fa-arrows-v"></i></a>Address</th>
+        <th><a href="" title="Order By Age" ng-click="SetOrder('start_date')"><i class="fa  fa-arrows-v"></i></a>Start Date</th>
+        <th colspan="4" align="center">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="site in sites | filter:query | orderBy:order_by">
+        <td><a href="#/site/site-details/{[{site.id}]}" title="Modify Site">
+              <i class="fa fa-edit" ng-hide="!data.is_admin"></i>{[{site.name}]} </a></td>
+        <td>{[{site.description}]}</td>
+        <td>{[{site.address}]}</td>
+        <td>{[{site.start_date}]}</td>
+        <td><a href="#/progress/progress/{[{site.id}]}" title="Site progress">
+                  <i class="fa fa-line-chart">Progress</i></a></td>
+        <td><a href="#/inventories/{[{site.id}]}" title="Inventory Details">
+                  <i class="fa fa-wrench">Inventory</i></a>
+        </td>
+        <td><a href="#/demands/{[{site.id}]}" title="Demand Details">
+                  <i class="fa fa-level-up">Demands</i></a></td>
+        <td><a href="#/site/site-details/{[{site.id}]}" title="Modify Site">
+              <i class="fa fa-edit" ng-hide="!data.is_admin"></i></a></td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <th><a href="" title="Order By Name" ng-click="SetOrder('name')"><i class="fa  fa-arrows-v"></i></a>
+            Site Name
+            <a href="#/site/site-details/0" title="Add Site">
+                  <i class="fa fa-plus" ng-hide="!data.is_admin"></i></a></th>
+        <th><a href="" title="Order By Description" ng-click="SetOrder('description')"><i class="fa  fa-arrows-v"></i></a>Description</th>
+        <th><a href="" title="Order By Address" ng-click="SetOrder('address')"><i class="fa  fa-arrows-v"></i></a>Address</th>
+        <th><a href="" title="Order By Age" ng-click="SetOrder('start_date')"><i class="fa  fa-arrows-v"></i></a>Start Date</th>
+        <th colspan="4" align="center">Actions</th>
+      </tr>
+    </tfoot>
+</table>
 
-        <div class="box box-widget widget-user">
-            <!-- Add the bg color to the header using any of the bg-* classes -->
-            <div class="widget-user-header" ng-class-odd="' bg-aqua-active'" ng-class-even="' bg-yellow'">
-              <h3 class="widget-user-username">{[{site.name}]}
-                  <a href="#/site/site-details/{[{site.id}]}" title="Modify Site">
-              <i class="fa fa-edit" ng-hide="!data.is_admin"></i></a></h3>
-              <h5 class="widget-user-desc">{[{site.description}]}</h5>
-            </div>
-
-        </div>
-        <div class="box-body">
-              <div class="col-sm-3"><a href="#/progress/progress/{[{site.id}]}" title="Site progress">
-                  <i class="fa fa-line-chart">Progress</i></a></div>
-              <div class="col-sm-3">
-                  <a href="#/employees/{[{site.id}]}" title="Employee Details"><i class="fa fa-user">Employees</i></a>
-              </div>
-              <div class="col-sm-2"><a href="#/inventories/{[{site.id}]}" title="Inventory Details">
-                  <i class="fa fa-wrench">Inventory</i></a></div>
-              <!--<div class="col-sm-2"><a href="#/account/summary/{[{site.id}]}" title="Account Details">-->
-                  <!--<i class="fa fa-book">Account</i></a></div>-->
-            <div class="col-sm-2"><a href="#/demands/{[{site.id}]}" title="Demand Details">
-                  <i class="fa fa-level-up">Demands</i></a></div>
-        </div>
-        <div class="box-footer">
-              <div class="row">
-                    <div class="col-sm-6 border-right " ng-class-odd="' bg-aqua-active'" ng-class-even="' bg-yellow'" >
-                      <div class="description-block">
-                        <h5 class="description-header">{[{site.start_date}]}</h5>
-                        <span class="description-text">Started</span>
-                      </div>
-                    </div>
-                  <div class="col-sm-6 border-right" ng-class-odd="' bg-aqua-active'" ng-class-even="' bg-yellow'" >
-                      <div class="description-block">
-                        <h5 class="description-header">{[{site.address}]}</h5>
-                        <span class="description-text">Location</span>
-                      </div>
-                    </div>
-
-              </div>
-         </div>
-    </div>
-</div>
+<pagination total-items="totalItems" ng-model="currentPage"  items-per-page= "itemsPerPage" ng-change="pageChanged()"></pagination>

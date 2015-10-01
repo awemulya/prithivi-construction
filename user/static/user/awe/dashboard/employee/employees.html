@@ -38,13 +38,15 @@
     </tbody>
     <tfoot>
       <tr>
-        <th>Employee <a href="" title="Add Employee" ng-click="openAddEmployee(site)"><i class="fa fa-plus"></i></a></th>
-        <th>Address</th>
-        <th>Age</th>
+        <th><a href="" title="Order By Name" ng-click="SetOrder('name')"><i class="fa  fa-arrows-v"></i></a>
+            Employee
+            <a href="" title="Add Employee" ng-click="openAddEmployee(site)"><i class="fa fa-plus"></i></a></th>
+        <th><a href="" title="Order By Address" ng-click="SetOrder('address')"><i class="fa  fa-arrows-v"></i></a>Address</th>
+        <th><a href="" title="Order By Age" ng-click="SetOrder('employee_age')"><i class="fa  fa-arrows-v"></i></a>Age</th>
         <th>Role</th>
         <th>Sex</th>
         <th>Marital Status</th>
-        <th>Date Joined</th>
+        <th><a href="" ng-click="SetOrder('date_joined')"><i class="fa  fa-arrows-v"></i></a>Date Joined</th>
         <th>Phone</th>
         <th>Status</th>
         <th colspan="4">Actions</th>

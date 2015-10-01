@@ -1,16 +1,18 @@
 <table id="example1" class="table table-bordered table-striped">
+    <tr><td colspan="8"><input type="text" name="q" ng-model="query" class="form-control" placeholder="Search..."></td></tr>
     <thead>
       <tr>
-        <th>Vendor <a href="" title="Add Bank" ng-click="openAddVendor({})"><i class="fa fa-plus"></i></a></th>
-        <th>Address</th>
+        <th><a href="" title="Order By Name" ng-click="SetOrder('name')"><i class="fa  fa-arrows-v"></i></a>
+            Vendor <a href="" title="Add Bank" ng-click="openAddVendor({})"><i class="fa fa-plus"></i></a></th>
+        <th><a href="" title="Order By Address" ng-click="SetOrder('address')"><i class="fa  fa-arrows-v"></i></a>Address</th>
         <th>Phone</th>
-          <th>Dr Amount</th>
-          <th>Cr Amount</th>
+          <th><a href="" title="Order By Dr Amount" ng-click="SetOrder('current_dr')"><i class="fa  fa-arrows-v"></i></a>Dr Amount</th>
+          <th><a href="" title="Order By Cr Amount" ng-click="SetOrder('current_cr')"><i class="fa  fa-arrows-v"></i></a>Cr Amount</th>
         <th colspan="3">Actions</th>
       </tr>
     </thead>
     <tbody>
-      <tr ng-repeat="vendor in vendors | orderBy:'-name'">
+      <tr ng-repeat="vendor in vendors | filter:query | orderBy:order_by">
         <td>{[{vendor.name}]}</td>
         <td>{[{vendor.address}]}</td>
         <td>{[{vendor.phone_no}]}</td>

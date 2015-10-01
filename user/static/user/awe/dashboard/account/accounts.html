@@ -1,10 +1,12 @@
 <table id="example1" class="table table-bordered table-striped">
+  <tr><td colspan="8"><input type="text" name="q" ng-model="query" class="form-control" placeholder="Search..."></td></tr>
     <thead>
       <tr>
-        <th>Name <a href="" title="Add Account" ng-click="openAddAccount()"><i class="fa fa-plus"></i></a></th>
-        <th>Code</th>
-        <th>Current Dr</th>
-        <th>Current Cr</th>
+        <th><a href="" title="Order By Name" ng-click="SetOrder('name')"><i class="fa  fa-arrows-v"></i></a>Name
+            <a href="" title="Add Account" ng-click="openAddAccount()"><i class="fa fa-plus"></i></a></th>
+        <th><a href="" title="Order By Code" ng-click="SetOrder('code')"><i class="fa  fa-arrows-v"></i></a>Code</th>
+        <th><a href="" title="Order By Dr Amount" ng-click="SetOrder('current_dr')"><i class="fa  fa-arrows-v"></i></a>Current Dr</th>
+        <th><a href="" title="Order By Cr Amount" ng-click="SetOrder('current_cr')"><i class="fa  fa-arrows-v"></i></a>Current Cr</th>
         <th>Tax Rate</th>
         <th>Opening Cr</th>
         <th>Opening Dr</th>
@@ -14,7 +16,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr ng-repeat="account in accounts | orderBy:'-name'">
+      <tr ng-repeat="account in accounts | filter:query | orderBy:order_by">
         <td>{[{account.name}]}</td>
         <td>{[{account.code}]}</td>
         <td>{[{account.current_dr | rs}]}</td>

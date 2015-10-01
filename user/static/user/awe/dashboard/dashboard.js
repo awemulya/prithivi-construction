@@ -188,7 +188,35 @@ $routeProvider.when('/inventory/item-consumption/:accountId', {
 
 .controller('DashboardController', ['$scope', 'Site', '$modal', '$timeout', function($scope, Site, $modal, $timeout) {
  var self = $scope;
- self.sites = Site.query();
+ self.order_by = "name";
+    self.SetOrder = function (value){
+        if(self.order_by == value){
+            value = '-'+value;
+        }
+        self.order_by = value;
+    };
+        self.$watch('sitesAll', function(sitesAll) {
+        if(!angular.equals(sitesAll,{})){
+         self.sites = self.sitesAll.slice((self.currentPage-1)*self.itemsPerPage, self.currentPage*self.itemsPerPage);
+            self.totalItems = self.sitesAll.length;
+
+        }
+    }, true);
+    self.sites = [];
+    self.totalItems = 0;
+      self.currentPage = 1;
+      self.itemsPerPage = 10;
+
+      self.setPage = function (pageNo) {
+        self.currentPage = pageNo;
+      };
+
+      self.pageChanged = function() {
+      self.sites = self.sitesAll.slice((self.currentPage-1)*self.itemsPerPage, self.currentPage*self.itemsPerPage);
+//        console.log('Page changed to: ' + self.currentPage);
+      };
+
+    self.sitesAll = Site.query();
 
 }])
 
@@ -441,6 +469,13 @@ function($scope, LedgerAccount, $modal, $timeout, $routeParams){
     var self = $scope;
     var parent = self.$parent;
     self.accounts = LedgerAccount.query();
+    self.order_by = "name";
+    self.SetOrder = function (value){
+        if(self.order_by == value){
+            value = '-'+value;
+        }
+        self.order_by = value;
+    };
 
 
 }])
@@ -562,7 +597,13 @@ function($scope, SitePayroll, $routeParams){
             function(error) {
                 console.log(error);
             });
-
+    self.order_by = "voucher_no";
+    self.SetOrder = function (value){
+        if(self.order_by == value){
+            value = '-'+value;
+        }
+        self.order_by = value;
+    };
 
 }])
 
@@ -1257,6 +1298,19 @@ function($scope, Site, User, $modal, $timeout, $routeParams, $location) {
     }
 
     self.saveSite = function(){
+    if(!self.site.name){
+        alert('Site name nannot be empty');
+        return;
+    }else if(!self.site.description){
+        alert('Site description cannot be empty.');
+        return;
+    }else if(!self.site.address){
+        alert("Site address cannot be empty.");
+        return;
+    }else if(!self.site.start_date){
+        alert("Start Date cannot be empty.");
+
+    }
     if(self.site.id){
         var ss = new Site();
         ss.id=self.site.id;
@@ -1804,6 +1858,11 @@ function($scope, User, $modal, $timeout){
     var parent = self.$parent;
     self.users = User.query();
 
+       self.order_by = "email";
+    self.SetOrder = function (value){
+        self.order_by = value;
+    };
+
         self.openEditUser = function(user) {
         var modalInstance = $modal.open({
             animation: true,
@@ -2190,6 +2249,13 @@ function($scope, Bank, $modal, $timeout, $routeParams){
     var self = $scope;
     var parent = self.$parent;
     self.banks = Bank.query();
+     self.order_by = "name";
+        self.SetOrder = function (value){
+        if(self.order_by == value){
+            value = '-'+value;
+        }
+        self.order_by = value;
+    };
 
     self.openAddBank = function(bank) {
         var modalInstance = $modal.open({
@@ -2252,6 +2318,14 @@ function($scope, Vendor, $modal, $timeout, $routeParams){
     var self = $scope;
     var parent = self.$parent;
     self.vendors = Vendor.query();
+
+    self.order_by = "name";
+        self.SetOrder = function (value){
+        if(self.order_by == value){
+            value = '-'+value;
+        }
+        self.order_by = value;
+    };
 
     self.openAddVendor = function(vendor) {
         var modalInstance = $modal.open({
