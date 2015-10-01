@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ledger.models import Account, Bank, BankWithdrawAndDeposit, Vendor, VendorPayments
+from ledger.models import Account, Bank, BankWithdrawAndDeposit, Vendor, VendorPayments, Transaction
 from ledger.models import Account, set_transactions as set_ledger_transactions
 
 
@@ -67,13 +67,35 @@ class BankSerializer(serializers.ModelSerializer):
 
 class BankWithdrawRowSerializer(serializers.ModelSerializer):
 
-        class Meta:
-            model = BankWithdrawAndDeposit
-            exclude = ['bank']
-            extra_kwargs = {
-                "id": {
-                    "read_only": False, "required": False, },
-            }
+    class Meta:
+        model = BankWithdrawAndDeposit
+        exclude = ['bank']
+        extra_kwargs = {
+            "id": {
+                "read_only": False, "required": False, },
+        }
+
+
+class TransactionSerializer(serializers.ModelSerializer):
+
+    date = serializers.ReadOnlyField(source='journal_entry.date')
+    voucher_no = serializers.ReadOnlyField(source='journal_entry.source.voucher_no')
+
+    class Meta:
+        model = Transaction
+        exclude = ['account','journal_entry']
+        # extra_kwargs = {
+        #     "id": {
+        #         "read_only": False, "required": False, },
+        # }
+
+
+class AccountTransactionSerializer(serializers.ModelSerializer):
+
+    transactions = TransactionSerializer(many=True)
+
+    class Meta:
+        model = Account
 
 
 class BankWSOrDepoSerializer(serializers.ModelSerializer):

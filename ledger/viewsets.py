@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from ledger.models import Account, Bank, Vendor
 from ledger.serializers import AccountSerializer, BankWSOrDepoSerializer, BankSerializer, VendorPaymentsSerializer, \
-    VendorSerializer
+    VendorSerializer, AccountTransactionSerializer
 from ledger.models import Account
 from project.permissions import IsAdminOrReadOnly
 
@@ -79,6 +79,19 @@ class VendorViewSet(viewsets.ModelViewSet):
 
     queryset = Vendor.objects.all()
     serializer_class = VendorSerializer
+    # permission_classes = [IsOwnerOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save()
+
+    def perform_update(self, serializer):
+        serializer.save()
+
+
+class AccountTransactionVS(viewsets.ModelViewSet):
+
+    queryset = Account.objects.all()
+    serializer_class = AccountTransactionSerializer
     # permission_classes = [IsOwnerOrReadOnly]
 
     def perform_create(self, serializer):

@@ -86,6 +86,11 @@ $routeProvider.when('/account/accounts/', {
     controller: 'AccountController'
   })
 
+$routeProvider.when('/account/transactions/:accountId', {
+    templateUrl: djstatic('user/awe/dashboard/account/accounts_transactions.html'),
+    controller: 'AccountTransactionController'
+  })
+
 $routeProvider.when('/inventory/demand-details/:demandId', {
     templateUrl: djstatic('user/awe/dashboard/inventory/demand/demand_details.html'),
     controller: 'DemandDetailController'
@@ -437,6 +442,24 @@ function($scope, LedgerAccount, $modal, $timeout, $routeParams){
     var parent = self.$parent;
     self.accounts = LedgerAccount.query();
 
+
+}])
+
+.controller('AccountTransactionController', ['$scope', 'LedgerAccountTrans', '$modal', '$timeout', '$routeParams',
+function($scope, LedgerAccountTrans, $modal, $timeout, $routeParams){
+    var self = $scope;
+    var parent = self.$parent;
+    self.accountId = $routeParams.accountId;
+    self.transactions = {};
+
+    var lts = new LedgerAccountTrans();
+    lts.$query({Id:self.accountId},
+     function(data) {
+            self.account = data;
+            },
+            function(error) {
+                console.log(error);
+            });
 
 }])
 
@@ -1826,29 +1849,37 @@ function($scope, Employee, SiteEmployee, Site, Role, SalaryRecord, Salary, Emplo
 $timeout, $routeParams){
     var self = $scope;
     var parent = self.$parent;
-    self.totalItems = 100;
+    self.order_by = "name";
+    self.SetOrder = function (value){
+        if(self.order_by == value){
+            value = '-'+value;
+        }
+        self.order_by = value;
+    };
+//    self.query = '';
+    self.totalItems = 0;
       self.currentPage = 1;
-      self.itemsPerPage = 5;
+      self.itemsPerPage = 10;
 
       self.setPage = function (pageNo) {
         self.currentPage = pageNo;
       };
 
       self.pageChanged = function() {
-      self.employees = self.employeesAll.slice((self.currentPage-1)*5, self.currentPage*5);
+      self.employees = self.employeesAll.slice((self.currentPage-1)*self.itemsPerPage, self.currentPage*self.itemsPerPage);
 //        console.log('Page changed to: ' + self.currentPage);
       };
 
 
     self.siteID =  $routeParams.siteId;
     parent.data.site_id = self.siteID;
-    self.employees = {};
+    self.employees = [];
     self.site = "";
     var employeeService = new SiteEmployee();
     employeeService.$query({siteID:self.siteID},
             function(data) {
             self.employeesAll = data.employee;
-            self.employees = self.employeesAll.slice((self.currentPage-1)*5, self.currentPage*5);
+            self.employees = self.employeesAll.slice((self.currentPage-1)*self.itemsPerPage, self.currentPage*self.itemsPerPage);
             self.totalItems = self.employeesAll.length;
             self.site = data.id;
             },

@@ -170,6 +170,12 @@ angular.module('dashboardServices', ['ngResource'])
 	});
 }])
 
+.factory('LedgerAccountTrans', ['$resource', function($resource){
+	return $resource('/ledger/account-transactions/:Id', {}, {
+	  query: {method:'GET', params:{Id: '@Id'}},
+	});
+}])
+
 .factory('SitePayroll', ['$resource', function($resource){
 	return $resource('/employee/site-payrolls/:siteID', {}, {
 	  query: {method:'GET', params:{siteID: '@siteID'}},
